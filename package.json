@@ -4,6 +4,7 @@
   "description": "Social authenticator for adonis framework",
   "main": "index.js",
   "directories": {
+    "example": "examples",
     "test": "test"
   },
   "scripts": {
@@ -51,5 +52,13 @@
     "lodash": "^4.15.0",
     "node-exceptions": "^1.0.3",
     "oauth": "^0.9.14"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/adonisjs/adonis-ally.git"
+  },
+  "bugs": {
+    "url": "https://github.com/adonisjs/adonis-ally/issues"
+  },
+  "homepage": "https://github.com/adonisjs/adonis-ally#readme"
 }
