@@ -1,0 +1,55 @@
+{
+  "name": "adonis-ally",
+  "version": "1.0.0",
+  "description": "Social authenticator for adonis framework",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "npm run lint && _mocha test/**/*.spec.js",
+    "lint": "standard"
+  },
+  "keywords": [
+    "adonis",
+    "adonisjs",
+    "social-auth",
+    "oauth"
+  ],
+  "author": "adonisjs,amanvirk",
+  "license": "MIT",
+  "devDependencies": {
+    "adonis-fold": "^3.0.3",
+    "chai": "^3.5.0",
+    "co": "^4.6.0",
+    "co-mocha": "^1.1.3",
+    "coveralls": "^2.11.12",
+    "cz-conventional-changelog": "^1.2.0",
+    "istanbul": "^0.4.5",
+    "mocha": "^3.0.2",
+    "standard": "^8.0.0"
+  },
+  "standard": {
+    "global": [
+      "describe",
+      "it",
+      "context",
+      "before",
+      "after",
+      "beforeEach",
+      "afterEach"
+    ]
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-conventional-changelog"
+    }
+  },
+  "dependencies": {
+    "cat-log": "^1.0.2",
+    "got": "^6.3.0",
+    "lodash": "^4.15.0",
+    "node-exceptions": "^1.0.3",
+    "oauth": "^0.9.14"
+  }
+}
