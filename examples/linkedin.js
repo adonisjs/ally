@@ -12,7 +12,8 @@ http.get('/linkedin', function * (request, response) {
   const ally = new AllyManager(request, response)
   const linkedin = ally.driver('linkedin')
   response.writeHead(200, {'content-type': 'text/html'})
-  response.write(`<a href="${linkedin.getRedirectUrl()}">Login With LinkedIn</a>`)
+  const url = yield linkedin.getRedirectUrl()
+  response.write(`<a href="${url}">Login With LinkedIn</a>`)
   response.end()
 })
 

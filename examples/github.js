@@ -12,7 +12,8 @@ http.get('/github', function * (request, response) {
   const ally = new AllyManager(request, response)
   const github = ally.driver('github')
   response.writeHead(200, {'content-type': 'text/html'})
-  response.write(`<a href="${github.getRedirectUrl()}">Login With Github</a>`)
+  const url = yield github.getRedirectUrl()
+  response.write(`<a href="${url}">Login With Github</a>`)
   response.end()
 })
 

@@ -12,7 +12,8 @@ http.get('/facebook', function * (request, response) {
   const ally = new AllyManager(request, response)
   const facebook = ally.driver('facebook')
   response.writeHead(200, {'content-type': 'text/html'})
-  response.write(`<a href="${facebook.getRedirectUrl()}">Login With Facebook</a>`)
+  const url = yield facebook.getRedirectUrl()
+  response.write(`<a href="${url}">Login With Facebook</a>`)
   response.end()
 })
 

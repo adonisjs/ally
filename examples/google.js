@@ -12,7 +12,8 @@ http.get('/google', function * (request, response) {
   const ally = new AllyManager(request, response)
   const google = ally.driver('google')
   response.writeHead(200, {'content-type': 'text/html'})
-  response.write(`<a href="${google.getRedirectUrl()}">Login With Google</a>`)
+  const url = yield google.getRedirectUrl()
+  response.write(`<a href="${url}">Login With Google</a>`)
   response.end()
 })
 

@@ -152,7 +152,7 @@ class LinkedIn extends OAuth2Scheme {
    *
    * @return {String}
    */
-  getRedirectUrl (scope) {
+  * getRedirectUrl (scope) {
     scope = _.size(scope) ? scope : this._scope
     return this.getUrl(this._redirectUri, scope, this._redirectUriOptions)
   }
