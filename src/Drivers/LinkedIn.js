@@ -18,7 +18,7 @@ const _ = require('lodash')
 class LinkedIn extends OAuth2Scheme {
 
   constructor (Config) {
-    const config = Config.get('auth.social.linkedin')
+    const config = Config.get('services.ally.linkedin')
     super(config.clientId, config.clientSecret, config.headers)
 
     /**

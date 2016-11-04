@@ -18,7 +18,7 @@ const _ = require('lodash')
 class Github extends OAuth2Scheme {
 
   constructor (Config) {
-    const config = Config.get('auth.social.github')
+    const config = Config.get('services.ally.github')
     super(config.clientId, config.clientSecret, config.headers)
 
     /**

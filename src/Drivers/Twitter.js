@@ -16,7 +16,7 @@ const AllyUser = require('../AllyUser')
 class Twitter extends OAuthScheme {
 
   constructor (Config) {
-    const config = Config.get('auth.social.twitter')
+    const config = Config.get('services.ally.twitter')
     super(config.clientId, config.clientSecret, config.redirectUri)
   }
 

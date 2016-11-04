@@ -11,8 +11,8 @@
 
 module.exports = {
   facebook: require('./Facebook'),
-  google: require('./Google'),
   github: require('./Github'),
+  google: require('./Google'),
   linkedin: require('./LinkedIn'),
   twitter: require('./Twitter')
 }

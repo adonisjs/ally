@@ -18,7 +18,7 @@ const _ = require('lodash')
 class Facebook extends OAuth2Scheme {
 
   constructor (Config) {
-    const config = Config.get('auth.social.facebook')
+    const config = Config.get('services.ally.facebook')
     super(config.clientId, config.clientSecret, config.headers)
 
     /**

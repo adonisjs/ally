@@ -18,7 +18,7 @@ const _ = require('lodash')
 class Google extends OAuth2Scheme {
 
   constructor (Config) {
-    const config = Config.get('auth.social.google')
+    const config = Config.get('services.ally.google')
     super(config.clientId, config.clientSecret, config.headers)
 
     /**
