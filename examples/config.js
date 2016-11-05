@@ -47,7 +47,6 @@ module.exports = {
       redirectUri: `${Env.get('APP_URL')}/authenticated/google`
     },
 
-
     /*
     |--------------------------------------------------------------------------
     | Github Configuration
