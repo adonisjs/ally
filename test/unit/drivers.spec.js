@@ -18,9 +18,30 @@ const Facebook = drivers.facebook
 const Github = drivers.github
 const LinkedIn = drivers.linkedin
 const assert = chai.assert
+require('co-mocha')
 
 describe('Oauth Drivers', function () {
   context('Google', function () {
+    it('should throw an exception when config has not been defined', function () {
+      const google = () => new Google({get: function () { return null }})
+      assert.throw(google, 'OAuthException: E_MISSING_OAUTH_CONFIG: Make sure to define google configuration inside config/services.js file')
+    })
+
+    it('should throw an exception when clientid is missing', function () {
+      const google = () => new Google({get: function () { return {clientSecret: '1', redirectUri: '2'} }})
+      assert.throw(google, 'OAuthException: E_MISSING_OAUTH_CONFIG: Make sure to define google configuration inside config/services.js file')
+    })
+
+    it('should throw an exception when clientSecret is missing', function () {
+      const google = () => new Google({get: function () { return {clientId: '1', redirectUri: '2'} }})
+      assert.throw(google, 'OAuthException: E_MISSING_OAUTH_CONFIG: Make sure to define google configuration inside config/services.js file')
+    })
+
+    it('should throw an exception when redirectUri is missing', function () {
+      const google = () => new Google({get: function () { return {clientId: '1', clientSecret: '2'} }})
+      assert.throw(google, 'OAuthException: E_MISSING_OAUTH_CONFIG: Make sure to define google configuration inside config/services.js file')
+    })
+
     it('should generate the redirect_uri with correct signature', function * () {
       const google = new Google(config)
       const redirectUrl = qs.escape(config.get().redirectUri)
@@ -60,6 +81,26 @@ describe('Oauth Drivers', function () {
   })
 
   context('Facebook', function () {
+    it('should throw an exception when config has not been defined', function () {
+      const facebook = () => new Facebook({get: function () { return null }})
+      assert.throw(facebook, 'OAuthException: E_MISSING_OAUTH_CONFIG: Make sure to define facebook configuration inside config/services.js file')
+    })
+
+    it('should throw an exception when clientid is missing', function () {
+      const facebook = () => new Facebook({get: function () { return {clientSecret: '1', redirectUri: '2'} }})
+      assert.throw(facebook, 'OAuthException: E_MISSING_OAUTH_CONFIG: Make sure to define facebook configuration inside config/services.js file')
+    })
+
+    it('should throw an exception when clientSecret is missing', function () {
+      const facebook = () => new Facebook({get: function () { return {clientId: '1', redirectUri: '2'} }})
+      assert.throw(facebook, 'OAuthException: E_MISSING_OAUTH_CONFIG: Make sure to define facebook configuration inside config/services.js file')
+    })
+
+    it('should throw an exception when redirectUri is missing', function () {
+      const facebook = () => new Facebook({get: function () { return {clientId: '1', clientSecret: '2'} }})
+      assert.throw(facebook, 'OAuthException: E_MISSING_OAUTH_CONFIG: Make sure to define facebook configuration inside config/services.js file')
+    })
+
     it('should generate the redirect_uri with correct signature', function * () {
       const facebook = new Facebook(config)
       const redirectUrl = qs.escape(config.get().redirectUri)
@@ -99,6 +140,26 @@ describe('Oauth Drivers', function () {
   })
 
   context('Github', function () {
+    it('should throw an exception when config has not been defined', function () {
+      const github = () => new Github({get: function () { return null }})
+      assert.throw(github, 'OAuthException: E_MISSING_OAUTH_CONFIG: Make sure to define github configuration inside config/services.js file')
+    })
+
+    it('should throw an exception when clientid is missing', function () {
+      const github = () => new Github({get: function () { return {clientSecret: '1', redirectUri: '2'} }})
+      assert.throw(github, 'OAuthException: E_MISSING_OAUTH_CONFIG: Make sure to define github configuration inside config/services.js file')
+    })
+
+    it('should throw an exception when clientSecret is missing', function () {
+      const github = () => new Github({get: function () { return {clientId: '1', redirectUri: '2'} }})
+      assert.throw(github, 'OAuthException: E_MISSING_OAUTH_CONFIG: Make sure to define github configuration inside config/services.js file')
+    })
+
+    it('should throw an exception when redirectUri is missing', function () {
+      const github = () => new Github({get: function () { return {clientId: '1', clientSecret: '2'} }})
+      assert.throw(github, 'OAuthException: E_MISSING_OAUTH_CONFIG: Make sure to define github configuration inside config/services.js file')
+    })
+
     it('should generate the redirect_uri with correct signature', function * () {
       const github = new Github(config)
       const redirectUrl = qs.escape(config.get().redirectUri)
@@ -138,6 +199,26 @@ describe('Oauth Drivers', function () {
   })
 
   context('LinkedIn', function () {
+    it('should throw an exception when config has not been defined', function () {
+      const linkedin = () => new LinkedIn({get: function () { return null }})
+      assert.throw(linkedin, 'OAuthException: E_MISSING_OAUTH_CONFIG: Make sure to define linkedin configuration inside config/services.js file')
+    })
+
+    it('should throw an exception when clientid is missing', function () {
+      const linkedin = () => new LinkedIn({get: function () { return {clientSecret: '1', redirectUri: '2'} }})
+      assert.throw(linkedin, 'OAuthException: E_MISSING_OAUTH_CONFIG: Make sure to define linkedin configuration inside config/services.js file')
+    })
+
+    it('should throw an exception when clientSecret is missing', function () {
+      const linkedin = () => new LinkedIn({get: function () { return {clientId: '1', redirectUri: '2'} }})
+      assert.throw(linkedin, 'OAuthException: E_MISSING_OAUTH_CONFIG: Make sure to define linkedin configuration inside config/services.js file')
+    })
+
+    it('should throw an exception when redirectUri is missing', function () {
+      const linkedin = () => new LinkedIn({get: function () { return {clientId: '1', clientSecret: '2'} }})
+      assert.throw(linkedin, 'OAuthException: E_MISSING_OAUTH_CONFIG: Make sure to define linkedin configuration inside config/services.js file')
+    })
+
     it('should generate the redirect_uri with correct signature', function * () {
       const linkedin = new LinkedIn(config)
       const redirectUrl = qs.escape(config.get().redirectUri)

@@ -12,11 +12,18 @@
 const OAuthScheme = require('../Schemes/OAuth')
 const CE = require('../Exceptions')
 const AllyUser = require('../AllyUser')
+const utils = require('../../lib/utils')
+const _ = utils.mixLodash(require('lodash'))
 
 class Twitter extends OAuthScheme {
 
   constructor (Config) {
     const config = Config.get('services.ally.twitter')
+
+    if (!_.hasAll(config, ['clientId', 'clientSecret', 'redirectUri'])) {
+      throw CE.OAuthException.missingConfig('github')
+    }
+
     super(config.clientId, config.clientSecret, config.redirectUri)
   }
 

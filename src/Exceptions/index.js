@@ -77,6 +77,19 @@ class OAuthException extends NE.LogicalException {
     return error
   }
 
+  /**
+   * This exception is raised when the configuration for
+   * the provider has not been defined.
+   *
+   * @param  {String} provider
+   * @param  {Number} [code=500]
+   *
+   * @return {Object}
+   */
+  static missingConfig (provider, code) {
+    return new this(`Make sure to define ${provider} configuration inside config/services.js file`, code || this.defaultErrorCode, 'E_MISSING_OAUTH_CONFIG')
+  }
+
 }
 
 class RuntimeException extends NE.RuntimeException {

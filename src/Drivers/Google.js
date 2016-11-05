@@ -13,12 +13,18 @@ const CE = require('../Exceptions')
 const OAuth2Scheme = require('../Schemes/OAuth2')
 const AllyUser = require('../AllyUser')
 const got = require('got')
-const _ = require('lodash')
+const utils = require('../../lib/utils')
+const _ = utils.mixLodash(require('lodash'))
 
 class Google extends OAuth2Scheme {
 
   constructor (Config) {
     const config = Config.get('services.ally.google')
+
+    if (!_.hasAll(config, ['clientId', 'clientSecret', 'redirectUri'])) {
+      throw CE.OAuthException.missingConfig('google')
+    }
+
     super(config.clientId, config.clientSecret, config.headers)
 
     /**
