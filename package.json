@@ -49,6 +49,7 @@
   },
   "dependencies": {
     "cat-log": "^1.0.2",
+    "csrf": "^3.0.3",
     "got": "^6.3.0",
     "lodash": "^4.15.0",
     "node-exceptions": "^1.0.3",
