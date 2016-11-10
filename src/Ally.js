@@ -10,10 +10,12 @@
 */
 
 const CE = require('./Exceptions')
+const Csrf = require('csrf')
 
 class Ally {
 
   constructor (driverInstance, request, response) {
+    this._csrf = new Csrf()
     this._driverInstance = driverInstance
     this._request = request
     this._response = response
@@ -59,7 +61,9 @@ class Ally {
    * @return {String}
    */
   * getRedirectUrl () {
-    const url = yield this._driverInstance.getRedirectUrl(this._scope)
+    let url = yield this._driverInstance.getRedirectUrl(this._scope)
+    const token = this._request.csrfToken()
+    url += `&state=${token}`
     this._scope = []
     return url
   }
@@ -73,12 +77,25 @@ class Ally {
   }
 
   /**
+   * Verifies that the URI has not been tampered with
+   *
+   * @return {Boolean}
+   */
+  * verifyUri () {
+    const secret = yield this._request.session.get('csrf-secret')
+    const token = this._request.input('state', null)
+    return this._csrf.verify(secret, token)
+  }
+
+  /**
    * Returns an instance AllyUser containing the user profile.
    * A driver is responsible for normalizing the user fields.
    *
    * @return {Object}
    */
   * getUser () {
+    const UriValid = yield this.verify()
+    if (!UriValid) throw CE.CsrfException.badToken()
     const user = yield this._driverInstance.getUser(this._request.get(), this._fields)
     this._fields = []
     return user
