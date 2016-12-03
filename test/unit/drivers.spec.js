@@ -17,6 +17,7 @@ const Google = drivers.google
 const Facebook = drivers.facebook
 const Github = drivers.github
 const LinkedIn = drivers.linkedin
+const Discord = drivers.discord
 const assert = chai.assert
 require('co-mocha')
 
@@ -253,6 +254,65 @@ describe('Oauth Drivers', function () {
       const scope = qs.escape(['foo'].join(' '))
       const providerUrl = `https://www.linkedin.com/oauth/v2/authorization?redirect_uri=${redirectUrl}&scope=${scope}&response_type=code&client_id=${config.get().clientId}`
       const redirectToUrl = yield linkedin.getRedirectUrl(['foo'])
+      assert.equal(redirectToUrl, providerUrl)
+    })
+  })
+
+  context('Discord', function () {
+    it('should throw an exception when config has not been defined', function () {
+      const discord = () => new Discord({get: function () { return null }})
+      assert.throw(discord, 'OAuthException: E_MISSING_OAUTH_CONFIG: Make sure to define discord configuration inside config/services.js file')
+    })
+
+    it('should throw an exception when clientid is missing', function () {
+      const discord = () => new Discord({get: function () { return {clientSecret: '1', redirectUri: '2'} }})
+      assert.throw(discord, 'OAuthException: E_MISSING_OAUTH_CONFIG: Make sure to define discord configuration inside config/services.js file')
+    })
+
+    it('should throw an exception when clientSecret is missing', function () {
+      const discord = () => new Discord({get: function () { return {clientId: '1', redirectUri: '2'} }})
+      assert.throw(discord, 'OAuthException: E_MISSING_OAUTH_CONFIG: Make sure to define discord configuration inside config/services.js file')
+    })
+
+    it('should throw an exception when redirectUri is missing', function () {
+      const discord = () => new Discord({get: function () { return {clientId: '1', clientSecret: '2'} }})
+      assert.throw(discord, 'OAuthException: E_MISSING_OAUTH_CONFIG: Make sure to define discord configuration inside config/services.js file')
+    })
+
+    it('should generate the redirect_uri with correct signature', function * () {
+      const discord = new Discord(config)
+      const redirectUrl = qs.escape(config.get().redirectUri)
+      const scope = qs.escape(['identify', 'email'].join(' '))
+      const providerUrl = `https://discordapp.com/api/oauth2/authorize?redirect_uri=${redirectUrl}&scope=${scope}&response_type=code&client_id=${config.get().clientId}`
+      const redirectToUrl = yield discord.getRedirectUrl()
+      assert.equal(redirectToUrl, providerUrl)
+    })
+
+    it('should make use of the scopes defined in the config file', function * () {
+      const customConfig = {
+        get: function () {
+          return {
+            clientId: 12,
+            clientSecret: 123,
+            redirectUri: 'http://localhost',
+            scope: ['identify']
+          }
+        }
+      }
+      const discord = new Discord(customConfig)
+      const redirectUrl = qs.escape(customConfig.get().redirectUri)
+      const scope = qs.escape(['identify'].join(' '))
+      const providerUrl = `https://discordapp.com/api/oauth2/authorize?redirect_uri=${redirectUrl}&scope=${scope}&response_type=code&client_id=${customConfig.get().clientId}`
+      const redirectToUrl = yield discord.getRedirectUrl()
+      assert.equal(redirectToUrl, providerUrl)
+    })
+
+    it('should make use of the scopes passed to the generate method', function * () {
+      const discord = new Discord(config)
+      const redirectUrl = qs.escape(config.get().redirectUri)
+      const scope = qs.escape(['foo'].join(' '))
+      const providerUrl = `https://discordapp.com/api/oauth2/authorize?redirect_uri=${redirectUrl}&scope=${scope}&response_type=code&client_id=${config.get().clientId}`
+      const redirectToUrl = yield discord.getRedirectUrl(['foo'])
       assert.equal(redirectToUrl, providerUrl)
     })
   })
