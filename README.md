@@ -66,11 +66,12 @@ BOOM! Now you are good to make use of the ally provider and authenticate your us
 ## <a name="available-drivers"></a>Available Drivers
 Below is the list of available drivers and you are free to add more.
 
-1. Facebook
-2. Github
-3. Google
-4. LinkedIn
-5. Twitter
+1. Discord
+2. Facebook
+3. Github
+4. Google
+5. LinkedIn
+6. Twitter
 
 <br>
 ## <a name="config"></a>Config

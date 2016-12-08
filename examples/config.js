@@ -60,6 +60,21 @@ module.exports = {
       clientId: Env.get('GITHUB_CLIENT_ID'),
       clientSecret: Env.get('GITHUB_CLIENT_SECRET'),
       redirectUri: `${Env.get('APP_URL')}/authenticated/github`
+    },
+
+    /*
+    |--------------------------------------------------------------------------
+    | Discord Configuration
+    |--------------------------------------------------------------------------
+    |
+    | You can access your application credentials from the discord developers
+    | console. https://discordapp.com/developers/applications/me
+    |
+    */
+    discord: {
+      clientId: Env.get('DISCORD_CLIENT_ID'),
+      clientSecret: Env.get('DISCORD_CLIENT_SECRET'),
+      redirectUri: `${Env.get('APP_URL')}/authenticated/discord`
     }
   }
 }
