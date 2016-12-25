@@ -14,5 +14,6 @@ module.exports = {
   github: require('./Github'),
   google: require('./Google'),
   linkedin: require('./LinkedIn'),
-  twitter: require('./Twitter')
+  twitter: require('./Twitter'),
+  instagram: require('./Instagram')
 }
