@@ -193,4 +193,4 @@ class Instagram extends OAuth2Scheme {
     }
 }
 
-module.exports = Instagram;
+module.exports = Instagram

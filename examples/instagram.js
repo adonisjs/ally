@@ -1,19 +1,19 @@
 'use strict'
 
-const Ioc = require('adonis-fold').Ioc;
-const config = require('./setup/config');
-const http = require('./setup/http');
-const AllyManager = require('../src/AllyManager');
+const Ioc = require('adonis-fold').Ioc
+const config = require('./setup/config')
+const http = require('./setup/http')
+const AllyManager = require('../src/AllyManager')
 Ioc.bind('Adonis/Src/Config', () => {
     return config
 })
 
 http.get('/instagram', function * (request, response) {
-    const ally = new AllyManager(request, response);
-    const instagram = ally.driver('instagram');
-    response.writeHead(200, {'content-type': 'text/html'});
-    const url = yield instagram.getRedirectUrl();
-    response.write(`<a href="${url}">Login With Instagram</a>`);
+    const ally = new AllyManager(request, response)
+    const instagram = ally.driver('instagram')
+    response.writeHead(200, {'content-type': 'text/html'})
+    const url = yield instagram.getRedirectUrl()
+    response.write(`<a href="${url}">Login With Instagram</a>`)
     response.end()
 })
 
