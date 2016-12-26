@@ -75,6 +75,6 @@ module.exports = {
       clientId: Env.get('INSTAGRAM_CLIENT_ID'),
       clientSecret: Env.get('INSTAGRAM_CLIENT_SECRET'),
       redirectUri: `${Env.get('APP_URL')}/authenticated/instagram`
-    },
+    }
   }
 }

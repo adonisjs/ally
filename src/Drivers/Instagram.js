@@ -18,32 +18,32 @@ const _ = utils.mixLodash(require('lodash'))
 
 class Instagram extends OAuth2Scheme {
 
-    constructor (Config) {
-        const config = Config.get('services.ally.instagram')
+  constructor (Config) {
+    const config = Config.get('services.ally.instagram')
 
-        if (!_.hasAll(config, ['clientId', 'clientSecret', 'redirectUri'])) {
-            throw CE.OAuthException.missingConfig('instagram')
-        }
+    if (!_.hasAll(config, ['clientId', 'clientSecret', 'redirectUri'])) {
+      throw CE.OAuthException.missingConfig('instagram')
+    }
 
-        super(config.clientId, config.clientSecret, config.headers);
+    super(config.clientId, config.clientSecret, config.headers)
 
         /**
          * Oauth specific values to be used when creating the redirect
          * url or fetching user profile.
          */
-        this._scope = this._getInitialScopes(config.scope)
-        this._redirectUri = config.redirectUri
-        this._redirectUriOptions = _.merge({response_type: 'code'}, config.options)
-    }
+    this._scope = this._getInitialScopes(config.scope)
+    this._redirectUri = config.redirectUri
+    this._redirectUriOptions = _.merge({response_type: 'code'}, config.options)
+  }
 
     /**
      * Injections to be made by the IoC container
      *
      * @return {Array}
      */
-    static get inject () {
-        return ['Adonis/Src/Config']
-    }
+  static get inject () {
+    return ['Adonis/Src/Config']
+  }
 
     /**
      * Scope seperator for seperating multiple
@@ -51,9 +51,9 @@ class Instagram extends OAuth2Scheme {
      *
      * @return {String}
      */
-    get scopeSeperator () {
-        return ' '
-    }
+  get scopeSeperator () {
+    return ' '
+  }
 
     /**
      * Base url to be used for constructing
@@ -61,9 +61,9 @@ class Instagram extends OAuth2Scheme {
      *
      * @return {String}
      */
-    get baseUrl () {
-        return 'https://api.instagram.com/'
-    }
+  get baseUrl () {
+    return 'https://api.instagram.com/'
+  }
 
     /**
      * Relative url to be used for redirecting
@@ -71,9 +71,9 @@ class Instagram extends OAuth2Scheme {
      *
      * @return {String} [description]
      */
-    get authorizeUrl () {
-        return 'oauth/authorize'
-    }
+  get authorizeUrl () {
+    return 'oauth/authorize'
+  }
 
     /**
      * Relative url to be used for exchanging
@@ -81,9 +81,9 @@ class Instagram extends OAuth2Scheme {
      *
      * @return {String}
      */
-    get accessTokenUrl () {
-        return 'oauth/access_token'
-    }
+  get accessTokenUrl () {
+    return 'oauth/access_token'
+  }
 
     /**
      * Returns initial scopes to be used right from the
@@ -96,10 +96,9 @@ class Instagram extends OAuth2Scheme {
      *
      * @private
      */
-    _getInitialScopes (scopes) {
-        return _.size(scopes) ? scopes : ['basic']
-    }
-
+  _getInitialScopes (scopes) {
+    return _.size(scopes) ? scopes : ['basic']
+  }
 
     /**
      * Returns the user profile as an object using the
@@ -111,17 +110,17 @@ class Instagram extends OAuth2Scheme {
      *
      * @private
      */
-    * _getUserProfile (accessToken) {
-        //fields = _.size(fields) ? fields : this._fields
-        const profileUrl = `${this.baseUrl}v1/users/self?access_token=${accessToken}`
-        const response = yield got(profileUrl, {
-            headers: {
-                'Accept': 'application/json'
-            },
-            json: true
-        })
-        return response.body
-    }
+  * _getUserProfile (accessToken) {
+        // fields = _.size(fields) ? fields : this._fields
+    const profileUrl = `${this.baseUrl}v1/users/self?access_token=${accessToken}`
+    const response = yield got(profileUrl, {
+      headers: {
+        'Accept': 'application/json'
+      },
+      json: true
+    })
+    return response.body
+  }
 
     /**
      * Returns the redirect url for a given provider.
@@ -130,11 +129,10 @@ class Instagram extends OAuth2Scheme {
      *
      * @return {String}
      */
-    * getRedirectUrl (scope) {
-        scope = _.size(scope) ? scope : this._scope
-        return this.getUrl(this._redirectUri, scope, this._redirectUriOptions)
-    }
-
+  * getRedirectUrl (scope) {
+    scope = _.size(scope) ? scope : this._scope
+    return this.getUrl(this._redirectUri, scope, this._redirectUriOptions)
+  }
 
     /**
      * Parses the redirect errors returned by facebook
@@ -144,9 +142,9 @@ class Instagram extends OAuth2Scheme {
      *
      * @return {String}
      */
-    parseRedirectError (queryParams) {
-        return queryParams.error_message || 'Oauth failed during redirect'
-    }
+  parseRedirectError (queryParams) {
+    return queryParams.error_message || 'Oauth failed during redirect'
+  }
 
     /**
      * Returns the user profile with it's access token, refresh token
@@ -156,24 +154,24 @@ class Instagram extends OAuth2Scheme {
      *
      * @return {Object}
      */
-    * getUser (queryParams) {
-        const code = queryParams.code
+  * getUser (queryParams) {
+    const code = queryParams.code
 
         /**
          * Throw an exception when query string does not have
          * code.
          */
-        if (!code) {
-            const errorMessage = this.parseRedirectError(queryParams)
-            throw CE.OAuthException.tokenExchangeException(errorMessage, null, errorMessage)
-        }
+    if (!code) {
+      const errorMessage = this.parseRedirectError(queryParams)
+      throw CE.OAuthException.tokenExchangeException(errorMessage, null, errorMessage)
+    }
 
-        const accessTokenResponse = yield this.getAccessToken(code, this._redirectUri, {
-            grant_type: 'authorization_code'
-        })
-        const userProfile = yield this._getUserProfile(accessTokenResponse.accessToken)
-        const user = new AllyUser()
-        user
+    const accessTokenResponse = yield this.getAccessToken(code, this._redirectUri, {
+      grant_type: 'authorization_code'
+    })
+    const userProfile = yield this._getUserProfile(accessTokenResponse.accessToken)
+    const user = new AllyUser()
+    user
             .setOriginal(userProfile)
             .setFields(
                 userProfile.id,
@@ -189,8 +187,8 @@ class Instagram extends OAuth2Scheme {
                 Number(_.get(accessTokenResponse, 'result.expires'))
             )
 
-        return user
-    }
+    return user
+  }
 }
 
 module.exports = Instagram
