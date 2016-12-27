@@ -12,9 +12,9 @@
 module.exports = {
   get: function () {
     return {
-      clientId: process.env.CLIENT_ID,
-      clientSecret: process.env.CLIENT_SECRET,
-      redirectUri: process.env.REDIRECT_URI
+      clientId: '76ed4125a66c4427a0f4cb4384b3ee92',
+      clientSecret: 'f06777921d1d4db7bd80f0d21259b322',
+      redirectUri: 'http://localhost:8000/instagram/authenticated'
     }
   }
 }

@@ -174,11 +174,11 @@ class Instagram extends OAuth2Scheme {
     user
             .setOriginal(userProfile)
             .setFields(
-                userProfile.id,
-                userProfile.username,
-                userProfile.email,
-                userProfile.full_name,
-                userProfile.profile_picture
+                userProfile.data.id,
+                userProfile.data.full_name,
+                userProfile.data.email || null,
+                userProfile.data.username,
+                userProfile.data.profile_picture
             )
             .setToken(
                 accessTokenResponse.accessToken,
