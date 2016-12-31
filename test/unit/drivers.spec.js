@@ -318,5 +318,25 @@ describe('Oauth Drivers', function () {
     })
   })
 
+  context('Twitter', function () {
+    it('should throw an exception when config has not been defined', function () {
+      const twitter = () => new Twitter({get: function () { return null }})
+      assert.throw(twitter, 'OAuthException: E_MISSING_OAUTH_CONFIG: Make sure to define twitter configuration inside config/services.js file')
+    })
 
+    it('should throw an exception when clientid is missing', function () {
+      const twitter = () => new Twitter({get: function () { return {clientSecret: '1', redirectUri: '2'} }})
+      assert.throw(twitter, 'OAuthException: E_MISSING_OAUTH_CONFIG: Make sure to define twitter configuration inside config/services.js file')
+    })
+
+    it('should throw an exception when clientSecret is missing', function () {
+      const twitter = () => new Twitter({get: function () { return {clientId: '1', redirectUri: '2'} }})
+      assert.throw(twitter, 'OAuthException: E_MISSING_OAUTH_CONFIG: Make sure to define twitter configuration inside config/services.js file')
+    })
+
+    it('should throw an exception when redirectUri is missing', function () {
+      const twitter = () => new Twitter({get: function () { return {clientId: '1', clientSecret: '2'} }})
+      assert.throw(twitter, 'OAuthException: E_MISSING_OAUTH_CONFIG: Make sure to define twitter configuration inside config/services.js file')
+    })
+  })
 })
