@@ -18,6 +18,7 @@ const Facebook = drivers.facebook
 const Github = drivers.github
 const LinkedIn = drivers.linkedin
 const Instagram = drivers.instagram
+const Twitter = drivers.twitter
 const assert = chai.assert
 require('co-mocha')
 
@@ -316,4 +317,6 @@ describe('Oauth Drivers', function () {
       assert.equal(redirectToUrl, providerUrl)
     })
   })
+
+
 })

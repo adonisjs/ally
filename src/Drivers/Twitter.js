@@ -21,7 +21,7 @@ class Twitter extends OAuthScheme {
     const config = Config.get('services.ally.twitter')
 
     if (!_.hasAll(config, ['clientId', 'clientSecret', 'redirectUri'])) {
-      throw CE.OAuthException.missingConfig('github')
+      throw CE.OAuthException.missingConfig('twitter')
     }
 
     super(config.clientId, config.clientSecret, config.redirectUri)
