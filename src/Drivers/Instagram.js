@@ -111,7 +111,6 @@ class Instagram extends OAuth2Scheme {
      * @private
      */
   * _getUserProfile (accessToken) {
-        // fields = _.size(fields) ? fields : this._fields
     const profileUrl = `${this.baseUrl}v1/users/self?access_token=${accessToken}`
     const response = yield got(profileUrl, {
       headers: {
@@ -143,7 +142,7 @@ class Instagram extends OAuth2Scheme {
      * @return {String}
      */
   parseRedirectError (queryParams) {
-    return queryParams.error_message || 'Oauth failed during redirect'
+    return queryParams.error_description || queryParams.error || 'Oauth failed during redirect'
   }
 
     /**
@@ -176,7 +175,7 @@ class Instagram extends OAuth2Scheme {
             .setFields(
                 userProfile.data.id,
                 userProfile.data.full_name,
-                userProfile.data.email || null,
+                null,
                 userProfile.data.username,
                 userProfile.data.profile_picture
             )
@@ -184,7 +183,7 @@ class Instagram extends OAuth2Scheme {
                 accessTokenResponse.accessToken,
                 accessTokenResponse.refreshToken,
                 null,
-                Number(_.get(accessTokenResponse, 'result.expires'))
+                null
             )
 
     return user
