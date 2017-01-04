@@ -20,6 +20,7 @@ const LinkedIn = drivers.linkedin
 const Instagram = drivers.instagram
 const Twitter = drivers.twitter
 const Foursquare = drivers.foursquare
+const Bitbucket = drivers.bitbucket
 const assert = chai.assert
 require('co-mocha')
 
@@ -393,6 +394,36 @@ describe('Oauth Drivers', function () {
       const redirectUrl = qs.escape(config.get().redirectUri)
       const providerUrl = `https://foursquare.com/oauth2/authenticate?redirect_uri=${redirectUrl}&response_type=code&client_id=${config.get().clientId}`
       const redirectToUrl = yield foursquare.getRedirectUrl(['basic'])
+      assert.equal(redirectToUrl, providerUrl)
+    })
+  })
+
+  context('Bitbucket', function () {
+    it('should throw an exception when config has not been defined', function () {
+      const bitbucket = () => new Bitbucket({get: function () { return null }})
+      assert.throw(bitbucket, 'OAuthException: E_MISSING_OAUTH_CONFIG: Make sure to define bitbucket configuration inside config/services.js file')
+    })
+
+    it('should throw an exception when clientid is missing', function () {
+      const bitbucket = () => new Bitbucket({get: function () { return {clientSecret: '1', redirectUri: '2'} }})
+      assert.throw(bitbucket, 'OAuthException: E_MISSING_OAUTH_CONFIG: Make sure to define bitbucket configuration inside config/services.js file')
+    })
+
+    it('should throw an exception when clientSecret is missing', function () {
+      const bitbucket = () => new Bitbucket({get: function () { return {clientId: '1', redirectUri: '2'} }})
+      assert.throw(bitbucket, 'OAuthException: E_MISSING_OAUTH_CONFIG: Make sure to define bitbucket configuration inside config/services.js file')
+    })
+
+    it('should throw an exception when redirectUri is missing', function () {
+      const bitbucket = () => new Bitbucket({get: function () { return {clientId: '1', clientSecret: '2'} }})
+      assert.throw(bitbucket, 'OAuthException: E_MISSING_OAUTH_CONFIG: Make sure to define bitbucket configuration inside config/services.js file')
+    })
+
+    it('should generate the redirect_uri with correct signature', function * () {
+      const bitbucket = new Bitbucket(config)
+      const redirectUrl = qs.escape(config.get().redirectUri)
+      const providerUrl = `https://bitbucket.org/site/oauth2/authorize?redirect_uri=${redirectUrl}&response_type=code&client_id=${config.get().clientId}`
+      const redirectToUrl = yield bitbucket.getRedirectUrl()
       assert.equal(redirectToUrl, providerUrl)
     })
   })
