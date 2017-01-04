@@ -90,6 +90,21 @@ module.exports = {
       clientId: Env.get('FOURSQUARE_ID'),
       clientSecret: Env.get('FOURSQUARE_SECRET'),
       redirectUri: `${Env.get('APP_URL')}/authenticated/foursquare`
+    },
+
+    /*
+     |--------------------------------------------------------------------------
+     | Bitbucket Configuration
+     |--------------------------------------------------------------------------
+     |
+     | You can access your application credentials from the Foursquare developers
+     | console. https://bitbucket.org/dashboard/overview
+     |
+     */
+    bitbucket: {
+      clientId: Env.get('BITBUCKET_ID'),
+      clientSecret: Env.get('BITBUCKET_SECRET'),
+      redirectUri: `${Env.get('APP_URL')}/bitbucket/authenticated`
     }
   }
 }
