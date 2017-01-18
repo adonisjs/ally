@@ -16,7 +16,6 @@ const CE = require('../Exceptions')
 const OAuth2Scheme = require('../Schemes/OAuth2')
 const AllyUser = require('../AllyUser')
 const got = require('got')
-const moment = require('moment')
 const utils = require('../../lib/utils')
 const _ = utils.mixLodash(require('lodash'))
 
@@ -89,7 +88,9 @@ class Foursquare extends OAuth2Scheme {
      * @private
      */
   * _getUserProfile (accessToken) {
-    const profileUrl = `https://api.foursquare.com/v2/users/self?oauth_token=${accessToken}&m=foursquare&v=${moment().format('YYYYMMDD')}`
+    const date = new Date()
+    const formattedDate = `${date.getFullYear()}${date.getMonth() + 1}${date.getDate()}`
+    const profileUrl = `https://api.foursquare.com/v2/users/self?oauth_token=${accessToken}&m=foursquare&v=${formattedDate}`
     const response = yield got(profileUrl, {
       headers: {
         'Accept': 'application/json'
@@ -118,7 +119,7 @@ class Foursquare extends OAuth2Scheme {
      * @return {String}
      */
   parseRedirectError (queryParams) {
-    return queryParams.error_message || 'Oauth failed during redirect'
+    return queryParams.error || 'Oauth failed during redirect'
   }
 
     /**
@@ -145,7 +146,7 @@ class Foursquare extends OAuth2Scheme {
       grant_type: 'authorization_code'
     })
     const userProfile = yield this._getUserProfile(accessTokenResponse.accessToken)
-    const avatarUrl = `${userProfile.response.user.photo.prefix}260x260${userProfile.response.user.photo.suffix}`
+    const avatarUrl = `${userProfile.response.user.photo.prefix}original${userProfile.response.user.photo.suffix}`
     const user = new AllyUser()
     user
             .setOriginal(userProfile)
