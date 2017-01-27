@@ -27,89 +27,89 @@ class Instagram extends OAuth2Scheme {
 
     super(config.clientId, config.clientSecret, config.headers)
 
-        /**
-         * Oauth specific values to be used when creating the redirect
-         * url or fetching user profile.
-         */
+    /**
+     * Oauth specific values to be used when creating the redirect
+     * url or fetching user profile.
+     */
     this._scope = this._getInitialScopes(config.scope)
     this._redirectUri = config.redirectUri
     this._redirectUriOptions = _.merge({response_type: 'code'}, config.options)
   }
 
-    /**
-     * Injections to be made by the IoC container
-     *
-     * @return {Array}
-     */
+  /**
+   * Injections to be made by the IoC container
+   *
+   * @return {Array}
+   */
   static get inject () {
     return ['Adonis/Src/Config']
   }
 
-    /**
-     * Scope seperator for seperating multiple
-     * scopes.
-     *
-     * @return {String}
-     */
+  /**
+   * Scope seperator for seperating multiple
+   * scopes.
+   *
+   * @return {String}
+   */
   get scopeSeperator () {
     return ' '
   }
 
-    /**
-     * Base url to be used for constructing
-     * facebook oauth urls.
-     *
-     * @return {String}
-     */
+  /**
+   * Base url to be used for constructing
+   * facebook oauth urls.
+   *
+   * @return {String}
+   */
   get baseUrl () {
     return 'https://api.instagram.com/'
   }
 
-    /**
-     * Relative url to be used for redirecting
-     * user.
-     *
-     * @return {String} [description]
-     */
+  /**
+   * Relative url to be used for redirecting
+   * user.
+   *
+   * @return {String} [description]
+   */
   get authorizeUrl () {
     return 'oauth/authorize'
   }
 
-    /**
-     * Relative url to be used for exchanging
-     * access token.
-     *
-     * @return {String}
-     */
+  /**
+   * Relative url to be used for exchanging
+   * access token.
+   *
+   * @return {String}
+   */
   get accessTokenUrl () {
     return 'oauth/access_token'
   }
 
-    /**
-     * Returns initial scopes to be used right from the
-     * config file. Otherwise it will fallback to the
-     * commonly used scopes
-     *
-     * @param   {Array} scopes
-     *
-     * @return  {Array}
-     *
-     * @private
-     */
+  /**
+   * Returns initial scopes to be used right from the
+   * config file. Otherwise it will fallback to the
+   * commonly used scopes
+   *
+   * @param   {Array} scopes
+   *
+   * @return  {Array}
+   *
+   * @private
+   */
   _getInitialScopes (scopes) {
     return _.size(scopes) ? scopes : ['basic']
   }
 
-    /**
-     * Returns the user profile as an object using the
-     * access token
-     *
-     * @param   {String} accessToken
-     *
-     * @return  {Object}
-     *
-     * @private
-     */
+  /**
+   * Returns the user profile as an object using the
+   * access token
+   *
+   * @param   {String} accessToken
+   *
+   * @return  {Object}
+   *
+   * @private
+   */
   * _getUserProfile (accessToken) {
     const profileUrl = `${this.baseUrl}v1/users/self?access_token=${accessToken}`
     const response = yield got(profileUrl, {
@@ -121,45 +121,45 @@ class Instagram extends OAuth2Scheme {
     return response.body
   }
 
-    /**
-     * Returns the redirect url for a given provider.
-     *
-     * @param  {Array} scope
-     *
-     * @return {String}
-     */
+  /**
+   * Returns the redirect url for a given provider.
+   *
+   * @param  {Array} scope
+   *
+   * @return {String}
+   */
   * getRedirectUrl (scope) {
     scope = _.size(scope) ? scope : this._scope
     return this.getUrl(this._redirectUri, scope, this._redirectUriOptions)
   }
 
-    /**
-     * Parses the redirect errors returned by facebook
-     * and returns the error message.
-     *
-     * @param  {Object} queryParams
-     *
-     * @return {String}
-     */
+  /**
+   * Parses the redirect errors returned by facebook
+   * and returns the error message.
+   *
+   * @param  {Object} queryParams
+   *
+   * @return {String}
+   */
   parseRedirectError (queryParams) {
     return queryParams.error_description || queryParams.error || 'Oauth failed during redirect'
   }
 
-    /**
-     * Returns the user profile with it's access token, refresh token
-     * and token expiry
-     *
-     * @param {Object} queryParams
-     *
-     * @return {Object}
-     */
+  /**
+   * Returns the user profile with it's access token, refresh token
+   * and token expiry
+   *
+   * @param {Object} queryParams
+   *
+   * @return {Object}
+   */
   * getUser (queryParams) {
     const code = queryParams.code
 
-        /**
-         * Throw an exception when query string does not have
-         * code.
-         */
+    /**
+     * Throw an exception when query string does not have
+     * code.
+     */
     if (!code) {
       const errorMessage = this.parseRedirectError(queryParams)
       throw CE.OAuthException.tokenExchangeException(errorMessage, null, errorMessage)
@@ -168,23 +168,26 @@ class Instagram extends OAuth2Scheme {
     const accessTokenResponse = yield this.getAccessToken(code, this._redirectUri, {
       grant_type: 'authorization_code'
     })
+
     const userProfile = yield this._getUserProfile(accessTokenResponse.accessToken)
+
     const user = new AllyUser()
+
     user
-            .setOriginal(userProfile)
-            .setFields(
-                userProfile.data.id,
-                userProfile.data.full_name,
-                null,
-                userProfile.data.username,
-                userProfile.data.profile_picture
-            )
-            .setToken(
-                accessTokenResponse.accessToken,
-                accessTokenResponse.refreshToken,
-                null,
-                null
-            )
+      .setOriginal(userProfile)
+      .setFields(
+        userProfile.data.id,
+        userProfile.data.full_name,
+        null,
+        userProfile.data.username,
+        userProfile.data.profile_picture
+      )
+      .setToken(
+        accessTokenResponse.accessToken,
+        accessTokenResponse.refreshToken,
+        null,
+        null
+      )
 
     return user
   }
