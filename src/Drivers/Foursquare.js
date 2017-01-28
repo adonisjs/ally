@@ -16,13 +16,13 @@ const got = require('got')
 const utils = require('../../lib/utils')
 const _ = utils.mixLodash(require('lodash'))
 
-class Instagram extends OAuth2Scheme {
+class Foursquare extends OAuth2Scheme {
 
   constructor (Config) {
-    const config = Config.get('services.ally.instagram')
+    const config = Config.get('services.ally.foursquare')
 
     if (!_.hasAll(config, ['clientId', 'clientSecret', 'redirectUri'])) {
-      throw CE.OAuthException.missingConfig('instagram')
+      throw CE.OAuthException.missingConfig('foursquare')
     }
 
     super(config.clientId, config.clientSecret, config.headers)
@@ -31,7 +31,6 @@ class Instagram extends OAuth2Scheme {
      * Oauth specific values to be used when creating the redirect
      * url or fetching user profile.
      */
-    this._scope = this._getInitialScopes(config.scope)
     this._redirectUri = config.redirectUri
     this._redirectUriOptions = _.merge({response_type: 'code'}, config.options)
   }
@@ -46,23 +45,13 @@ class Instagram extends OAuth2Scheme {
   }
 
   /**
-   * Scope seperator for seperating multiple
-   * scopes.
-   *
-   * @return {String}
-   */
-  get scopeSeperator () {
-    return ' '
-  }
-
-  /**
    * Base url to be used for constructing
    * facebook oauth urls.
    *
    * @return {String}
    */
   get baseUrl () {
-    return 'https://api.instagram.com/'
+    return 'https://foursquare.com/'
   }
 
   /**
@@ -72,7 +61,7 @@ class Instagram extends OAuth2Scheme {
    * @return {String} [description]
    */
   get authorizeUrl () {
-    return 'oauth/authorize'
+    return 'oauth2/authenticate'
   }
 
   /**
@@ -82,22 +71,18 @@ class Instagram extends OAuth2Scheme {
    * @return {String}
    */
   get accessTokenUrl () {
-    return 'oauth/access_token'
+    return 'oauth2/access_token'
   }
 
   /**
-   * Returns initial scopes to be used right from the
-   * config file. Otherwise it will fallback to the
-   * commonly used scopes
+   * Pads the date with a leading zero when date
+   * is less than 10
    *
-   * @param   {Array} scopes
-   *
-   * @return  {Array}
-   *
-   * @private
+   * @param  {Number} currentDate
+   * @return {String}
    */
-  _getInitialScopes (scopes) {
-    return _.size(scopes) ? scopes : ['basic']
+  _padDate (currentDate) {
+    return currentDate < 10 ? `0${currentDate}` : currentDate
   }
 
   /**
@@ -111,26 +96,29 @@ class Instagram extends OAuth2Scheme {
    * @private
    */
   * _getUserProfile (accessToken) {
-    const profileUrl = `${this.baseUrl}v1/users/self?access_token=${accessToken}`
+    const date = new Date()
+    const formattedDate = `${date.getFullYear()}${date.getMonth() + 1}${this._padDate(date.getDate())}`
+
+    const profileUrl = `https://api.foursquare.com/v2/users/self?oauth_token=${accessToken}&m=foursquare&v=${formattedDate}`
+
     const response = yield got(profileUrl, {
       headers: {
         'Accept': 'application/json'
       },
       json: true
     })
+
     return response.body
   }
 
   /**
    * Returns the redirect url for a given provider.
    *
-   * @param  {Array} scope
    *
    * @return {String}
    */
-  * getRedirectUrl (scope) {
-    scope = _.size(scope) ? scope : this._scope
-    return this.getUrl(this._redirectUri, scope, this._redirectUriOptions)
+  * getRedirectUrl () {
+    return this.getUrl(this._redirectUri, null, this._redirectUriOptions)
   }
 
   /**
@@ -142,7 +130,7 @@ class Instagram extends OAuth2Scheme {
    * @return {String}
    */
   parseRedirectError (queryParams) {
-    return queryParams.error_description || queryParams.error || 'Oauth failed during redirect'
+    return queryParams.error || 'Oauth failed during redirect'
   }
 
   /**
@@ -169,27 +157,28 @@ class Instagram extends OAuth2Scheme {
       grant_type: 'authorization_code'
     })
     const userProfile = yield this._getUserProfile(accessTokenResponse.accessToken)
+    const avatarUrl = `${userProfile.response.user.photo.prefix}original${userProfile.response.user.photo.suffix}`
 
     const user = new AllyUser()
 
     user
       .setOriginal(userProfile)
       .setFields(
-        userProfile.data.id,
-        userProfile.data.full_name,
-        null,
-        userProfile.data.username,
-        userProfile.data.profile_picture
+        userProfile.response.user.id,
+        `${userProfile.response.user.firstName} ${userProfile.response.user.lastName}`,
+        userProfile.response.user.contact.email || null,
+        '',
+        avatarUrl
       )
       .setToken(
         accessTokenResponse.accessToken,
         accessTokenResponse.refreshToken,
         null,
-        null
+        Number(_.get(accessTokenResponse, 'result.expires'))
       )
 
     return user
   }
 }
 
-module.exports = Instagram
+module.exports = Foursquare

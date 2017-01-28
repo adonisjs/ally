@@ -75,6 +75,21 @@ module.exports = {
       clientId: Env.get('INSTAGRAM_CLIENT_ID'),
       clientSecret: Env.get('INSTAGRAM_CLIENT_SECRET'),
       redirectUri: `${Env.get('APP_URL')}/authenticated/instagram`
+    },
+
+    /*
+     |--------------------------------------------------------------------------
+     | Foursquare Configuration
+     |--------------------------------------------------------------------------
+     |
+     | You can access your application credentials from the Foursquare developers
+     | console. https://developer.foursquare.com/
+     |
+     */
+    foursquare: {
+      clientId: Env.get('FOURSQUARE_ID'),
+      clientSecret: Env.get('FOURSQUARE_SECRET'),
+      redirectUri: `${Env.get('APP_URL')}/authenticated/foursquare`
     }
   }
 }
