@@ -148,6 +148,7 @@ class Foursquare extends OAuth2Scheme {
      * Throw an exception when query string does not have
      * code.
      */
+
     if (!code) {
       const errorMessage = this.parseRedirectError(queryParams)
       throw CE.OAuthException.tokenExchangeException(errorMessage, null, errorMessage)
