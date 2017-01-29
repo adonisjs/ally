@@ -422,7 +422,8 @@ describe('Oauth Drivers', function () {
     it('should generate the redirect_uri with correct signature', function * () {
       const bitbucket = new Bitbucket(config)
       const redirectUrl = qs.escape(config.get().redirectUri)
-      const providerUrl = `https://bitbucket.org/site/oauth2/authorize?redirect_uri=${redirectUrl}&response_type=code&client_id=${config.get().clientId}`
+      const scope = qs.escape(['account', 'email'].join(' '))
+      const providerUrl = `https://bitbucket.org/site/oauth2/authorize?redirect_uri=${redirectUrl}&scope=${scope}&response_type=code&client_id=${config.get().clientId}`
       const redirectToUrl = yield bitbucket.getRedirectUrl()
       assert.equal(redirectToUrl, providerUrl)
     })
