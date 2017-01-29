@@ -97,7 +97,7 @@ class Foursquare extends OAuth2Scheme {
    */
   * _getUserProfile (accessToken) {
     const date = new Date()
-    const formattedDate = `${date.getFullYear()}${date.getMonth() + 1}${this._padDate(date.getDate())}`
+    const formattedDate = `${date.getFullYear()}${this._padDate(date.getMonth() + 1)}${this._padDate(date.getDate())}`
 
     const profileUrl = `https://api.foursquare.com/v2/users/self?oauth_token=${accessToken}&m=foursquare&v=${formattedDate}`
 
