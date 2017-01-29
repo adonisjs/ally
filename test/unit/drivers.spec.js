@@ -17,6 +17,9 @@ const Google = drivers.google
 const Facebook = drivers.facebook
 const Github = drivers.github
 const LinkedIn = drivers.linkedin
+const Instagram = drivers.instagram
+const Twitter = drivers.twitter
+const Foursquare = drivers.foursquare
 const assert = chai.assert
 require('co-mocha')
 
@@ -253,6 +256,143 @@ describe('Oauth Drivers', function () {
       const scope = qs.escape(['foo'].join(' '))
       const providerUrl = `https://www.linkedin.com/oauth/v2/authorization?redirect_uri=${redirectUrl}&scope=${scope}&response_type=code&client_id=${config.get().clientId}`
       const redirectToUrl = yield linkedin.getRedirectUrl(['foo'])
+      assert.equal(redirectToUrl, providerUrl)
+    })
+  })
+
+  context('Instagram', function () {
+    it('should throw an exception when config has not been defined', function () {
+      const instagram = () => new Instagram({get: function () { return null }})
+      assert.throw(instagram, 'OAuthException: E_MISSING_OAUTH_CONFIG: Make sure to define instagram configuration inside config/services.js file')
+    })
+
+    it('should throw an exception when clientid is missing', function () {
+      const instagram = () => new Instagram({get: function () { return {clientSecret: '1', redirectUri: '2'} }})
+      assert.throw(instagram, 'OAuthException: E_MISSING_OAUTH_CONFIG: Make sure to define instagram configuration inside config/services.js file')
+    })
+
+    it('should throw an exception when clientSecret is missing', function () {
+      const instagram = () => new Instagram({get: function () { return {clientId: '1', redirectUri: '2'} }})
+      assert.throw(instagram, 'OAuthException: E_MISSING_OAUTH_CONFIG: Make sure to define instagram configuration inside config/services.js file')
+    })
+
+    it('should throw an exception when redirectUri is missing', function () {
+      const instagram = () => new Instagram({get: function () { return {clientId: '1', clientSecret: '2'} }})
+      assert.throw(instagram, 'OAuthException: E_MISSING_OAUTH_CONFIG: Make sure to define instagram configuration inside config/services.js file')
+    })
+
+    it('should generate the redirect_uri with correct signature', function * () {
+      const instagram = new Instagram(config)
+      const redirectUrl = qs.escape(config.get().redirectUri)
+      const scope = qs.escape(['basic'].join(' '))
+      const providerUrl = `https://api.instagram.com/oauth/authorize?redirect_uri=${redirectUrl}&scope=${scope}&response_type=code&client_id=${config.get().clientId}`
+      const redirectToUrl = yield instagram.getRedirectUrl()
+      assert.equal(redirectToUrl, providerUrl)
+    })
+
+    it('should make use of the scopes defined in the config file', function * () {
+      const customConfig = {
+        get: function () {
+          return {
+            clientId: 12,
+            clientSecret: 123,
+            redirectUri: 'http://localhost',
+            scope: ['basic']
+          }
+        }
+      }
+      const instagram = new Instagram(customConfig)
+      const redirectUrl = qs.escape(customConfig.get().redirectUri)
+      const scope = qs.escape(['basic'].join(' '))
+      const providerUrl = `https://api.instagram.com/oauth/authorize?redirect_uri=${redirectUrl}&scope=${scope}&response_type=code&client_id=${customConfig.get().clientId}`
+      const redirectToUrl = yield instagram.getRedirectUrl()
+      assert.equal(redirectToUrl, providerUrl)
+    })
+
+    it('should make use of the scopes passed to the generate method', function * () {
+      const instagram = new Instagram(config)
+      const redirectUrl = qs.escape(config.get().redirectUri)
+      const scope = qs.escape(['basic'].join(' '))
+      const providerUrl = `https://api.instagram.com/oauth/authorize?redirect_uri=${redirectUrl}&scope=${scope}&response_type=code&client_id=${config.get().clientId}`
+      const redirectToUrl = yield instagram.getRedirectUrl(['basic'])
+      assert.equal(redirectToUrl, providerUrl)
+    })
+  })
+
+  context('Twitter', function () {
+    it('should throw an exception when config has not been defined', function () {
+      const twitter = () => new Twitter({get: function () { return null }})
+      assert.throw(twitter, 'OAuthException: E_MISSING_OAUTH_CONFIG: Make sure to define twitter configuration inside config/services.js file')
+    })
+
+    it('should throw an exception when clientid is missing', function () {
+      const twitter = () => new Twitter({get: function () { return {clientSecret: '1', redirectUri: '2'} }})
+      assert.throw(twitter, 'OAuthException: E_MISSING_OAUTH_CONFIG: Make sure to define twitter configuration inside config/services.js file')
+    })
+
+    it('should throw an exception when clientSecret is missing', function () {
+      const twitter = () => new Twitter({get: function () { return {clientId: '1', redirectUri: '2'} }})
+      assert.throw(twitter, 'OAuthException: E_MISSING_OAUTH_CONFIG: Make sure to define twitter configuration inside config/services.js file')
+    })
+
+    it('should throw an exception when redirectUri is missing', function () {
+      const twitter = () => new Twitter({get: function () { return {clientId: '1', clientSecret: '2'} }})
+      assert.throw(twitter, 'OAuthException: E_MISSING_OAUTH_CONFIG: Make sure to define twitter configuration inside config/services.js file')
+    })
+  })
+
+  context('Foursquare', function () {
+    it('should throw an exception when config has not been defined', function () {
+      const foursquare = () => new Foursquare({get: function () { return null }})
+      assert.throw(foursquare, 'OAuthException: E_MISSING_OAUTH_CONFIG: Make sure to define foursquare configuration inside config/services.js file')
+    })
+
+    it('should throw an exception when clientid is missing', function () {
+      const foursquare = () => new Foursquare({get: function () { return {clientSecret: '1', redirectUri: '2'} }})
+      assert.throw(foursquare, 'OAuthException: E_MISSING_OAUTH_CONFIG: Make sure to define foursquare configuration inside config/services.js file')
+    })
+
+    it('should throw an exception when clientSecret is missing', function () {
+      const foursquare = () => new Foursquare({get: function () { return {clientId: '1', redirectUri: '2'} }})
+      assert.throw(foursquare, 'OAuthException: E_MISSING_OAUTH_CONFIG: Make sure to define foursquare configuration inside config/services.js file')
+    })
+
+    it('should throw an exception when redirectUri is missing', function () {
+      const foursquare = () => new Foursquare({get: function () { return {clientId: '1', clientSecret: '2'} }})
+      assert.throw(foursquare, 'OAuthException: E_MISSING_OAUTH_CONFIG: Make sure to define foursquare configuration inside config/services.js file')
+    })
+
+    it('should generate the redirect_uri with correct signature', function * () {
+      const foursquare = new Foursquare(config)
+      const redirectUrl = qs.escape(config.get().redirectUri)
+      const providerUrl = `https://foursquare.com/oauth2/authenticate?redirect_uri=${redirectUrl}&response_type=code&client_id=${config.get().clientId}`
+      const redirectToUrl = yield foursquare.getRedirectUrl()
+      assert.equal(redirectToUrl, providerUrl)
+    })
+
+    it('should make use of the scopes defined in the config file', function * () {
+      const customConfig = {
+        get: function () {
+          return {
+            clientId: 12,
+            clientSecret: 123,
+            redirectUri: 'http://localhost',
+            scope: ['basic']
+          }
+        }
+      }
+      const foursquare = new Foursquare(customConfig)
+      const redirectUrl = qs.escape(customConfig.get().redirectUri)
+      const providerUrl = `https://foursquare.com/oauth2/authenticate?redirect_uri=${redirectUrl}&response_type=code&client_id=${customConfig.get().clientId}`
+      const redirectToUrl = yield foursquare.getRedirectUrl()
+      assert.equal(redirectToUrl, providerUrl)
+    })
+
+    it('should make use of the scopes passed to the generate method', function * () {
+      const foursquare = new Foursquare(config)
+      const redirectUrl = qs.escape(config.get().redirectUri)
+      const providerUrl = `https://foursquare.com/oauth2/authenticate?redirect_uri=${redirectUrl}&response_type=code&client_id=${config.get().clientId}`
+      const redirectToUrl = yield foursquare.getRedirectUrl(['basic'])
       assert.equal(redirectToUrl, providerUrl)
     })
   })
