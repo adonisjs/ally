@@ -22,21 +22,21 @@ const _ = utils.mixLodash(require('lodash'))
 class Bitbucket extends OAuth2Scheme {
 
   constructor (Config) {
-      const config = Config.get('services.ally.bitbucket')
+    const config = Config.get('services.ally.bitbucket')
 
-      if (!_.hasAll(config, ['clientId', 'clientSecret', 'redirectUri'])) {
-        throw CE.OAuthException.missingConfig('bitbucket')
-      }
+    if (!_.hasAll(config, ['clientId', 'clientSecret', 'redirectUri'])) {
+      throw CE.OAuthException.missingConfig('bitbucket')
+    }
 
-      super(config.clientId, config.clientSecret, config.headers)
+    super(config.clientId, config.clientSecret, config.headers)
 
       /**
        * Oauth specific values to be used when creating the redirect
        * url or fetching user profile.
        */
-      this._scope = this._getInitialScopes(config.scope)
-      this._redirectUri = config.redirectUri
-      this._redirectUriOptions = _.merge({response_type: 'code'}, config.options)
+    this._scope = this._getInitialScopes(config.scope)
+    this._redirectUri = config.redirectUri
+    this._redirectUriOptions = _.merge({response_type: 'code'}, config.options)
   }
 
   /**
@@ -137,10 +137,10 @@ class Bitbucket extends OAuth2Scheme {
   * _getUserEmail (accessToken) {
     const profileUrl = `${this.baseUrl}api/2.0/user/emails?access_token=${accessToken}`
     const response = yield got(profileUrl, {
-        headers: {
-            'Accept': 'application/json'
-        },
-        json: true
+      headers: {
+        'Accept': 'application/json'
+      },
+      json: true
     })
     return response.body
   }
@@ -194,29 +194,14 @@ class Bitbucket extends OAuth2Scheme {
     })
     const userProfile = yield this._getUserProfile(accessTokenResponse.accessToken)
     const userEmail = yield this._getUserEmail(accessTokenResponse.accessToken)
-    userProfile.emails = [];
-    (userEmail.values).forEach(function(email) {
-	    userProfile.emails.push({
-		    value: email.email,
-		    primary: email.is_primary,
-		    verified: email.is_confirmed
-	    })
-    });
+    userProfile.emails = []
+    userEmail.values.forEach(function (email) {
+      userProfile.emails.push({ value: email.email, primary: email.is_primary, verified: email.is_confirmed })
+    })
     const user = new AllyUser()
     user.setOriginal(userProfile)
-      .setFields(
-          userProfile.uuid,
-          userProfile.display_name,
-	        userProfile.emails[0].value,
-          userProfile.username,
-          userProfile.links.avatar.href
-      )
-      .setToken(
-          accessTokenResponse.accessToken,
-          accessTokenResponse.refreshToken,
-          null,
-          Number(_.get(accessTokenResponse, 'result.expires_in'))
-      )
+      .setFields(userProfile.uuid, userProfile.display_name, userProfile.emails[0].value, userProfile.username, userProfile.links.avatar.href)
+      .setToken(accessTokenResponse.accessToken, accessTokenResponse.refreshToken, null, Number(_.get(accessTokenResponse, 'result.expires_in')))
 
     return user
   }
