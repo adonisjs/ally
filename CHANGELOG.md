@@ -1,3 +1,13 @@
+<a name="1.1.1"></a>
+## [1.1.1](https://github.com/adonisjs/adonis-ally/compare/v1.1.0...v1.1.1) (2017-02-25)
+
+
+### Bug Fixes
+
+* **provider:** bind manager to be extended from outside world ([16e90af](https://github.com/adonisjs/adonis-ally/commit/16e90af)), closes [#14](https://github.com/adonisjs/adonis-ally/issues/14)
+
+
+
 <a name="1.1.0"></a>
 # [1.1.0](https://github.com/adonisjs/adonis-ally/compare/v1.0.0...v1.1.0) (2017-01-29)
 

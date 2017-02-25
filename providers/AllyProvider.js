@@ -22,6 +22,10 @@ class AllyProvider extends ServiceProvider {
       const AllyMiddleware = require('../middleware/Ally')
       return new AllyMiddleware()
     })
+
+    this.app.manager('Adonis/Middleware/Ally', function () {
+      return require('../src/AllyManager')
+    })
   }
 
 }
