@@ -1,3 +1,13 @@
+<a name="1.1.2"></a>
+## [1.1.2](https://github.com/adonisjs/adonis-ally/compare/v1.1.1...v1.1.2) (2017-02-26)
+
+
+### Bug Fixes
+
+* **provider:** ioc.manager does not expects the callback ([7f49860](https://github.com/adonisjs/adonis-ally/commit/7f49860)), closes [#15](https://github.com/adonisjs/adonis-ally/issues/15)
+
+
+
 <a name="1.1.1"></a>
 ## [1.1.1](https://github.com/adonisjs/adonis-ally/compare/v1.1.0...v1.1.1) (2017-02-25)
 
