@@ -132,4 +132,30 @@ class RuntimeException extends NE.RuntimeException {
 
 }
 
-module.exports = { InvalidArgumentException, OAuthException, RuntimeException }
+class CsrfException extends NE.DomainException {
+
+  /**
+   * Default error code to be used when user does not
+   * specify error code for an error.
+   *
+   * @return {Number}
+   */
+  static get defaultErrorCode () {
+    return 403
+  }
+
+  /**
+   * This exception is raised when the csrf token is invalid
+   *
+   * @param  {String} driver
+   * @param  {Number} [code=500]
+   *
+   * @return {Object}
+   */
+  static badToken () {
+    return new this('Bad CSRF token', this.defaultErrorCode, 'E_BAD_CSRF_TOKEN')
+  }
+
+}
+
+module.exports = { InvalidArgumentException, OAuthException, RuntimeException, CsrfException }
