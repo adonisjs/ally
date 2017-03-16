@@ -222,7 +222,7 @@ class Github extends OAuth2Scheme {
       .setFields(
         userProfile.id,
         userProfile.name,
-        _.get(userProfile, 'emails.0.value'),
+        userProfile.email,
         userProfile.login,
         userProfile.avatar_url
       )
