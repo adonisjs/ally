@@ -28,7 +28,7 @@
     "cz-conventional-changelog": "^1.2.0",
     "istanbul": "^0.4.5",
     "mocha": "^3.0.2",
-    "standard": "^8.6.0"
+    "standard": "^9.0.2"
   },
   "standard": {
     "global": [
