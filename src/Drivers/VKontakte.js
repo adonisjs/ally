@@ -18,7 +18,7 @@ const _ = utils.mixLodash(require('lodash'))
 
 class VKontakte extends OAuth2Scheme {
 
-  constructor(Config) {
+  constructor (Config) {
     const config = Config.get('services.ally.vkontakte')
 
     if (!_.hasAll(config, ['clientId', 'clientSecret', 'redirectUri'])) {
@@ -45,7 +45,7 @@ class VKontakte extends OAuth2Scheme {
    *
    * @return {Array}
    */
-  static get inject() {
+  static get inject () {
     return ['Adonis/Src/Config']
   }
 
@@ -55,7 +55,7 @@ class VKontakte extends OAuth2Scheme {
    *
    * @return {String}
    */
-  get scopeSeperator() {
+  get scopeSeperator () {
     return ','
   }
 
@@ -65,7 +65,7 @@ class VKontakte extends OAuth2Scheme {
    *
    * @return {String}
    */
-  get baseUrl() {
+  get baseUrl () {
     return 'https://oauth.vk.com'
   }
 
@@ -75,7 +75,7 @@ class VKontakte extends OAuth2Scheme {
    *
    * @return {String} [description]
    */
-  get authorizeUrl() {
+  get authorizeUrl () {
     return 'authorize'
   }
 
@@ -85,7 +85,7 @@ class VKontakte extends OAuth2Scheme {
    *
    * @return {String}
    */
-  get accessTokenUrl() {
+  get accessTokenUrl () {
     return 'access_token'
   }
 
@@ -94,7 +94,7 @@ class VKontakte extends OAuth2Scheme {
    *
    * @return {String}
    */
-  get apiUrl() {
+  get apiUrl () {
     return 'https://api.vk.com/method'
   }
 
@@ -109,7 +109,7 @@ class VKontakte extends OAuth2Scheme {
    *
    * @private
    */
-  _getInitialScopes(scopes) {
+  _getInitialScopes (scopes) {
     return _.size(scopes) ? scopes : ['email']
   }
 
@@ -124,7 +124,7 @@ class VKontakte extends OAuth2Scheme {
    *
    * @private
    */
-  _getInitialFields(fields) {
+  _getInitialFields (fields) {
     return _.size(fields) ? fields : ['uid', 'first_name', 'screen_name', 'last_name', 'has_photo', 'photo', 'city']
   }
 
@@ -139,7 +139,7 @@ class VKontakte extends OAuth2Scheme {
    *
    * @private
    */
-  * _getUserProfile(accessToken, fields) {
+  * _getUserProfile (accessToken, fields) {
     fields = _.size(fields) ? fields : this._fields
     const profileUrl = `${this.apiUrl}/users.get?access_token=${accessToken}&fields=${fields.join(',')}&https=1&v=${this._api_version}`
     const response = yield got(profileUrl, {
@@ -158,7 +158,7 @@ class VKontakte extends OAuth2Scheme {
    *
    * @return {String}
    */
-  * getRedirectUrl(scope) {
+  * getRedirectUrl (scope) {
     scope = _.size(scope) ? scope : this._scope
     return this.getUrl(this._redirectUri, scope, this._redirectUriOptions)
   }
@@ -171,7 +171,7 @@ class VKontakte extends OAuth2Scheme {
    *
    * @return {Error}
    */
-  parseProviderError(error) {
+  parseProviderError (error) {
     const parsedError = _.isString(error.data) ? JSON.parse(error.data) : null
     const message = _.get(parsedError, 'error.message', error)
     return CE.OAuthException.tokenExchangeException(message, error.statusCode, parsedError)
@@ -185,7 +185,7 @@ class VKontakte extends OAuth2Scheme {
    *
    * @return {String}
    */
-  parseRedirectError(queryParams) {
+  parseRedirectError (queryParams) {
     return queryParams.error_message || 'Oauth failed during redirect'
   }
 
@@ -198,7 +198,7 @@ class VKontakte extends OAuth2Scheme {
    *
    * @return {Object}
    */
-  * getUser(queryParams, fields) {
+  * getUser (queryParams, fields) {
     const code = queryParams.code
 
     /**
