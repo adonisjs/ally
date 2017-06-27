@@ -71,6 +71,7 @@ Below is the list of available drivers and you are free to add more.
 3. Google
 4. LinkedIn
 5. Twitter
+6. VKontakte
 
 <br>
 ## <a name="config"></a>Config
