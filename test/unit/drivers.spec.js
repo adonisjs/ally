@@ -20,6 +20,7 @@ const LinkedIn = drivers.linkedin
 const Instagram = drivers.instagram
 const Twitter = drivers.twitter
 const Foursquare = drivers.foursquare
+const VKontakte = drivers.vkontakte
 const assert = chai.assert
 require('co-mocha')
 
@@ -393,6 +394,65 @@ describe('Oauth Drivers', function () {
       const redirectUrl = qs.escape(config.get().redirectUri)
       const providerUrl = `https://foursquare.com/oauth2/authenticate?redirect_uri=${redirectUrl}&response_type=code&client_id=${config.get().clientId}`
       const redirectToUrl = yield foursquare.getRedirectUrl(['basic'])
+      assert.equal(redirectToUrl, providerUrl)
+    })
+  })
+
+  context('VKontakte', function () {
+    it('should throw an exception when config has not been defined', function () {
+      const vkontakte = () => new VKontakte({get: function () { return null }})
+      assert.throw(vkontakte, 'OAuthException: E_MISSING_OAUTH_CONFIG: Make sure to define vkontakte configuration inside config/services.js file')
+    })
+
+    it('should throw an exception when clientid is missing', function () {
+      const vkontakte = () => new VKontakte({get: function () { return {clientSecret: '1', redirectUri: '2'} }})
+      assert.throw(vkontakte, 'OAuthException: E_MISSING_OAUTH_CONFIG: Make sure to define vkontakte configuration inside config/services.js file')
+    })
+
+    it('should throw an exception when clientSecret is missing', function () {
+      const vkontakte = () => new VKontakte({get: function () { return {clientId: '1', redirectUri: '2'} }})
+      assert.throw(vkontakte, 'OAuthException: E_MISSING_OAUTH_CONFIG: Make sure to define vkontakte configuration inside config/services.js file')
+    })
+
+    it('should throw an exception when redirectUri is missing', function () {
+      const vkontakte = () => new VKontakte({get: function () { return {clientId: '1', clientSecret: '2'} }})
+      assert.throw(vkontakte, 'OAuthException: E_MISSING_OAUTH_CONFIG: Make sure to define vkontakte configuration inside config/services.js file')
+    })
+
+    it('should generate the redirect_uri with correct signature', function * () {
+      const vkontakte = new VKontakte(config)
+      const redirectUrl = qs.escape(config.get().redirectUri)
+      const scope = qs.escape(['email'].join(','))
+      const providerUrl = `https://oauth.vk.com/authorize?redirect_uri=${redirectUrl}&scope=${scope}&response_type=code&client_id=${config.get().clientId}`
+      const redirectToUrl = yield vkontakte.getRedirectUrl()
+      assert.equal(redirectToUrl, providerUrl)
+    })
+
+    it('should make use of the scopes defined in the config file', function * () {
+      const customConfig = {
+        get: function () {
+          return {
+            clientId: 12,
+            clientSecret: 123,
+            redirectUri: 'http://localhost',
+            scope: ['email', 'name']
+          }
+        }
+      }
+      const vkontakte = new VKontakte(customConfig)
+      const redirectUrl = qs.escape(customConfig.get().redirectUri)
+      const scope = qs.escape(['email', 'name'].join(','))
+      const providerUrl = `https://oauth.vk.com/authorize?redirect_uri=${redirectUrl}&scope=${scope}&response_type=code&client_id=${customConfig.get().clientId}`
+      const redirectToUrl = yield vkontakte.getRedirectUrl()
+      assert.equal(redirectToUrl, providerUrl)
+    })
+
+    it('should make use of the scopes passed to the generate method', function * () {
+      const vkontakte = new VKontakte(config)
+      const redirectUrl = qs.escape(config.get().redirectUri)
+      const scope = qs.escape(['foo'].join(','))
+      const providerUrl = `https://oauth.vk.com/authorize?redirect_uri=${redirectUrl}&scope=${scope}&response_type=code&client_id=${config.get().clientId}`
+      const redirectToUrl = yield vkontakte.getRedirectUrl(['foo'])
       assert.equal(redirectToUrl, providerUrl)
     })
   })
