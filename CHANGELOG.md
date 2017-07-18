@@ -1,3 +1,39 @@
+<a name="1.1.2"></a>
+## [1.1.2](https://github.com/adonisjs/adonis-ally/compare/v1.1.1...v1.1.2) (2017-02-26)
+
+
+### Bug Fixes
+
+* **provider:** ioc.manager does not expects the callback ([7f49860](https://github.com/adonisjs/adonis-ally/commit/7f49860)), closes [#15](https://github.com/adonisjs/adonis-ally/issues/15)
+
+
+
+<a name="1.1.1"></a>
+## [1.1.1](https://github.com/adonisjs/adonis-ally/compare/v1.1.0...v1.1.1) (2017-02-25)
+
+
+### Bug Fixes
+
+* **provider:** bind manager to be extended from outside world ([16e90af](https://github.com/adonisjs/adonis-ally/commit/16e90af)), closes [#14](https://github.com/adonisjs/adonis-ally/issues/14)
+
+
+
+<a name="1.1.0"></a>
+# [1.1.0](https://github.com/adonisjs/adonis-ally/compare/v1.0.0...v1.1.0) (2017-01-29)
+
+
+### Bug Fixes
+
+* **drivers:** pad month when less than zero ([31dac59](https://github.com/adonisjs/adonis-ally/commit/31dac59))
+
+
+### Features
+
+* **driver:** add instagram driver ([3d5ca8f](https://github.com/adonisjs/adonis-ally/commit/3d5ca8f))
+* **social-auth:** create foursquare driver ([8fb43bb](https://github.com/adonisjs/adonis-ally/commit/8fb43bb))
+
+
+
 <a name="1.0.0"></a>
 # 1.0.0 (2016-11-05)
 

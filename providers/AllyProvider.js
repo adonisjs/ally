@@ -10,18 +10,21 @@
 */
 
 const ServiceProvider = require('adonis-fold').ServiceProvider
+const AllyManager = require('../src/AllyManager')
 
 class AllyProvider extends ServiceProvider {
 
   * register () {
     this.app.bind('Adonis/Addons/Ally', function () {
-      return require('../src/AllyManager')
+      return AllyManager
     })
 
     this.app.bind('Adonis/Middleware/Ally', function () {
       const AllyMiddleware = require('../middleware/Ally')
       return new AllyMiddleware()
     })
+
+    this.app.manager('Adonis/Middleware/Ally', AllyManager)
   }
 
 }
