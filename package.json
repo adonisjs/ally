@@ -1,10 +1,11 @@
 {
-  "name": "adonis-ally",
-  "version": "1.1.2",
-  "description": "Social authenticator for adonis framework",
+  "name": "@adonisjs/ally",
+  "version": "2.0.0",
+  "description": "Social authenticator for AdonisJs Framework",
   "main": "index.js",
   "directories": {
     "example": "examples",
+    "lib": "lib",
     "test": "test"
   },
   "scripts": {
@@ -35,16 +36,7 @@
     "standard": "^10.0.3"
   },
   "standard": {
-    "global": [
-      "describe",
-      "it",
-      "use",
-      "context",
-      "before",
-      "after",
-      "beforeEach",
-      "afterEach"
-    ]
+    "global": ["use"]
   },
   "config": {
     "commitizen": {
