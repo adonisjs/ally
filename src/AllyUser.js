@@ -9,8 +9,15 @@
  * file that was distributed with this source code.
 */
 
-const _ = require('lodash')
-
+/**
+ * This class represents a single user entity fetch from one of
+ * the social websites. The class provides a unified API to
+ * pull user details, regardless of the response received
+ * from different providers.
+ *
+ * @class AllyUser
+ * @constructor
+ */
 class AllyUser {
   constructor () {
     /**
@@ -38,45 +45,57 @@ class AllyUser {
       expires: null
     }
 
+    /**
+     * Reference to the original object
+     * received from the provider
+     *
+     * @type {Object}
+     */
     this._original = {}
   }
 
+
   /**
-   * Set the user attributes
+   * Set user attributes
    *
-   * @param {String} id
-   * @param {String} name
-   * @param {String} email
-   * @param {String} nickname
-   * @param {String} avatar
+   * @method setFields
+   *
+   * @param  {Number|String}  id
+   * @param  {String}         name
+   * @param  {String}         email
+   * @param  {String}         nickname
+   * @param  {String}         avatar
+   *
+   * @chainable
    */
   setFields (id, name, email, nickname, avatar) {
-    this._userFields.id = id
-    this._userFields.name = name
-    this._userFields.email = email
-    this._userFields.nickname = nickname
-    this._userFields.avatar = avatar
+    this._userFields = { id, name, email, nickname, avatar }
     return this
   }
 
   /**
-   * Set provider token fields
+   * Set token details returned from the provider for a
+   * given user.
    *
-   * @param {String} accessToken
-   * @param {String} refreshToken
-   * @param {String} tokenSecret
-   * @param {Number} expires
+   * @method setToken
+   *
+   * @param  {String} accessToken
+   * @param  {String} refreshToken
+   * @param  {String} tokenSecret
+   * @param  {Number} expires
+   *
+   * @chainable
    */
-  setToken (accessToken, refreshToken, tokenSecret, expires) {
-    this._tokenFields.accessToken = accessToken
-    this._tokenFields.refreshToken = refreshToken
-    this._tokenFields.tokenSecret = tokenSecret
-    this._tokenFields.expires = expires
+  setToken (accessToken, refreshToken, tokenSecret, expires = null) {
+    this._tokenFields = { accessToken, refreshToken, tokenSecret, expires }
     return this
   }
 
   /**
-   * Set the original payload, maybe some needs it.
+   * Sets the original payload received from the
+   * provider, helpful for debugging.
+   *
+   * @method setOriginal
    */
   setOriginal (response) {
     this._original = response
@@ -84,7 +103,10 @@ class AllyUser {
   }
 
   /**
-   * Return original payload
+   * Returns original payload received from the
+   * provider.
+   *
+   * @main getOriginal
    *
    * @return {Object}
    */
@@ -95,7 +117,9 @@ class AllyUser {
   /**
    * Returns the user id
    *
-   * @return {String}
+   * @method getId
+   *
+   * @return {String|Number}
    */
   getId () {
     return this._userFields.id
@@ -103,6 +127,8 @@ class AllyUser {
 
   /**
    * Returns the user name
+   *
+   * @main getName
    *
    * @return {String}
    */
@@ -113,6 +139,8 @@ class AllyUser {
   /**
    * Returns the user email
    *
+   * @method getEmail
+   *
    * @return {String}
    */
   getEmail () {
@@ -121,6 +149,8 @@ class AllyUser {
 
   /**
    * Returns the user nickname
+   *
+   * @method getNickname
    *
    * @return {String}
    */
@@ -131,6 +161,8 @@ class AllyUser {
   /**
    * Returns the user avatar
    *
+   * @method getAvatar
+   *
    * @return {String}
    */
   getAvatar () {
@@ -139,6 +171,8 @@ class AllyUser {
 
   /**
    * Returns the user access token
+   *
+   * @method getAccessToken
    *
    * @return {String}
    */
@@ -149,6 +183,8 @@ class AllyUser {
   /**
    * Returns the user refresh token
    *
+   * @method getRefreshToken
+   *
    * @return {String}
    */
   getRefreshToken () {
@@ -158,6 +194,8 @@ class AllyUser {
   /**
    * Returns the users token expiry
    *
+   * @method getExpires
+   *
    * @return {String}
    */
   getExpires () {
@@ -166,6 +204,8 @@ class AllyUser {
 
   /**
    * Returns the users token secret
+   *
+   * @method getTokenSecret
    *
    * @return {String}
    */
@@ -178,10 +218,12 @@ class AllyUser {
    * and the token fields merged into a single
    * object.
    *
+   * @method toJSON
+   *
    * @return {Object}
    */
   toJSON () {
-    return _.merge(this._userFields, this._tokenFields)
+    return Object.assign({}, this._userFields, this._tokenFields)
   }
 }
 
