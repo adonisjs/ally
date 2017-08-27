@@ -12,7 +12,6 @@
 const http = require('http')
 const url = require('url')
 const qs = require('querystring')
-const co = require('co')
 const routes = {}
 
 class Request {
@@ -34,7 +33,7 @@ class Request {
 const httpServer = exports = module.exports = {}
 
 httpServer.get = function (route, closure) {
-  routes[route] = co.wrap(closure)
+  routes[route] = closure
 }
 
 httpServer.start = function () {

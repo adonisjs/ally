@@ -18,7 +18,3 @@ module.exports = {
     }
   }
 }
-
-// '927888111695-8jbae7a8amlirithps0vifndn1qgnk1h.apps.googleusercontent.com'
-// 'fyNAREIyDPc_dmDnLkikLRn9'
-// 'http://localhost:8000/authenticated'

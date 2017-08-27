@@ -9,15 +9,13 @@
  * file that was distributed with this source code.
 */
 
-const GE = require('@adonisjs/generic-exceptions')
 const got = require('got')
-const debug = require('debug')('adonis:ally')
 
 const CE = require('../Exceptions')
 const OAuth2Scheme = require('../Schemes/OAuth2')
 const AllyUser = require('../AllyUser')
 const utils = require('../../lib/utils')
-const _ = utils.mixLodash(require('lodash'))
+const _ = require('lodash')
 
 /**
  * LinkedIn driver to authenticating users via OAuth2Scheme.
@@ -29,12 +27,8 @@ class LinkedIn extends OAuth2Scheme {
   constructor (Config) {
     const config = Config.get('services.ally.linkedin')
 
-    if (!_.hasAll(config, ['clientId', 'clientSecret', 'redirectUri'])) {
-      throw GE.RuntimeException.missingConfig('linkedin', 'config/services.js')
-    }
-
-    const logConfig = Object.assign({}, config, { clientId: '***', clientSecret: '***' })
-    debug('instantiating linkedin driver %j', logConfig)
+    utils.validateDriverConfig('linkedin', config)
+    utils.debug('linkedin', config)
 
     super(config.clientId, config.clientSecret, config.headers)
 

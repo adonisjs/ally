@@ -9,14 +9,10 @@
  * file that was distributed with this source code.
 */
 
-const GE = require('@adonisjs/generic-exceptions')
-const debug = require('debug')('adonis:ally')
-
 const OAuthScheme = require('../Schemes/OAuth')
 const CE = require('../Exceptions')
 const AllyUser = require('../AllyUser')
 const utils = require('../../lib/utils')
-const _ = utils.mixLodash(require('lodash'))
 
 /**
  * Twitter driver to authenticating users via OAuth1 scheme.
@@ -28,12 +24,8 @@ class Twitter extends OAuthScheme {
   constructor (Config) {
     const config = Config.get('services.ally.twitter')
 
-    if (!_.hasAll(config, ['clientId', 'clientSecret', 'redirectUri'])) {
-      throw GE.RuntimeException.missingConfig('twitter', 'config/services.js')
-    }
-
-    const logConfig = Object.assign({}, config, { clientId: '***', clientSecret: '***' })
-    debug('instantiating twitter driver %j', logConfig)
+    utils.validateDriverConfig('twitter', config)
+    utils.debug('twitter', config)
 
     super(config.clientId, config.clientSecret, config.redirectUri)
   }

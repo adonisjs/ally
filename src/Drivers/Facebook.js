@@ -9,15 +9,13 @@
  * file that was distributed with this source code.
 */
 
-const GE = require('@adonisjs/generic-exceptions')
 const got = require('got')
-const debug = require('debug')('adonis:ally')
 
 const CE = require('../Exceptions')
 const OAuth2Scheme = require('../Schemes/OAuth2')
 const AllyUser = require('../AllyUser')
 const utils = require('../../lib/utils')
-const _ = utils.mixLodash(require('lodash'))
+const _ = require('lodash')
 
 /**
  * Facebook driver to authenticate a user using
@@ -30,12 +28,8 @@ class Facebook extends OAuth2Scheme {
   constructor (Config) {
     const config = Config.get('services.ally.facebook')
 
-    if (!_.hasAll(config, ['clientId', 'clientSecret', 'redirectUri'])) {
-      throw GE.RuntimeException.missingConfig('facebook', 'config/services.js')
-    }
-
-    const logConfig = Object.assign({}, config, { clientId: '***', clientSecret: '***' })
-    debug('instantiating facebook driver %j', logConfig)
+    utils.validateDriverConfig('facebook', config)
+    utils.debug('facebook', config)
 
     super(config.clientId, config.clientSecret, config.headers)
 

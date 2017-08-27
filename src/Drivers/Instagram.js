@@ -9,15 +9,13 @@
  * file that was distributed with this source code.
  */
 
-const GE = require('@adonisjs/generic-exceptions')
 const got = require('got')
-const debug = require('debug')('adonis:ally')
 
 const CE = require('../Exceptions')
 const OAuth2Scheme = require('../Schemes/OAuth2')
 const AllyUser = require('../AllyUser')
 const utils = require('../../lib/utils')
-const _ = utils.mixLodash(require('lodash'))
+const _ = require('lodash')
 
 /**
  * Instagram driver to authenticating users via OAuth2Scheme.
@@ -29,12 +27,8 @@ class Instagram extends OAuth2Scheme {
   constructor (Config) {
     const config = Config.get('services.ally.instagram')
 
-    if (!_.hasAll(config, ['clientId', 'clientSecret', 'redirectUri'])) {
-      throw GE.RuntimeException.missingConfig('instagram', 'config/services.js')
-    }
-
-    const logConfig = Object.assign({}, config, { clientId: '***', clientSecret: '***' })
-    debug('instantiating instagram driver %j', logConfig)
+    utils.validateDriverConfig('instagram', config)
+    utils.debug('instagram', config)
 
     super(config.clientId, config.clientSecret, config.headers)
 

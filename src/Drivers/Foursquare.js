@@ -9,15 +9,13 @@
  * file that was distributed with this source code.
  */
 
-const GE = require('@adonisjs/generic-exceptions')
 const got = require('got')
-const debug = require('debug')('adonis:ally')
 
 const CE = require('../Exceptions')
 const OAuth2Scheme = require('../Schemes/OAuth2')
 const AllyUser = require('../AllyUser')
 const utils = require('../../lib/utils')
-const _ = utils.mixLodash(require('lodash'))
+const _ = require('lodash')
 
 /**
  * Foursquare driver to authenticate users using Oauth2
@@ -30,15 +28,8 @@ class Foursquare extends OAuth2Scheme {
   constructor (Config) {
     const config = Config.get('services.ally.foursquare')
 
-    /**
-     * Make sure config is enought to continue
-     */
-    if (!_.hasAll(config, ['clientId', 'clientSecret', 'redirectUri'])) {
-      throw GE.RuntimeException.missingConfig('foursquare', 'config/services.js')
-    }
-
-    const logConfig = Object.assign({}, config, { clientId: '***', clientSecret: '***' })
-    debug('instantiating foursquare driver %j', logConfig)
+    utils.validateDriverConfig('foursquare', config)
+    utils.debug('foursquare', config)
 
     super(config.clientId, config.clientSecret, config.headers)
 
