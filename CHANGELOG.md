@@ -1,3 +1,18 @@
+<a name="2.0.0"></a>
+# [2.0.0](https://github.com/adonisjs/adonis-ally/compare/v1.1.2...v2.0.0) (2017-08-27)
+
+
+### Bug Fixes
+
+* **lint:** lint code properly ([0d59350](https://github.com/adonisjs/adonis-ally/commit/0d59350))
+
+
+### Features
+
+* **instructions:** add instructions files ([54fcb52](https://github.com/adonisjs/adonis-ally/commit/54fcb52))
+
+
+
 <a name="1.1.2"></a>
 ## [1.1.2](https://github.com/adonisjs/adonis-ally/compare/v1.1.1...v1.1.2) (2017-02-26)
 
