@@ -3,13 +3,13 @@
 const { ioc } = require('@adonisjs/fold')
 const config = require('./setup/config')
 const http = require('./setup/http')
-const AllyManager = require('../src/AllyManager')
+const Ally = require('../src/Ally')
 ioc.bind('Adonis/Src/Config', () => {
   return config
 })
 
 http.get('/twitter', async function (request, response) {
-  const ally = new AllyManager(request, response)
+  const ally = new Ally(request, response)
   try {
     const twitter = ally.driver('twitter')
     const url = await twitter.getRedirectUrl()
@@ -23,7 +23,7 @@ http.get('/twitter', async function (request, response) {
 })
 
 http.get('/twitter/authenticated', async function (request, response) {
-  const ally = new AllyManager(request, response)
+  const ally = new Ally(request, response)
   const twitter = ally.driver('twitter')
   try {
     const user = await twitter.getUser()

@@ -3,13 +3,13 @@
 const { ioc } = require('@adonisjs/fold')
 const config = require('./setup/config')
 const http = require('./setup/http')
-const AllyManager = require('../src/AllyManager')
+const Ally = require('../src/Ally')
 ioc.bind('Adonis/Src/Config', () => {
   return config
 })
 
 http.get('/github', async function (request, response) {
-  const ally = new AllyManager(request, response)
+  const ally = new Ally(request, response)
   const github = ally.driver('github')
   response.writeHead(200, {'content-type': 'text/html'})
   const url = await github.getRedirectUrl()
@@ -18,7 +18,7 @@ http.get('/github', async function (request, response) {
 })
 
 http.get('/github/authenticated', async function (request, response) {
-  const ally = new AllyManager(request, response)
+  const ally = new Ally(request, response)
   const github = ally.driver('github')
   try {
     const user = await github.getUser()

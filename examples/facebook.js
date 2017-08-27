@@ -3,14 +3,14 @@
 const { ioc } = require('@adonisjs/fold')
 const config = require('./setup/config')
 const http = require('./setup/http')
-const AllyManager = require('../src/AllyManager')
+const Ally = require('../src/Ally')
 
 ioc.bind('Adonis/Src/Config', () => {
   return config
 })
 
 http.get('/facebook', async function (request, response) {
-  const ally = new AllyManager(request, response)
+  const ally = new Ally(request, response)
   const facebook = ally.driver('facebook')
   response.writeHead(200, {'content-type': 'text/html'})
   const url = await facebook.getRedirectUrl()
@@ -19,7 +19,7 @@ http.get('/facebook', async function (request, response) {
 })
 
 http.get('/facebook/authenticated', async function (request, response) {
-  const ally = new AllyManager(request, response)
+  const ally = new Ally(request, response)
   const facebook = ally.driver('facebook')
   try {
     const user = await facebook.getUser()

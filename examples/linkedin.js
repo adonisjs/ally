@@ -3,13 +3,13 @@
 const { ioc } = require('@adonisjs/fold')
 const config = require('./setup/config')
 const http = require('./setup/http')
-const AllyManager = require('../src/AllyManager')
+const Ally = require('../src/Ally')
 ioc.bind('Adonis/Src/Config', () => {
   return config
 })
 
 http.get('/linkedin', async function (request, response) {
-  const ally = new AllyManager(request, response)
+  const ally = new Ally(request, response)
   const linkedin = ally.driver('linkedin')
   response.writeHead(200, {'content-type': 'text/html'})
   const url = await linkedin.getRedirectUrl()
@@ -18,7 +18,7 @@ http.get('/linkedin', async function (request, response) {
 })
 
 http.get('/linkedin/authenticated', async function (request, response) {
-  const ally = new AllyManager(request, response)
+  const ally = new Ally(request, response)
   const linkedin = ally.driver('linkedin')
   try {
     const user = await linkedin.getUser()

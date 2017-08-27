@@ -37,7 +37,7 @@ class Ally {
    */
   driver (name) {
     const driverInstance = AllyManager.driver(name)
-    return new Authenticator(this._request, this._response, driverInstance)
+    return new Authenticator(driverInstance, this._request, this._response)
   }
 }
 
