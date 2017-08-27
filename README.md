@@ -28,15 +28,6 @@ const providers = [
 ]
 ```
 
-#### Register The Middleware
-A global middleware needs to be added inside `start/kernel.js` in order to make use of ally.
-
-```javascript
-const globalMiddleware = [
-  'Adonis/Middleware/Ally'
-]
-```
-
 BOOM! Now you are good to make use of the ally provider and authenticate your users via available drivers.
 
 <br>
