@@ -12,7 +12,6 @@
 const NE = require('node-exceptions')
 
 class InvalidArgumentException extends NE.InvalidArgumentException {
-
   /**
    * Default error code to be used when user does not
    * specify error code for an error.
@@ -46,11 +45,9 @@ class InvalidArgumentException extends NE.InvalidArgumentException {
   static invalidParameter (message, code) {
     return new this(message, code || this.defaultErrorCode, 'E_INVALID_PARAMETER')
   }
-
 }
 
 class OAuthException extends NE.LogicalException {
-
   /**
    * Default error code to be used when user does not
    * specify error code for an error.
@@ -89,11 +86,9 @@ class OAuthException extends NE.LogicalException {
   static missingConfig (provider, code) {
     return new this(`Make sure to define ${provider} configuration inside config/services.js file`, code || this.defaultErrorCode, 'E_MISSING_OAUTH_CONFIG')
   }
-
 }
 
 class RuntimeException extends NE.RuntimeException {
-
   /**
    * Default error code to be used when user does not
    * specify error code for an error.
@@ -129,7 +124,6 @@ class RuntimeException extends NE.RuntimeException {
   static invalidDriver (driver, code) {
     return new this(`Cannot find ally driver ${driver}`, code || this.defaultErrorCode, 'E_INVALID_ALLY_DRIVER')
   }
-
 }
 
 module.exports = { InvalidArgumentException, OAuthException, RuntimeException }

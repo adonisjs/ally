@@ -17,7 +17,6 @@ const utils = require('../../lib/utils')
 const _ = utils.mixLodash(require('lodash'))
 
 class Foursquare extends OAuth2Scheme {
-
   constructor (Config) {
     const config = Config.get('services.ally.foursquare')
 

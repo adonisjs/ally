@@ -13,7 +13,6 @@ const ServiceProvider = require('adonis-fold').ServiceProvider
 const AllyManager = require('../src/AllyManager')
 
 class AllyProvider extends ServiceProvider {
-
   * register () {
     this.app.bind('Adonis/Addons/Ally', function () {
       return AllyManager
@@ -26,7 +25,6 @@ class AllyProvider extends ServiceProvider {
 
     this.app.manager('Adonis/Middleware/Ally', AllyManager)
   }
-
 }
 
 module.exports = AllyProvider

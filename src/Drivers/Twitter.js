@@ -16,7 +16,6 @@ const utils = require('../../lib/utils')
 const _ = utils.mixLodash(require('lodash'))
 
 class Twitter extends OAuthScheme {
-
   constructor (Config) {
     const config = Config.get('services.ally.twitter')
 
@@ -80,7 +79,7 @@ class Twitter extends OAuthScheme {
    * @return {String}
    */
   async getRedirectUrl () {
-    return await this.getUrl()
+    return this.getUrl()
   }
 
   /**

@@ -15,7 +15,6 @@ const CatLog = require('cat-log')
 const logger = new CatLog('adonis:ally')
 
 class OAuth {
-
   /**
    * Url to be used for fetching user profile.
    *
@@ -214,7 +213,6 @@ class OAuth {
       })
     })
   }
-
 }
 
 module.exports = OAuth

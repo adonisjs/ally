@@ -26,13 +26,13 @@
   "license": "MIT",
   "devDependencies": {
     "@adonisjs/fold": "^4.0.2",
-    "coveralls": "^2.11.12",
-    "cz-conventional-changelog": "^1.2.0",
+    "coveralls": "^2.13.1",
+    "cz-conventional-changelog": "^2.0.0",
     "japa": "^1.0.4",
     "japa-cli": "^1.0.1",
     "nyc": "^11.1.0",
     "semver": "^5.4.1",
-    "standard": "^8.6.0"
+    "standard": "^10.0.3"
   },
   "standard": {
     "global": [
@@ -53,10 +53,10 @@
   },
   "dependencies": {
     "cat-log": "^1.0.2",
-    "got": "^6.3.0",
-    "lodash": "^4.15.0",
-    "node-exceptions": "^1.0.3",
-    "oauth": "^0.9.14"
+    "got": "^7.1.0",
+    "lodash": "^4.17.4",
+    "node-exceptions": "^2.0.2",
+    "oauth": "^0.9.15"
   },
   "repository": {
     "type": "git",

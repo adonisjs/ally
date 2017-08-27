@@ -44,7 +44,6 @@ const _makeDriverInstance = function (name, drivers, extendedDrivers, callback) 
  * redirect the user.
  */
 class AllyManager {
-
   constructor (request, response) {
     this._request = request
     this._response = response

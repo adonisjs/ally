@@ -29,7 +29,6 @@ class Request {
     const parsedUrl = url.parse(this.req.url)
     return parsedUrl.search ? qs.parse(parsedUrl.search.replace('?', '')) : {}
   }
-
 }
 
 const httpServer = exports = module.exports = {}

@@ -16,7 +16,6 @@ const logger = new CatLog('adonis:ally')
 const _ = require('lodash')
 
 class OAuth2 {
-
   /**
    * The seperator to be used for joining the
    * scope values.

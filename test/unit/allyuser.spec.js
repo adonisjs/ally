@@ -68,4 +68,3 @@ test.group('AllyUser', function () {
     })
   })
 })
-

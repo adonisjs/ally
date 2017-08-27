@@ -12,7 +12,6 @@
 const _ = require('lodash')
 
 class AllyUser {
-
   constructor () {
     /**
      * The user fields to be mapped
@@ -184,7 +183,6 @@ class AllyUser {
   toJSON () {
     return _.merge(this._userFields, this._tokenFields)
   }
-
 }
 
 module.exports = AllyUser
