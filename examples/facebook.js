@@ -1,27 +1,28 @@
 'use strict'
 
-const Ioc = require('adonis-fold').Ioc
+const { ioc } = require('@adonisjs/fold')
 const config = require('./setup/config')
 const http = require('./setup/http')
-const AllyManager = require('../src/AllyManager')
-Ioc.bind('Adonis/Src/Config', () => {
+const Ally = require('../src/Ally')
+
+ioc.bind('Adonis/Src/Config', () => {
   return config
 })
 
-http.get('/facebook', function * (request, response) {
-  const ally = new AllyManager(request, response)
+http.get('/facebook', async function (request, response) {
+  const ally = new Ally(request, response)
   const facebook = ally.driver('facebook')
   response.writeHead(200, {'content-type': 'text/html'})
-  const url = yield facebook.getRedirectUrl()
+  const url = await facebook.getRedirectUrl()
   response.write(`<a href="${url}">Login With Facebook</a>`)
   response.end()
 })
 
-http.get('/facebook/authenticated', function * (request, response) {
-  const ally = new AllyManager(request, response)
+http.get('/facebook/authenticated', async function (request, response) {
+  const ally = new Ally(request, response)
   const facebook = ally.driver('facebook')
   try {
-    const user = yield facebook.getUser()
+    const user = await facebook.getUser()
     response.writeHead(200, {'content-type': 'application/json'})
     response.write(JSON.stringify({ original: user.getOriginal(), profile: user.toJSON() }))
   } catch (e) {

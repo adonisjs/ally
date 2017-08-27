@@ -1,27 +1,27 @@
 'use strict'
 
-const Ioc = require('adonis-fold').Ioc
+const { ioc } = require('@adonisjs/fold')
 const config = require('./setup/config')
 const http = require('./setup/http')
-const AllyManager = require('../src/AllyManager')
-Ioc.bind('Adonis/Src/Config', () => {
+const Ally = require('../src/Ally')
+ioc.bind('Adonis/Src/Config', () => {
   return config
 })
 
-http.get('/linkedin', function * (request, response) {
-  const ally = new AllyManager(request, response)
+http.get('/linkedin', async function (request, response) {
+  const ally = new Ally(request, response)
   const linkedin = ally.driver('linkedin')
   response.writeHead(200, {'content-type': 'text/html'})
-  const url = yield linkedin.getRedirectUrl()
+  const url = await linkedin.getRedirectUrl()
   response.write(`<a href="${url}">Login With LinkedIn</a>`)
   response.end()
 })
 
-http.get('/linkedin/authenticated', function * (request, response) {
-  const ally = new AllyManager(request, response)
+http.get('/linkedin/authenticated', async function (request, response) {
+  const ally = new Ally(request, response)
   const linkedin = ally.driver('linkedin')
   try {
-    const user = yield linkedin.getUser()
+    const user = await linkedin.getUser()
     response.writeHead(200, {'content-type': 'application/json'})
     response.write(JSON.stringify({ original: user.getOriginal(), profile: user.toJSON() }))
   } catch (e) {

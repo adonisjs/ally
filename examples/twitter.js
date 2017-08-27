@@ -1,18 +1,18 @@
 'use strict'
 
-const Ioc = require('adonis-fold').Ioc
+const { ioc } = require('@adonisjs/fold')
 const config = require('./setup/config')
 const http = require('./setup/http')
-const AllyManager = require('../src/AllyManager')
-Ioc.bind('Adonis/Src/Config', () => {
+const Ally = require('../src/Ally')
+ioc.bind('Adonis/Src/Config', () => {
   return config
 })
 
-http.get('/twitter', function * (request, response) {
-  const ally = new AllyManager(request, response)
+http.get('/twitter', async function (request, response) {
+  const ally = new Ally(request, response)
   try {
     const twitter = ally.driver('twitter')
-    const url = yield twitter.getRedirectUrl()
+    const url = await twitter.getRedirectUrl()
     response.writeHead(200, {'content-type': 'text/html'})
     response.write(`<a href="${url}">Login With Twitter</a>`)
   } catch (e) {
@@ -22,11 +22,11 @@ http.get('/twitter', function * (request, response) {
   response.end()
 })
 
-http.get('/twitter/authenticated', function * (request, response) {
-  const ally = new AllyManager(request, response)
+http.get('/twitter/authenticated', async function (request, response) {
+  const ally = new Ally(request, response)
   const twitter = ally.driver('twitter')
   try {
-    const user = yield twitter.getUser()
+    const user = await twitter.getUser()
     response.writeHead(200, {'content-type': 'application/json'})
     response.write(JSON.stringify({ original: user.getOriginal(), profile: user.toJSON() }))
   } catch (e) {

@@ -1,27 +1,27 @@
 'use strict'
 
-const Ioc = require('adonis-fold').Ioc
+const { ioc } = require('@adonisjs/fold')
 const config = require('./setup/config')
 const http = require('./setup/http')
-const AllyManager = require('../src/AllyManager')
-Ioc.bind('Adonis/Src/Config', () => {
+const Ally = require('../src/Ally')
+ioc.bind('Adonis/Src/Config', () => {
   return config
 })
 
-http.get('/instagram', function * (request, response) {
-  const ally = new AllyManager(request, response)
+http.get('/instagram', async function (request, response) {
+  const ally = new Ally(request, response)
   const instagram = ally.driver('instagram')
   response.writeHead(200, {'content-type': 'text/html'})
-  const url = yield instagram.getRedirectUrl()
+  const url = await instagram.getRedirectUrl()
   response.write(`<a href="${url}">Login With Instagram</a>`)
   response.end()
 })
 
-http.get('/instagram/authenticated', function * (request, response) {
-  const ally = new AllyManager(request, response)
+http.get('/instagram/authenticated', async function (request, response) {
+  const ally = new Ally(request, response)
   const instagram = ally.driver('instagram')
   try {
-    const user = yield instagram.getUser()
+    const user = await instagram.getUser()
     response.writeHead(200, {'content-type': 'application/json'})
     response.write(JSON.stringify({ original: user.getOriginal(), profile: user.toJSON() }))
   } catch (e) {
