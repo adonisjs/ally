@@ -9,7 +9,7 @@
  * file that was distributed with this source code.
 */
 
-const Ioc = require('adonis-fold').Ioc
+const { ioc } = require('@adonisjs/fold')
 const Drivers = require('./Drivers')
 const CE = require('./Exceptions')
 const Ally = require('./Ally')
@@ -30,7 +30,7 @@ const extendedDrivers = {}
  * @private
  */
 const _makeDriverInstance = function (name, drivers, extendedDrivers, callback) {
-  const driver = drivers[name] ? Ioc.make(drivers[name]) : extendedDrivers[name]
+  const driver = drivers[name] ? ioc.make(drivers[name]) : extendedDrivers[name]
   if (!driver) {
     return callback()
   }

@@ -95,13 +95,13 @@ class Foursquare extends OAuth2Scheme {
    *
    * @private
    */
-  * _getUserProfile (accessToken) {
+  async _getUserProfile (accessToken) {
     const date = new Date()
     const formattedDate = `${date.getFullYear()}${this._padDate(date.getMonth() + 1)}${this._padDate(date.getDate())}`
 
     const profileUrl = `https://api.foursquare.com/v2/users/self?oauth_token=${accessToken}&m=foursquare&v=${formattedDate}`
 
-    const response = yield got(profileUrl, {
+    const response = await got(profileUrl, {
       headers: {
         'Accept': 'application/json'
       },
@@ -117,7 +117,7 @@ class Foursquare extends OAuth2Scheme {
    *
    * @return {String}
    */
-  * getRedirectUrl () {
+  async getRedirectUrl () {
     return this.getUrl(this._redirectUri, null, this._redirectUriOptions)
   }
 
@@ -141,7 +141,7 @@ class Foursquare extends OAuth2Scheme {
    *
    * @return {Object}
    */
-  * getUser (queryParams) {
+  async getUser (queryParams) {
     const code = queryParams.code
 
     /**
@@ -153,10 +153,10 @@ class Foursquare extends OAuth2Scheme {
       throw CE.OAuthException.tokenExchangeException(errorMessage, null, errorMessage)
     }
 
-    const accessTokenResponse = yield this.getAccessToken(code, this._redirectUri, {
+    const accessTokenResponse = await this.getAccessToken(code, this._redirectUri, {
       grant_type: 'authorization_code'
     })
-    const userProfile = yield this._getUserProfile(accessTokenResponse.accessToken)
+    const userProfile = await this._getUserProfile(accessTokenResponse.accessToken)
     const avatarUrl = `${userProfile.response.user.photo.prefix}original${userProfile.response.user.photo.suffix}`
 
     const user = new AllyUser()

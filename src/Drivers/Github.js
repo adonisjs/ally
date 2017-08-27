@@ -110,9 +110,9 @@ class Github extends OAuth2Scheme {
    *
    * @private
    */
-  * _getUserProfile (accessToken) {
+  async _getUserProfile (accessToken) {
     const profileUrl = 'https://api.github.com/user'
-    const response = yield got(profileUrl, {
+    const response = await got(profileUrl, {
       headers: {
         'Accept': 'application/vnd.github.v3+json',
         'Authorization': `token ${accessToken}`
@@ -125,7 +125,7 @@ class Github extends OAuth2Scheme {
      * only when the scopes includes user or user:email
      */
     if (_.size(_.intersection(this._scope, ['user', 'user:email']))) {
-      response.body.email = yield this._getUserEmail(accessToken)
+      response.body.email = await this._getUserEmail(accessToken)
     }
 
     return response.body
@@ -140,8 +140,8 @@ class Github extends OAuth2Scheme {
    *
    * @private
    */
-  * _getUserEmail (accessToken) {
-    const response = yield got('https://api.github.com/user/emails', {
+  async _getUserEmail (accessToken) {
+    const response = await got('https://api.github.com/user/emails', {
       headers: {
         'Accept': 'application/vnd.github.v3+json',
         'Authorization': `token ${accessToken}`
@@ -160,7 +160,7 @@ class Github extends OAuth2Scheme {
    *
    * @return {String}
    */
-  * getRedirectUrl (scope) {
+  async getRedirectUrl (scope) {
     scope = _.size(scope) ? scope : this._scope
     return this.getUrl(this._redirectUri, scope, this._redirectUriOptions)
   }
@@ -200,7 +200,7 @@ class Github extends OAuth2Scheme {
    *
    * @return {Object}
    */
-  * getUser (queryParams) {
+  async getUser (queryParams) {
     const code = queryParams.code
 
     /**
@@ -212,10 +212,10 @@ class Github extends OAuth2Scheme {
       throw CE.OAuthException.tokenExchangeException(errorMessage, null, errorMessage)
     }
 
-    const accessTokenResponse = yield this.getAccessToken(code, this._redirectUri, {
+    const accessTokenResponse = await this.getAccessToken(code, this._redirectUri, {
       grant_type: 'authorization_code'
     })
-    const userProfile = yield this._getUserProfile(accessTokenResponse.accessToken)
+    const userProfile = await this._getUserProfile(accessTokenResponse.accessToken)
     const user = new AllyUser()
     user
       .setOriginal(userProfile)

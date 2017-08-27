@@ -8,8 +8,13 @@
     "test": "test"
   },
   "scripts": {
-    "test": "npm run lint && _mocha test/**/*.spec.js",
-    "lint": "standard"
+    "lint": "standard",
+    "pretest": "npm run lint",
+    "posttest": "npm run coverage",
+    "test:local": "FORCE_COLOR=true node bin/index.js --local",
+    "test": "nyc npm run test:local",
+    "test:win": "set FORCE_COLOR=true && node bin/index.js --win",
+    "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
   "keywords": [
     "adonis",
@@ -20,14 +25,13 @@
   "author": "adonisjs,amanvirk",
   "license": "MIT",
   "devDependencies": {
-    "adonis-fold": "^3.0.3",
-    "chai": "^3.5.0",
-    "co": "^4.6.0",
-    "co-mocha": "^1.1.3",
+    "@adonisjs/fold": "^4.0.2",
     "coveralls": "^2.11.12",
     "cz-conventional-changelog": "^1.2.0",
-    "istanbul": "^0.4.5",
-    "mocha": "^3.0.2",
+    "japa": "^1.0.4",
+    "japa-cli": "^1.0.1",
+    "nyc": "^11.1.0",
+    "semver": "^5.4.1",
     "standard": "^8.6.0"
   },
   "standard": {

@@ -138,10 +138,10 @@ class LinkedIn extends OAuth2Scheme {
    *
    * @private
    */
-  * _getUserProfile (accessToken, fields) {
+  async _getUserProfile (accessToken, fields) {
     fields = _.size(fields) ? fields : this._fields
     const profileUrl = `https://api.linkedin.com/v1/people/~:(${fields.join(',')})`
-    const response = yield got(profileUrl, {
+    const response = await got(profileUrl, {
       headers: {
         'x-li-format': 'json',
         'Authorization': `Bearer ${accessToken}`
@@ -158,7 +158,7 @@ class LinkedIn extends OAuth2Scheme {
    *
    * @return {String}
    */
-  * getRedirectUrl (scope) {
+  async getRedirectUrl (scope) {
     scope = _.size(scope) ? scope : this._scope
     return this.getUrl(this._redirectUri, scope, this._redirectUriOptions)
   }
@@ -184,7 +184,7 @@ class LinkedIn extends OAuth2Scheme {
    *
    * @return {Object}
    */
-  * getUser (queryParams, fields) {
+  async getUser (queryParams, fields) {
     const code = queryParams.code
 
     /**
@@ -196,10 +196,10 @@ class LinkedIn extends OAuth2Scheme {
       throw CE.OAuthException.tokenExchangeException(errorMessage, null, errorMessage)
     }
 
-    const accessTokenResponse = yield this.getAccessToken(code, this._redirectUri, {
+    const accessTokenResponse = await this.getAccessToken(code, this._redirectUri, {
       grant_type: 'authorization_code'
     })
-    const userProfile = yield this._getUserProfile(accessTokenResponse.accessToken, fields)
+    const userProfile = await this._getUserProfile(accessTokenResponse.accessToken, fields)
     const user = new AllyUser()
     user
       .setOriginal(userProfile)

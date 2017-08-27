@@ -127,10 +127,10 @@ class Facebook extends OAuth2Scheme {
    *
    * @private
    */
-  * _getUserProfile (accessToken, fields) {
+  async _getUserProfile (accessToken, fields) {
     fields = _.size(fields) ? fields : this._fields
     const profileUrl = `${this.baseUrl}/me?access_token=${accessToken}&fields=${fields.join(',')}`
-    const response = yield got(profileUrl, {
+    const response = await got(profileUrl, {
       headers: {
         'Accept': 'application/json'
       },
@@ -146,7 +146,7 @@ class Facebook extends OAuth2Scheme {
    *
    * @return {String}
    */
-  * getRedirectUrl (scope) {
+  async getRedirectUrl (scope) {
     scope = _.size(scope) ? scope : this._scope
     return this.getUrl(this._redirectUri, scope, this._redirectUriOptions)
   }
@@ -186,7 +186,7 @@ class Facebook extends OAuth2Scheme {
    *
    * @return {Object}
    */
-  * getUser (queryParams, fields) {
+  async getUser (queryParams, fields) {
     const code = queryParams.code
 
     /**
@@ -198,10 +198,10 @@ class Facebook extends OAuth2Scheme {
       throw CE.OAuthException.tokenExchangeException(errorMessage, null, errorMessage)
     }
 
-    const accessTokenResponse = yield this.getAccessToken(code, this._redirectUri, {
+    const accessTokenResponse = await this.getAccessToken(code, this._redirectUri, {
       grant_type: 'authorization_code'
     })
-    const userProfile = yield this._getUserProfile(accessTokenResponse.accessToken, fields)
+    const userProfile = await this._getUserProfile(accessTokenResponse.accessToken, fields)
     const user = new AllyUser()
     const avatarUrl = `${this.baseUrl}/${userProfile.id}/picture?type=normal`
     user

@@ -12,7 +12,6 @@
 const CE = require('./Exceptions')
 
 class Ally {
-
   constructor (driverInstance, request, response) {
     this._driverInstance = driverInstance
     this._request = request
@@ -58,8 +57,8 @@ class Ally {
    *
    * @return {String}
    */
-  * getRedirectUrl () {
-    const url = yield this._driverInstance.getRedirectUrl(this._scope)
+  async getRedirectUrl () {
+    const url = await this._driverInstance.getRedirectUrl(this._scope)
     this._scope = []
     return url
   }
@@ -67,8 +66,8 @@ class Ally {
   /**
    * Redirects request to the provider website url
    */
-  * redirect () {
-    const url = yield this.getRedirectUrl()
+  async redirect () {
+    const url = await this.getRedirectUrl()
     this._response.status(302).redirect(url)
   }
 
@@ -78,12 +77,11 @@ class Ally {
    *
    * @return {Object}
    */
-  * getUser () {
-    const user = yield this._driverInstance.getUser(this._request.get(), this._fields)
+  async getUser () {
+    const user = await this._driverInstance.getUser(this._request.get(), this._fields)
     this._fields = []
     return user
   }
-
 }
 
 module.exports = Ally

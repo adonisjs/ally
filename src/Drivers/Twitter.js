@@ -79,8 +79,8 @@ class Twitter extends OAuthScheme {
    *
    * @return {String}
    */
-  * getRedirectUrl () {
-    return yield this.getUrl()
+  async getRedirectUrl () {
+    return await this.getUrl()
   }
 
   /**
@@ -101,7 +101,7 @@ class Twitter extends OAuthScheme {
    *
    * @return {Object}
    */
-  * getUser (queryParams) {
+  async getUser (queryParams) {
     const oauthToken = queryParams.oauth_token
     const oauthVerifier = queryParams.oauth_verifier
 
@@ -114,8 +114,8 @@ class Twitter extends OAuthScheme {
       throw CE.OAuthException.tokenExchangeException(errorMessage, null, errorMessage)
     }
 
-    const accessTokenResponse = yield this.getAccessToken(queryParams.oauth_token, queryParams.oauth_verifier)
-    const userProfile = yield this.getUserProfile(accessTokenResponse.accessToken, accessTokenResponse.tokenSecret)
+    const accessTokenResponse = await this.getAccessToken(queryParams.oauth_token, queryParams.oauth_verifier)
+    const userProfile = await this.getUserProfile(accessTokenResponse.accessToken, accessTokenResponse.tokenSecret)
 
     const user = new AllyUser()
     user
