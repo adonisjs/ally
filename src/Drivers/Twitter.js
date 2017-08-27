@@ -9,25 +9,39 @@
  * file that was distributed with this source code.
 */
 
+const GE = require('@adonisjs/generic-exceptions')
+const debug = require('debug')('adonis:ally')
+
 const OAuthScheme = require('../Schemes/OAuth')
 const CE = require('../Exceptions')
 const AllyUser = require('../AllyUser')
 const utils = require('../../lib/utils')
 const _ = utils.mixLodash(require('lodash'))
 
+/**
+ * Twitter driver to authenticating users via OAuth1 scheme.
+ *
+ * @class Twitter
+ * @constructor
+ */
 class Twitter extends OAuthScheme {
   constructor (Config) {
     const config = Config.get('services.ally.twitter')
 
     if (!_.hasAll(config, ['clientId', 'clientSecret', 'redirectUri'])) {
-      throw CE.OAuthException.missingConfig('twitter')
+      throw GE.RuntimeException.missingConfig('twitter', 'config/services.js')
     }
+
+    const logConfig = Object.assign({}, config, { clientId: '***', clientSecret: '***' })
+    debug('instantiating twitter driver %j', logConfig)
 
     super(config.clientId, config.clientSecret, config.redirectUri)
   }
 
   /**
    * Injections to be made by the IoC container
+   *
+   * @attribute inject
    *
    * @return {Array}
    */
@@ -36,7 +50,9 @@ class Twitter extends OAuthScheme {
   }
 
   /**
-   * Url to be used for fetching user profile
+   * Url to be used for fetching user profile.
+   *
+   * @attribute profileUrl
    *
    * @return {String}
    */
@@ -46,6 +62,8 @@ class Twitter extends OAuthScheme {
 
   /**
    * Url to be used for generating the request token
+   *
+   * @attribute requestTokenUrl
    *
    * @return {String} [description]
    */
@@ -57,6 +75,8 @@ class Twitter extends OAuthScheme {
    * Url to be used for redirecting
    * user.
    *
+   * @attribute authorizeUrl
+   *
    * @return {String} [description]
    */
   get authorizeUrl () {
@@ -67,6 +87,8 @@ class Twitter extends OAuthScheme {
    * Url to be used for exchanging
    * access token.
    *
+   * @attribute accessTokenUrl
+   *
    * @return {String}
    */
   get accessTokenUrl () {
@@ -75,6 +97,9 @@ class Twitter extends OAuthScheme {
 
   /**
    * Returns the redirect url for a given provider
+   *
+   * @method getRedirectUrl
+   * @async
    *
    * @return {String}
    */
@@ -86,6 +111,8 @@ class Twitter extends OAuthScheme {
    * Parses the redirect errors returned by github
    * and returns the error message.
    *
+   * @method parseRedirectError
+   *
    * @return {String}
    */
   parseRedirectError () {
@@ -94,7 +121,9 @@ class Twitter extends OAuthScheme {
 
   /**
    * Returns the user profile with it's access token, refresh token
-   * and token expiry
+   * and token expiry.
+   *
+   * @method getUser
    *
    * @param {Object} queryParams
    *
@@ -117,6 +146,7 @@ class Twitter extends OAuthScheme {
     const userProfile = await this.getUserProfile(accessTokenResponse.accessToken, accessTokenResponse.tokenSecret)
 
     const user = new AllyUser()
+
     user
       .setOriginal(userProfile)
       .setFields(

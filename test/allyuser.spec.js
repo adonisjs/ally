@@ -10,7 +10,7 @@
 */
 
 const test = require('japa')
-const AllyUser = require('../../src/AllyUser')
+const AllyUser = require('../src/AllyUser')
 
 test.group('AllyUser', function () {
   test('should be able to set partial user fields', function (assert) {

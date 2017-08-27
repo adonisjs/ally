@@ -10,7 +10,7 @@
 */
 
 const test = require('japa')
-const OAuth2 = require('../../src/Schemes/OAuth2')
+const OAuth2 = require('../src/Schemes/OAuth2')
 const qs = require('querystring')
 const clientId = '10012020'
 const clientSecret = '1000w0sa'
@@ -18,7 +18,7 @@ const clientSecret = '1000w0sa'
 test.group('OAuth2', function () {
   test('should throw an exception when oauth2 class is initiated directly', function (assert) {
     const oauth2 = () => new OAuth2(clientId, clientSecret)
-    assert.throw(oauth2, 'RuntimeException: E_CANNOT_INSTANTIATE: OAuth2 class cannot be instantiated directly and must be extended')
+    assert.throw(oauth2, 'E_CANNOT_INSTANTIATE: OAuth2 class cannot be instantiated directly and must be extended')
   })
 
   test('should throw an exception when redirect uri is not passed to the getUrl method', function (assert) {
@@ -37,7 +37,7 @@ test.group('OAuth2', function () {
     }
 
     const facebookUrl = () => new Facebook(clientId, clientSecret).getUrl()
-    assert.throw(facebookUrl, 'InvalidArgumentException: E_MISSING_PARAMETER: Redirect uri is required to initiate oauth2 request')
+    assert.throw(facebookUrl, 'E_MISSING_PARAMETER: Missing parameter redirectUri expected by getUrl as 1st parameter')
   })
 
   test('should throw an exception when trying to initiate the class without clientId', function (assert) {
@@ -56,7 +56,7 @@ test.group('OAuth2', function () {
     }
 
     const facebook = () => new Facebook()
-    assert.throw(facebook, 'InvalidArgumentException: E_MISSING_PARAMETER: Cannot initiate oauth2 instance without client id')
+    assert.throw(facebook, 'E_MISSING_PARAMETER: Missing parameter clientId expected by oauth2 as 1st parameter')
   })
 
   test('should throw an exception when trying to initiate the class without clientSecret', function (assert) {
@@ -75,7 +75,7 @@ test.group('OAuth2', function () {
     }
 
     const facebook = () => new Facebook(clientId)
-    assert.throw(facebook, 'InvalidArgumentException: E_MISSING_PARAMETER: Cannot initiate oauth2 instance without client secret')
+    assert.throw(facebook, 'E_MISSING_PARAMETER: Missing parameter clientSecret expected by oauth2 as 2nd parameter')
   })
 
   test('should not append / when the baseUrl ends with /', function (assert) {

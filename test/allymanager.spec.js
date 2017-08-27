@@ -11,7 +11,7 @@
 
 const test = require('japa')
 const { ioc } = require('@adonisjs/fold')
-const AllyManager = require('../../src/AllyManager')
+const AllyManager = require('../src/AllyManager')
 const config = require('./setup/config')
 
 test.group('AllyManager', function (group) {

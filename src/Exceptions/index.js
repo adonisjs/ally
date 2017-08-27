@@ -9,43 +9,7 @@
  * file that was distributed with this source code.
 */
 
-const NE = require('node-exceptions')
-
-class InvalidArgumentException extends NE.InvalidArgumentException {
-  /**
-   * Default error code to be used when user does not
-   * specify error code for an error.
-   *
-   * @return {Number}
-   */
-  static get defaultErrorCode () {
-    return 500
-  }
-
-  /**
-   * This exception is raised when a parameter is missing
-   *
-   * @param  {String} message
-   * @param  {Number} [code]
-   *
-   * @return {Object}
-   */
-  static missingParameter (message, code) {
-    return new this(message, code || this.defaultErrorCode, 'E_MISSING_PARAMETER')
-  }
-
-  /**
-   * This exception is raised when a parameter valid is incorrect
-   *
-   * @param  {String} message
-   * @param  {Number} [code]
-   *
-   * @return {Object}
-   */
-  static invalidParameter (message, code) {
-    return new this(message, code || this.defaultErrorCode, 'E_INVALID_PARAMETER')
-  }
-}
+const NE = require('@adonisjs/generic-exceptions')
 
 class OAuthException extends NE.LogicalException {
   /**
@@ -126,4 +90,4 @@ class RuntimeException extends NE.RuntimeException {
   }
 }
 
-module.exports = { InvalidArgumentException, OAuthException, RuntimeException }
+module.exports = { OAuthException, RuntimeException }

@@ -9,8 +9,15 @@
  * file that was distributed with this source code.
 */
 
-const CE = require('./Exceptions')
+const GE = require('@adonisjs/generic-exceptions')
 
+/**
+ * The public interface to authenticate and get user
+ * info using one of the available drivers.
+ *
+ * @class Ally
+ * @constructor
+ */
 class Ally {
   constructor (driverInstance, request, response) {
     this._driverInstance = driverInstance
@@ -29,7 +36,9 @@ class Ally {
    */
   scope (scope) {
     if (scope instanceof Array === false) {
-      throw CE.InvalidArgumentException.invalidParameter('Value for scope must be an array')
+      throw GE
+        .InvalidArgumentException
+        .invalidParameter('Value for scope must be an array', scope)
     }
 
     this._scope = scope
@@ -45,7 +54,9 @@ class Ally {
    */
   fields (fields) {
     if (fields instanceof Array === false) {
-      throw CE.InvalidArgumentException.invalidParameter('Value for fields must be an array')
+      throw GE
+        .InvalidArgumentException
+        .invalidParameter('Value for fields must be an array', fields)
     }
 
     this._fields = fields
@@ -54,6 +65,9 @@ class Ally {
 
   /**
    * Returns the redirect uri using the driverInstance
+   *
+   * @method getRedirectUrl
+   * @async
    *
    * @return {String}
    */
@@ -64,7 +78,12 @@ class Ally {
   }
 
   /**
-   * Redirects request to the provider website url
+   * Redirects request to the provider website url.
+   *
+   * @method redirect
+   * @async
+   *
+   * @return {void}
    */
   async redirect () {
     const url = await this.getRedirectUrl()
@@ -74,6 +93,9 @@ class Ally {
   /**
    * Returns an instance AllyUser containing the user profile.
    * A driver is responsible for normalizing the user fields.
+   *
+   * @method getUser
+   * @async
    *
    * @return {Object}
    */

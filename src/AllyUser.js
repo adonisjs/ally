@@ -54,7 +54,6 @@ class AllyUser {
     this._original = {}
   }
 
-
   /**
    * Set user attributes
    *

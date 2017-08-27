@@ -9,14 +9,23 @@
  * file that was distributed with this source code.
 */
 
+const GE = require('@adonisjs/generic-exceptions')
 const NodeOAuth = require('oauth').OAuth
+const debug = require('debug')('adonis:ally')
 const CE = require('../Exceptions')
-const CatLog = require('cat-log')
-const logger = new CatLog('adonis:ally')
 
+/**
+ * OAuth scheme to be extended to build drivers based
+ * on OAuth1 protocol.
+ *
+ * @class OAuth
+ * @constructor
+ */
 class OAuth {
   /**
    * Url to be used for fetching user profile.
+   *
+   * @attribute profileUrl
    *
    * @return {String} [description]
    */
@@ -28,6 +37,8 @@ class OAuth {
    * Url to be used for generating the request access
    * token.
    *
+   * @attribute requestTokenUrl
+   *
    * @return {String} [description]
    */
   get requestTokenUrl () {
@@ -37,6 +48,8 @@ class OAuth {
   /**
    * Url to be used for redirecting the user
    * with generated access token.
+   *
+   * @attribute authorizeUrl
    *
    * @return {String} [description]
    */
@@ -48,7 +61,9 @@ class OAuth {
    * AccessToken url to be used for generating
    * the access token. It is used when the
    * oauth server redirects the user back
-   * to the consumer website
+   * to the consumer website.
+   *
+   * @attribute accessTokenUrl
    *
    * @return {String}
    */
@@ -68,15 +83,15 @@ class OAuth {
     }
 
     if (!clientId) {
-      throw CE.InvalidArgumentException.missingParameter('Cannot initiate oauth instance without client id')
+      throw GE.InvalidArgumentException.missingParameter('oauth', 'clientId', '1st')
     }
 
     if (!clientSecret) {
-      throw CE.InvalidArgumentException.missingParameter('Cannot initiate oauth instance without client secret')
+      throw GE.InvalidArgumentException.missingParameter('oauth', 'clientSecret', '2nd')
     }
 
     if (!callbackUrl) {
-      throw CE.InvalidArgumentException.missingParameter('Cannot initiate oauth instance without redirect url')
+      throw GE.InvalidArgumentException.missingParameter('oauth', 'callbackUrl', '3rd')
     }
 
     this.client = new NodeOAuth(this.requestTokenUrl, this.accessTokenUrl, clientId, clientSecret, '1.0', callbackUrl, 'HMAC-SHA1')
@@ -85,6 +100,9 @@ class OAuth {
   /**
    * Generates the request token to be used for generating
    * the redirect uri and getting the access token.
+   *
+   * @method _getRequestToken
+   * @async
    *
    * @return  {Object}
    *
@@ -105,6 +123,8 @@ class OAuth {
    * Parses provider error by fetching error message
    * from nested data property.
    *
+   * @method parseProviderError
+   *
    * @param  {Object} error
    *
    * @return {Error}
@@ -119,6 +139,8 @@ class OAuth {
    * Parser error mentioned inside the result property
    * of the oauth response.
    *
+   * @method parseProviderResultError
+   *
    * @param  {Object} response
    *
    * @return {String}
@@ -131,22 +153,23 @@ class OAuth {
    * Returns a formatted url to be used for redirecting
    * users.
    *
+   * @method getUrl
+   * @async
+   *
    * @return {String}
    */
-  getUrl () {
-    return new Promise((resolve, reject) => {
-      this._getRequestToken()
-      .then((requestToken) => {
-        logger.verbose('generated request token %s', requestToken.oAuthToken)
-        resolve(`${this.authorizeUrl}?oauth_token=${requestToken.oAuthToken}`)
-      })
-      .catch(reject)
-    })
+  async getUrl () {
+    const requestToken = await this._getRequestToken()
+    debug('generated request token %s', requestToken.oAuthToken)
+    return `${this.authorizeUrl}?oauth_token=${requestToken.oAuthToken}`
   }
 
   /**
    * Returns accessToken and tokenSecret using the oauth token
    * and verifier.
+   *
+   * @method getAccessToken
+   * @async
    *
    * @param  {String} oAuthToken
    * @param  {String} oAuthVerifier
@@ -183,7 +206,10 @@ class OAuth {
 
   /**
    * Returns the user profile for an access token and
-   * token secret
+   * token secret.
+   *
+   * @method getUserProfile
+   * @async
    *
    * @param  {String} accessToken
    * @param  {String} tokenSecret

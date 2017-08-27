@@ -9,20 +9,32 @@
  * file that was distributed with this source code.
  */
 
+const GE = require('@adonisjs/generic-exceptions')
+const got = require('got')
+const debug = require('debug')('adonis:ally')
+
 const CE = require('../Exceptions')
 const OAuth2Scheme = require('../Schemes/OAuth2')
 const AllyUser = require('../AllyUser')
-const got = require('got')
 const utils = require('../../lib/utils')
 const _ = utils.mixLodash(require('lodash'))
 
+/**
+ * Instagram driver to authenticating users via OAuth2Scheme.
+ *
+ * @class Instagram
+ * @constructor
+ */
 class Instagram extends OAuth2Scheme {
   constructor (Config) {
     const config = Config.get('services.ally.instagram')
 
     if (!_.hasAll(config, ['clientId', 'clientSecret', 'redirectUri'])) {
-      throw CE.OAuthException.missingConfig('instagram')
+      throw GE.RuntimeException.missingConfig('instagram', 'config/services.js')
     }
+
+    const logConfig = Object.assign({}, config, { clientId: '***', clientSecret: '***' })
+    debug('instantiating instagram driver %j', logConfig)
 
     super(config.clientId, config.clientSecret, config.headers)
 
@@ -38,6 +50,8 @@ class Instagram extends OAuth2Scheme {
   /**
    * Injections to be made by the IoC container
    *
+   * @attribute inject
+   *
    * @return {Array}
    */
   static get inject () {
@@ -47,6 +61,8 @@ class Instagram extends OAuth2Scheme {
   /**
    * Scope seperator for seperating multiple
    * scopes.
+   *
+   * @attribute scopeSeperator
    *
    * @return {String}
    */
@@ -58,6 +74,8 @@ class Instagram extends OAuth2Scheme {
    * Base url to be used for constructing
    * facebook oauth urls.
    *
+   * @attribute baseUrl
+   *
    * @return {String}
    */
   get baseUrl () {
@@ -67,6 +85,8 @@ class Instagram extends OAuth2Scheme {
   /**
    * Relative url to be used for redirecting
    * user.
+   *
+   * @attribute authorizeUrl
    *
    * @return {String} [description]
    */
@@ -78,6 +98,8 @@ class Instagram extends OAuth2Scheme {
    * Relative url to be used for exchanging
    * access token.
    *
+   * @attribute accessTokenUrl
+   *
    * @return {String}
    */
   get accessTokenUrl () {
@@ -87,7 +109,9 @@ class Instagram extends OAuth2Scheme {
   /**
    * Returns initial scopes to be used right from the
    * config file. Otherwise it will fallback to the
-   * commonly used scopes
+   * commonly used scopes.
+   *
+   * @method _getInitialScopes
    *
    * @param   {Array} scopes
    *
@@ -101,7 +125,10 @@ class Instagram extends OAuth2Scheme {
 
   /**
    * Returns the user profile as an object using the
-   * access token
+   * access token.
+   *
+   * @method _getUserProfile
+   * @async
    *
    * @param   {String} accessToken
    *
@@ -111,17 +138,22 @@ class Instagram extends OAuth2Scheme {
    */
   async _getUserProfile (accessToken) {
     const profileUrl = `${this.baseUrl}v1/users/self?access_token=${accessToken}`
+
     const response = await got(profileUrl, {
       headers: {
         'Accept': 'application/json'
       },
       json: true
     })
+
     return response.body
   }
 
   /**
    * Returns the redirect url for a given provider.
+   *
+   * @method getRedirectUrl
+   * @async
    *
    * @param  {Array} scope
    *
@@ -136,6 +168,8 @@ class Instagram extends OAuth2Scheme {
    * Parses the redirect errors returned by facebook
    * and returns the error message.
    *
+   * @method parseRedirectError
+   *
    * @param  {Object} queryParams
    *
    * @return {String}
@@ -146,7 +180,9 @@ class Instagram extends OAuth2Scheme {
 
   /**
    * Returns the user profile with it's access token, refresh token
-   * and token expiry
+   * and token expiry.
+   *
+   * @method getUser
    *
    * @param {Object} queryParams
    *

@@ -10,7 +10,7 @@
 */
 
 const test = require('japa')
-const Ally = require('../../src/Ally')
+const Ally = require('../src/Ally')
 
 test.group('Ally', function () {
   test('should be able to add runtime scope', function (assert) {
