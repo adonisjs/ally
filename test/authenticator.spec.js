@@ -10,29 +10,29 @@
 */
 
 const test = require('japa')
-const Ally = require('../src/Ally')
+const Authenticator = require('../src/Authenticator')
 
-test.group('Ally', function () {
+test.group('Authenticator', function () {
   test('should be able to add runtime scope', function (assert) {
-    const ally = new Ally({}, {}, {})
+    const ally = new Authenticator({}, {}, {})
     ally.scope(['user', 'friends'])
     assert.deepEqual(ally._scope, ['user', 'friends'])
   })
 
   test('should be able to add runtime fields', function (assert) {
-    const ally = new Ally({}, {}, {})
+    const ally = new Authenticator({}, {}, {})
     ally.fields(['name', 'email'])
     assert.deepEqual(ally._fields, ['name', 'email'])
   })
 
   test('should be throw an exception when scope values are not an array', function (assert) {
-    const ally = new Ally({}, {}, {})
+    const ally = new Authenticator({}, {}, {})
     const fn = () => ally.scope('user')
     assert.throw(fn, 'E_INVALID_PARAMETER: Value for scope must be an array')
   })
 
   test('should be throw an exception when fields values are not an array', function (assert) {
-    const ally = new Ally({}, {}, {})
+    const ally = new Authenticator({}, {}, {})
     const fn = () => ally.fields('name')
     assert.throw(fn, 'E_INVALID_PARAMETER: Value for fields must be an array')
   })
@@ -48,7 +48,7 @@ test.group('Ally', function () {
       }
     }
     const dummyDriver = new DummyDriver()
-    const ally = new Ally(dummyDriver, {}, {})
+    const ally = new Authenticator(dummyDriver, {}, {})
     await ally.scope(['user']).getRedirectUrl()
     assert.deepEqual(dummyDriver.scope, ['user'])
   })
@@ -64,7 +64,7 @@ test.group('Ally', function () {
       }
     }
     const dummyDriver = new DummyDriver()
-    const ally = new Ally(dummyDriver, {get: function () {
+    const ally = new Authenticator(dummyDriver, {get: function () {
       return {code: 'foo'}
     }}, {})
     await ally.getUser()
@@ -82,7 +82,7 @@ test.group('Ally', function () {
       }
     }
     const dummyDriver = new DummyDriver()
-    const ally = new Ally(dummyDriver, {}, {})
+    const ally = new Authenticator(dummyDriver, {}, {})
     await ally.scope(['user']).getRedirectUrl()
     assert.deepEqual(ally._scope, [])
   })
