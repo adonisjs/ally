@@ -9,21 +9,26 @@
  * file that was distributed with this source code.
 */
 
+const got = require('got')
+
 const CE = require('../Exceptions')
 const OAuth2Scheme = require('../Schemes/OAuth2')
 const AllyUser = require('../AllyUser')
-const got = require('got')
 const utils = require('../../lib/utils')
-const _ = utils.mixLodash(require('lodash'))
+const _ = require('lodash')
 
+/**
+ * Google driver to authenticating users via OAuth2Scheme.
+ *
+ * @class Google
+ * @constructor
+ */
 class Google extends OAuth2Scheme {
-
   constructor (Config) {
     const config = Config.get('services.ally.google')
 
-    if (!_.hasAll(config, ['clientId', 'clientSecret', 'redirectUri'])) {
-      throw CE.OAuthException.missingConfig('google')
-    }
+    utils.validateDriverConfig('google', config)
+    utils.debug('google', config)
 
     super(config.clientId, config.clientSecret, config.headers)
 
@@ -39,6 +44,8 @@ class Google extends OAuth2Scheme {
   /**
    * Injections to be made by the IoC container
    *
+   * @attribute inject
+   *
    * @return {Array}
    */
   static get inject () {
@@ -48,6 +55,8 @@ class Google extends OAuth2Scheme {
   /**
    * Scope seperator for seperating multiple
    * scopes.
+   *
+   * @attribute scopeSeperator
    *
    * @return {String}
    */
@@ -59,6 +68,8 @@ class Google extends OAuth2Scheme {
    * Base url to be used for constructing
    * google oauth urls.
    *
+   * @attribute baseUrl
+   *
    * @return {String}
    */
   get baseUrl () {
@@ -68,6 +79,8 @@ class Google extends OAuth2Scheme {
   /**
    * Relative url to be used for redirecting
    * user.
+   *
+   * @attribute authorizeUrl
    *
    * @return {String} [description]
    */
@@ -79,6 +92,8 @@ class Google extends OAuth2Scheme {
    * Relative url to be used for exchanging
    * access token.
    *
+   * @attribute accessTokenUrl
+   *
    * @return {String}
    */
   get accessTokenUrl () {
@@ -88,7 +103,9 @@ class Google extends OAuth2Scheme {
   /**
    * Returns initial scopes to be used right from the
    * config file. Otherwise it will fallback to the
-   * commonly used scopes
+   * commonly used scopes.
+   *
+   * @method _getInitialScopes
    *
    * @param   {Array} scopes
    *
@@ -102,7 +119,10 @@ class Google extends OAuth2Scheme {
 
   /**
    * Returns the user profile as an object using the
-   * access token
+   * access token.
+   *
+   * @method _getUserProfile
+   * @async
    *
    * @param   {String} accessToken
    *
@@ -110,26 +130,31 @@ class Google extends OAuth2Scheme {
    *
    * @private
    */
-  * _getUserProfile (accessToken) {
+  async _getUserProfile (accessToken) {
     const profileUrl = 'https://www.googleapis.com/plus/v1/people/me'
-    const response = yield got(profileUrl, {
+
+    const response = await got(profileUrl, {
       headers: {
         'Accept': 'application/json',
         'Authorization': `Bearer ${accessToken}`
       },
       json: true
     })
+
     return response.body
   }
 
   /**
-   * Returns the redirect url for a given provider
+   * Returns the redirect url for a given provider.
+   *
+   * @method getRedirectUrl
+   * @async
    *
    * @param  {Array} scope
    *
    * @return {String}
    */
-  * getRedirectUrl (scope) {
+  async getRedirectUrl (scope) {
     scope = _.size(scope) ? scope : this._scope
     return this.getUrl(this._redirectUri, scope, this._redirectUriOptions)
   }
@@ -137,6 +162,8 @@ class Google extends OAuth2Scheme {
   /**
    * Parses the redirect errors returned by google
    * and returns the error message.
+   *
+   * @method parseRedirectError
    *
    * @param  {Object} queryParams
    *
@@ -148,13 +175,16 @@ class Google extends OAuth2Scheme {
 
   /**
    * Returns the user profile with it's access token, refresh token
-   * and token expiry
+   * and token expiry.
+   *
+   * @method getUser
+   * @async
    *
    * @param {Object} queryParams
    *
    * @return {Object}
    */
-  * getUser (queryParams) {
+  async getUser (queryParams) {
     const code = queryParams.code
 
     /**
@@ -166,11 +196,14 @@ class Google extends OAuth2Scheme {
       throw CE.OAuthException.tokenExchangeException(errorMessage, null, errorMessage)
     }
 
-    const accessTokenResponse = yield this.getAccessToken(code, this._redirectUri, {
+    const accessTokenResponse = await this.getAccessToken(code, this._redirectUri, {
       grant_type: 'authorization_code'
     })
-    const userProfile = yield this._getUserProfile(accessTokenResponse.accessToken)
+
+    const userProfile = await this._getUserProfile(accessTokenResponse.accessToken)
+
     const user = new AllyUser()
+
     user
       .setOriginal(userProfile)
       .setFields(

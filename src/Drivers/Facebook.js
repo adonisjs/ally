@@ -9,21 +9,27 @@
  * file that was distributed with this source code.
 */
 
+const got = require('got')
+
 const CE = require('../Exceptions')
 const OAuth2Scheme = require('../Schemes/OAuth2')
 const AllyUser = require('../AllyUser')
-const got = require('got')
 const utils = require('../../lib/utils')
-const _ = utils.mixLodash(require('lodash'))
+const _ = require('lodash')
 
+/**
+ * Facebook driver to authenticate a user using
+ * OAuth2 scheme.
+ *
+ * @class Facebook
+ * @constructor
+ */
 class Facebook extends OAuth2Scheme {
-
   constructor (Config) {
     const config = Config.get('services.ally.facebook')
 
-    if (!_.hasAll(config, ['clientId', 'clientSecret', 'redirectUri'])) {
-      throw CE.OAuthException.missingConfig('facebook')
-    }
+    utils.validateDriverConfig('facebook', config)
+    utils.debug('facebook', config)
 
     super(config.clientId, config.clientSecret, config.headers)
 
@@ -34,11 +40,13 @@ class Facebook extends OAuth2Scheme {
     this._scope = this._getInitialScopes(config.scope)
     this._fields = this._getInitialFields(config.fields)
     this._redirectUri = config.redirectUri
-    this._redirectUriOptions = _.merge({response_type: 'code'}, config.options)
+    this._redirectUriOptions = Object.assign({response_type: 'code'}, config.options)
   }
 
   /**
    * Injections to be made by the IoC container
+   *
+   * @attribute inject
    *
    * @return {Array}
    */
@@ -50,6 +58,8 @@ class Facebook extends OAuth2Scheme {
    * Scope seperator for seperating multiple
    * scopes.
    *
+   * @attribute scopeSeperator
+   *
    * @return {String}
    */
   get scopeSeperator () {
@@ -59,6 +69,8 @@ class Facebook extends OAuth2Scheme {
   /**
    * Base url to be used for constructing
    * facebook oauth urls.
+   *
+   * @attribute baseUrl
    *
    * @return {String}
    */
@@ -70,6 +82,8 @@ class Facebook extends OAuth2Scheme {
    * Relative url to be used for redirecting
    * user.
    *
+   * @attribute authorizeUrl
+   *
    * @return {String} [description]
    */
   get authorizeUrl () {
@@ -80,6 +94,8 @@ class Facebook extends OAuth2Scheme {
    * Relative url to be used for exchanging
    * access token.
    *
+   * @attribute accessTokenUrl
+   *
    * @return {String}
    */
   get accessTokenUrl () {
@@ -89,7 +105,9 @@ class Facebook extends OAuth2Scheme {
   /**
    * Returns initial scopes to be used right from the
    * config file. Otherwise it will fallback to the
-   * commonly used scopes
+   * commonly used scopes.
+   *
+   * @method _getInitialScopes
    *
    * @param   {Array} scopes
    *
@@ -106,6 +124,8 @@ class Facebook extends OAuth2Scheme {
    * config file. Otherwise it will fallback to the
    * commonly used fields.
    *
+   * @method _getInitialFields
+   *
    * @param   {Array} fields
    *
    * @return  {Array}
@@ -118,7 +138,9 @@ class Facebook extends OAuth2Scheme {
 
   /**
    * Returns the user profile as an object using the
-   * access token
+   * access token.
+   *
+   * @method _getInitialFields
    *
    * @param   {String} accessToken
    * @param   {Array} [fields]
@@ -127,26 +149,30 @@ class Facebook extends OAuth2Scheme {
    *
    * @private
    */
-  * _getUserProfile (accessToken, fields) {
+  async _getUserProfile (accessToken, fields) {
     fields = _.size(fields) ? fields : this._fields
     const profileUrl = `${this.baseUrl}/me?access_token=${accessToken}&fields=${fields.join(',')}`
-    const response = yield got(profileUrl, {
+
+    const response = await got(profileUrl, {
       headers: {
         'Accept': 'application/json'
       },
       json: true
     })
+
     return response.body
   }
 
   /**
    * Returns the redirect url for a given provider.
    *
+   * @method getRedirectUrl
+   *
    * @param  {Array} scope
    *
    * @return {String}
    */
-  * getRedirectUrl (scope) {
+  async getRedirectUrl (scope) {
     scope = _.size(scope) ? scope : this._scope
     return this.getUrl(this._redirectUri, scope, this._redirectUriOptions)
   }
@@ -154,6 +180,8 @@ class Facebook extends OAuth2Scheme {
   /**
    * Parses provider error by fetching error message
    * from nested data property.
+   *
+   * @method parseProviderError
    *
    * @param  {Object} error
    *
@@ -169,6 +197,8 @@ class Facebook extends OAuth2Scheme {
    * Parses the redirect errors returned by facebook
    * and returns the error message.
    *
+   * @method parseRedirectError
+   *
    * @param  {Object} queryParams
    *
    * @return {String}
@@ -179,14 +209,16 @@ class Facebook extends OAuth2Scheme {
 
   /**
    * Returns the user profile with it's access token, refresh token
-   * and token expiry
+   * and token expiry.
+   *
+   * @method getUser
    *
    * @param {Object} queryParams
    * @param {Array} [fields]
    *
    * @return {Object}
    */
-  * getUser (queryParams, fields) {
+  async getUser (queryParams, fields) {
     const code = queryParams.code
 
     /**
@@ -198,12 +230,18 @@ class Facebook extends OAuth2Scheme {
       throw CE.OAuthException.tokenExchangeException(errorMessage, null, errorMessage)
     }
 
-    const accessTokenResponse = yield this.getAccessToken(code, this._redirectUri, {
+    const accessTokenResponse = await this.getAccessToken(code, this._redirectUri, {
       grant_type: 'authorization_code'
     })
-    const userProfile = yield this._getUserProfile(accessTokenResponse.accessToken, fields)
+
+    const userProfile = await this._getUserProfile(accessTokenResponse.accessToken, fields)
+
     const user = new AllyUser()
     const avatarUrl = `${this.baseUrl}/${userProfile.id}/picture?type=normal`
+
+    /**
+     * Build user
+     */
     user
       .setOriginal(userProfile)
       .setFields(

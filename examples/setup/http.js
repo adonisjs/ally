@@ -12,7 +12,6 @@
 const http = require('http')
 const url = require('url')
 const qs = require('querystring')
-const co = require('co')
 const routes = {}
 
 class Request {
@@ -29,13 +28,12 @@ class Request {
     const parsedUrl = url.parse(this.req.url)
     return parsedUrl.search ? qs.parse(parsedUrl.search.replace('?', '')) : {}
   }
-
 }
 
 const httpServer = exports = module.exports = {}
 
 httpServer.get = function (route, closure) {
-  routes[route] = co.wrap(closure)
+  routes[route] = closure
 }
 
 httpServer.start = function () {

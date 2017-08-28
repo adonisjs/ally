@@ -1,15 +1,21 @@
 {
-  "name": "adonis-ally",
-  "version": "1.0.0",
-  "description": "Social authenticator for adonis framework",
+  "name": "@adonisjs/ally",
+  "version": "2.0.0",
+  "description": "Social authenticator for AdonisJs Framework",
   "main": "index.js",
   "directories": {
     "example": "examples",
+    "lib": "lib",
     "test": "test"
   },
   "scripts": {
-    "test": "npm run lint && _mocha test/**/*.spec.js",
-    "lint": "standard"
+    "lint": "standard",
+    "pretest": "npm run lint",
+    "posttest": "npm run coverage",
+    "test:local": "FORCE_COLOR=true node bin/index.js --local",
+    "test": "nyc npm run test:local",
+    "test:win": "set FORCE_COLOR=true && node bin/index.js --win",
+    "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
   "keywords": [
     "adonis",
@@ -20,27 +26,17 @@
   "author": "adonisjs,amanvirk",
   "license": "MIT",
   "devDependencies": {
-    "adonis-fold": "^3.0.3",
-    "chai": "^3.5.0",
-    "co": "^4.6.0",
-    "co-mocha": "^1.1.3",
-    "coveralls": "^2.11.12",
-    "cz-conventional-changelog": "^1.2.0",
-    "istanbul": "^0.4.5",
-    "mocha": "^3.0.2",
-    "standard": "^8.6.0"
+    "@adonisjs/fold": "^4.0.2",
+    "coveralls": "^2.13.1",
+    "cz-conventional-changelog": "^2.0.0",
+    "japa": "^1.0.4",
+    "japa-cli": "^1.0.1",
+    "nyc": "^11.1.0",
+    "semver": "^5.4.1",
+    "standard": "^10.0.3"
   },
   "standard": {
-    "global": [
-      "describe",
-      "it",
-      "use",
-      "context",
-      "before",
-      "after",
-      "beforeEach",
-      "afterEach"
-    ]
+    "global": ["use"]
   },
   "config": {
     "commitizen": {
@@ -48,11 +44,11 @@
     }
   },
   "dependencies": {
-    "cat-log": "^1.0.2",
-    "got": "^6.3.0",
-    "lodash": "^4.15.0",
-    "node-exceptions": "^1.0.3",
-    "oauth": "^0.9.14"
+    "@adonisjs/generic-exceptions": "^1.0.0",
+    "debug": "^3.0.1",
+    "got": "^7.1.0",
+    "lodash": "^4.17.4",
+    "oauth": "^0.9.15"
   },
   "repository": {
     "type": "git",

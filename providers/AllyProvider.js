@@ -9,21 +9,60 @@
  * file that was distributed with this source code.
 */
 
-const ServiceProvider = require('adonis-fold').ServiceProvider
+const { ServiceProvider } = require('@adonisjs/fold')
 
 class AllyProvider extends ServiceProvider {
-
-  * register () {
-    this.app.bind('Adonis/Addons/Ally', function () {
-      return require('../src/AllyManager')
-    })
-
-    this.app.bind('Adonis/Middleware/Ally', function () {
-      const AllyMiddleware = require('../middleware/Ally')
-      return new AllyMiddleware()
-    })
+  /**
+   * Register provider under `Adonis/Addons/Ally`
+   * namespace
+   *
+   * @method _registerProvider
+   *
+   * @return {void}
+   */
+  _registerProvider () {
+    this.app.bind('Adonis/Addons/Ally', () => require('../src/Ally'))
   }
 
+  /**
+   * Registers ally manager under `Adonis/Addons/Ally`
+   * namespace
+   *
+   * @method _registerManager
+   *
+   * @return {void}
+   */
+  _registerManager () {
+    this.app.manager('Adonis/Addons/Ally', () => require('../src/AllyManager'))
+  }
+
+  /**
+   * Register the provider and the manager
+   *
+   * @method register
+   *
+   * @return {void}
+   */
+  register () {
+    this._registerProvider()
+    this._registerManager()
+  }
+
+  /**
+   * Bind ally to the http context
+   *
+   * @method boot
+   *
+   * @return {void}
+   */
+  boot () {
+    const Context = this.app.use('Adonis/Src/HttpContext')
+    const Ally = this.app.use('Adonis/Addons/Ally')
+
+    Context.getter('ally', function () {
+      return new Ally(this.request, this.response)
+    }, true)
+  }
 }
 
 module.exports = AllyProvider

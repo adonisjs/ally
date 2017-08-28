@@ -9,20 +9,19 @@
  * file that was distributed with this source code.
 */
 
-const OAuth2 = require('../../src/Schemes/OAuth2')
-const chai = require('chai')
+const test = require('japa')
+const OAuth2 = require('../src/Schemes/OAuth2')
 const qs = require('querystring')
-const assert = chai.assert
 const clientId = '10012020'
 const clientSecret = '1000w0sa'
 
-describe('OAuth2', function () {
-  it('should throw an exception when oauth2 class is initiated directly', function () {
+test.group('OAuth2', function () {
+  test('should throw an exception when oauth2 class is initiated directly', function (assert) {
     const oauth2 = () => new OAuth2(clientId, clientSecret)
-    assert.throw(oauth2, 'RuntimeException: E_CANNOT_INSTANTIATE: OAuth2 class cannot be instantiated directly and must be extended')
+    assert.throw(oauth2, 'E_CANNOT_INSTANTIATE: OAuth2 class cannot be instantiated directly and must be extended')
   })
 
-  it('should throw an exception when redirect uri is not passed to the getUrl method', function () {
+  test('should throw an exception when redirect uri is not passed to the getUrl method', function (assert) {
     class Facebook extends OAuth2 {
       get baseUrl () {
         return 'https://graph.facebook.com/v2.1'
@@ -38,10 +37,10 @@ describe('OAuth2', function () {
     }
 
     const facebookUrl = () => new Facebook(clientId, clientSecret).getUrl()
-    assert.throw(facebookUrl, 'InvalidArgumentException: E_MISSING_PARAMETER: Redirect uri is required to initiate oauth2 request')
+    assert.throw(facebookUrl, 'E_MISSING_PARAMETER: Missing parameter redirectUri expected by getUrl as 1st parameter')
   })
 
-  it('should throw an exception when trying to initiate the class without clientId', function () {
+  test('should throw an exception when trying to initiate the class without clientId', function (assert) {
     class Facebook extends OAuth2 {
       get baseUrl () {
         return 'https://graph.facebook.com/v2.1'
@@ -57,10 +56,10 @@ describe('OAuth2', function () {
     }
 
     const facebook = () => new Facebook()
-    assert.throw(facebook, 'InvalidArgumentException: E_MISSING_PARAMETER: Cannot initiate oauth2 instance without client id')
+    assert.throw(facebook, 'E_MISSING_PARAMETER: Missing parameter clientId expected by oauth2 as 1st parameter')
   })
 
-  it('should throw an exception when trying to initiate the class without clientSecret', function () {
+  test('should throw an exception when trying to initiate the class without clientSecret', function (assert) {
     class Facebook extends OAuth2 {
       get baseUrl () {
         return 'https://graph.facebook.com/v2.1'
@@ -76,10 +75,10 @@ describe('OAuth2', function () {
     }
 
     const facebook = () => new Facebook(clientId)
-    assert.throw(facebook, 'InvalidArgumentException: E_MISSING_PARAMETER: Cannot initiate oauth2 instance without client secret')
+    assert.throw(facebook, 'E_MISSING_PARAMETER: Missing parameter clientSecret expected by oauth2 as 2nd parameter')
   })
 
-  it('should not append / when the baseUrl ends with /', function () {
+  test('should not append / when the baseUrl ends with /', function (assert) {
     class Facebook extends OAuth2 {
       get baseUrl () {
         return 'https://graph.facebook.com/v2.1/'
@@ -100,7 +99,7 @@ describe('OAuth2', function () {
     assert.equal(facebookUrl, expectedUrl)
   })
 
-  it('should return the redirect url using the getUrl method', function () {
+  test('should return the redirect url using the getUrl method', function (assert) {
     class Facebook extends OAuth2 {
       get baseUrl () {
         return 'https://graph.facebook.com/v2.1'
@@ -121,7 +120,7 @@ describe('OAuth2', function () {
     assert.equal(facebookUrl, expectedUrl)
   })
 
-  it('should append the scopes to the redirect url when defined', function () {
+  test('should append the scopes to the redirect url when defined', function (assert) {
     class Facebook extends OAuth2 {
       get baseUrl () {
         return 'https://graph.facebook.com/v2.1'
@@ -142,7 +141,7 @@ describe('OAuth2', function () {
     assert.equal(facebookUrl, expectedUrl)
   })
 
-  it('should append the secret to the redirect url when defined', function () {
+  test('should append the secret to the redirect url when defined', function (assert) {
     class Facebook extends OAuth2 {
       get baseUrl () {
         return 'https://graph.facebook.com/v2.1'
@@ -163,7 +162,7 @@ describe('OAuth2', function () {
     assert.equal(facebookUrl, expectedUrl)
   })
 
-  it('should be able to parse standard oauth error', function () {
+  test('should be able to parse standard oauth error', function (assert) {
     class Facebook extends OAuth2 {
     }
     const facebook = new Facebook(clientId, clientSecret)
@@ -172,7 +171,7 @@ describe('OAuth2', function () {
     assert.equal(parsedError.message, 'E_OAUTH_TOKEN_EXCHANGE: foo')
   })
 
-  it('should return original error back as a message when error message does not have data property', function () {
+  test('should return original error back as a message when error message does not have data property', function (assert) {
     class Facebook extends OAuth2 {
     }
     const facebook = new Facebook(clientId, clientSecret)

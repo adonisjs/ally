@@ -9,81 +9,36 @@
  * file that was distributed with this source code.
 */
 
-const CE = require('./Exceptions')
+const AllyManager = require('./AllyManager')
+const Authenticator = require('./Authenticator')
 
+/**
+ * The authenticator instance for
+ * each request.
+ *
+ * @class Ally
+ * @constructor
+ */
 class Ally {
-
-  constructor (driverInstance, request, response) {
-    this._driverInstance = driverInstance
+  constructor (request, response) {
     this._request = request
     this._response = response
-    this._scope = [] // runtime scopes for a single request
-    this._fields = [] // runtime fields for a single request
   }
 
   /**
-   * Add runtime scope to be used for redirecting the user.
+   * Pull authenticator instance for a given request
+   * for the defined driver.
    *
-   * @param  {Array} scope
+   * @method driver
+   *
+   * @param  {String} name
    *
    * @return {Object}
    */
-  scope (scope) {
-    if (scope instanceof Array === false) {
-      throw CE.InvalidArgumentException.invalidParameter('Value for scope must be an array')
-    }
-
-    this._scope = scope
-    return this
+  driver (name) {
+    const driverInstance = AllyManager.driver(name)
+    return new Authenticator(driverInstance, this._request, this._response)
   }
-
-  /**
-   * Add runtime fields to be used for fetching the user profile
-   *
-   * @param  {Array} fields
-   *
-   * @return {Object}
-   */
-  fields (fields) {
-    if (fields instanceof Array === false) {
-      throw CE.InvalidArgumentException.invalidParameter('Value for fields must be an array')
-    }
-
-    this._fields = fields
-    return this
-  }
-
-  /**
-   * Returns the redirect uri using the driverInstance
-   *
-   * @return {String}
-   */
-  * getRedirectUrl () {
-    const url = yield this._driverInstance.getRedirectUrl(this._scope)
-    this._scope = []
-    return url
-  }
-
-  /**
-   * Redirects request to the provider website url
-   */
-  * redirect () {
-    const url = yield this.getRedirectUrl()
-    this._response.status(302).redirect(url)
-  }
-
-  /**
-   * Returns an instance AllyUser containing the user profile.
-   * A driver is responsible for normalizing the user fields.
-   *
-   * @return {Object}
-   */
-  * getUser () {
-    const user = yield this._driverInstance.getUser(this._request.get(), this._fields)
-    this._fields = []
-    return user
-  }
-
 }
 
 module.exports = Ally
