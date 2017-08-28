@@ -9,72 +9,60 @@
  * file that was distributed with this source code.
 */
 
-const Ioc = require('adonis-fold').Ioc
+const GE = require('@adonisjs/generic-exceptions')
+const { ioc } = require('@adonisjs/fold')
 const Drivers = require('./Drivers')
-const CE = require('./Exceptions')
-const Ally = require('./Ally')
-const extendedDrivers = {}
 
 /**
- * Makes a driver instance using the driver name. It will start by making one of the
- * native drivers and will fallback to the extended drivers (if any). Otherwise
- * the given callback will be executed indicating that driver is not found.
+ * Ally manager class is used to manage
+ * drivers and build their instances
+ * on the fly.
  *
- * @param   {String}   name
- * @param   {Object}   drivers
- * @param   {Object}   extendedDrivers
- * @param   {Function} callback - Executed when unable to find the driver implementation
- *
- * @return  {Object}
- *
- * @private
- */
-const _makeDriverInstance = function (name, drivers, extendedDrivers, callback) {
-  const driver = drivers[name] ? Ioc.make(drivers[name]) : extendedDrivers[name]
-  if (!driver) {
-    return callback()
-  }
-  return driver
-}
-
-/**
- * Ally Request Manager is instantiated on each request
- * to have access to the request and response object.
- * Which is required to get the input code or
- * redirect the user.
+ * @class AllyManager
+ * @constructor
  */
 class AllyManager {
-
-  constructor (request, response) {
-    this._request = request
-    this._response = response
+  constructor () {
+    this._drivers = {}
   }
 
   /**
-   * Ioc container specific method to add new drivers
-   * to ally.
+   * Add a new driver to the drivers list
    *
-   * @param  {String} key
-   * @param  {Object} value
+   * @method extend
+   *
+   * @param  {String} name
+   * @param  {Object} implementation
+   *
+   * @return {void}
    */
-  static extend (key, value) {
-    extendedDrivers[key] = value
+  extend (name, implementation) {
+    this._drivers[name] = implementation
   }
 
   /**
-   * Returns an instance of Ally with a preloaded driver
-   * instance.
+   * Makes and returns the driver instance
    *
-   * @param  {String} driver
+   * @method driver
+   *
+   * @param  {String} name
    *
    * @return {Object}
    */
-  driver (driver) {
-    const driverInstance = _makeDriverInstance(driver, Drivers, extendedDrivers, () => {
-      throw CE.RuntimeException.invalidDriver(driver)
-    })
-    return new Ally(driverInstance, this._request, this._response)
+  driver (name) {
+    if (!name) {
+      throw GE.InvalidArgumentException.invalidParameter('Cannot get driver instance without a name')
+    }
+
+    name = name.toLowerCase()
+    const Driver = Drivers[name] || this._drivers[name]
+
+    if (!Driver) {
+      throw GE.InvalidArgumentException.invalidParameter(`${name} is not a valid ally driver`)
+    }
+
+    return ioc.make(Driver)
   }
 }
 
-module.exports = AllyManager
+module.exports = new AllyManager()

@@ -10,16 +10,24 @@
 */
 
 const NodeOAuth2 = require('oauth').OAuth2
-const CE = require('../Exceptions')
-const CatLog = require('cat-log')
-const logger = new CatLog('adonis:ally')
+const GE = require('@adonisjs/generic-exceptions')
+const debug = require('debug')('adonis:ally')
 const _ = require('lodash')
+const CE = require('../Exceptions')
 
+/**
+ * Base OAuth2 scheme to be used for implementing
+ * drivers based upon OAuth2 protocol.
+ *
+ * @class OAuth2
+ * @constructor
+ */
 class OAuth2 {
-
   /**
    * The seperator to be used for joining the
    * scope values.
+   *
+   * @attribute scopeSeperator
    *
    * @return {String}
    */
@@ -31,6 +39,8 @@ class OAuth2 {
    * OAuth2 base url to be used for making all
    * API/Redirect request
    *
+   * @attribute baseUrl
+   *
    * @return {String}
    */
   get baseUrl () {
@@ -40,6 +50,8 @@ class OAuth2 {
   /**
    * Authorize url to be used for redirecting the
    * user.
+   *
+   * @attribute authorizeUrl
    *
    * @return {String} [description]
    */
@@ -53,6 +65,8 @@ class OAuth2 {
    * oauth server redirects the user back
    * to the consumer website
    *
+   * @attribute accessTokenUrl
+   *
    * @return {String}
    */
   get accessTokenUrl () {
@@ -65,26 +79,32 @@ class OAuth2 {
    * @throws {InvalidArgumentException} If clientId is not defined
    * @throws {InvalidArgumentException} If clientSecret is not defined
    */
-  constructor (clientId, clientSecret, headers) {
+  constructor (clientId, clientSecret, headers = null) {
+    /**
+     * Class must be extended and should not be
+     * used directly
+     */
     if (new.target === OAuth2) {
       throw CE.RuntimeException.cannotInstantiate('OAuth2')
     }
 
     if (!clientId) {
-      throw CE.InvalidArgumentException.missingParameter('Cannot initiate oauth2 instance without client id')
+      throw GE.InvalidArgumentException.missingParameter('oauth2', 'clientId', '1st')
     }
 
     if (!clientSecret) {
-      throw CE.InvalidArgumentException.missingParameter('Cannot initiate oauth2 instance without client secret')
+      throw GE.InvalidArgumentException.missingParameter('oauth2', 'clientSecret', '2nd')
     }
 
-    const baseUrl = this.baseUrl.endsWith('/') ? `${this.baseUrl}` : `${this.baseUrl}/`
-    this.client = new NodeOAuth2(clientId, clientSecret, baseUrl, this.authorizeUrl, this.accessTokenUrl, headers || null)
+    const baseUrl = `${this.baseUrl.replace(/\/$/, '')}/`
+    this.client = new NodeOAuth2(clientId, clientSecret, baseUrl, this.authorizeUrl, this.accessTokenUrl, headers)
   }
 
   /**
    * Parses provider error by fetching error message
    * from nested data property.
+   *
+   * @method parseProviderError
    *
    * @param  {Object} error
    *
@@ -100,6 +120,8 @@ class OAuth2 {
    * Parser error mentioned inside the result property
    * of the oauth response.
    *
+   * @method parseProviderResultError
+   *
    * @param  {Object} response
    *
    * @return {String}
@@ -112,8 +134,10 @@ class OAuth2 {
    * Returns a formatted url to be used for redirecting
    * users.
    *
+   * @method getUrl
+   *
    * @param  {String} redirectUri
-   * @param  {Array} scope
+   * @param  {Array}  scope
    * @param  {Object} [extras] - Extras to be sent along the redirect uri
    *
    * @return {String}
@@ -122,16 +146,19 @@ class OAuth2 {
    */
   getUrl (redirectUri, scope, extras) {
     if (!redirectUri) {
-      throw CE.InvalidArgumentException.missingParameter('Redirect uri is required to initiate oauth2 request')
+      throw GE.InvalidArgumentException.missingParameter('getUrl', 'redirectUri', '1st')
     }
     const scopeHash = _.size(scope) ? { scope: scope.join(this.scopeSeperator) } : null
     const options = _.merge({ redirect_uri: redirectUri }, scopeHash, extras)
-    logger.verbose('generating redirect uri using %j options', options)
+    debug('generating redirect uri using %j options', options)
     return this.client.getAuthorizeUrl(options)
   }
 
   /**
    * Returns access token for a given oauth code
+   *
+   * @method getAccessToken
+   * @async
    *
    * @param  {String} code
    * @param  {String} redirectUri
@@ -145,8 +172,8 @@ class OAuth2 {
     return new Promise((resolve, reject) => {
       const options = _.merge({redirect_uri: redirectUri}, extras)
       this.client.getOAuthAccessToken(code, options, (error, accessToken, refreshToken, result) => {
-        logger.verbose('oauth error %j', error)
-        logger.verbose('oauth response %j', result)
+        debug('oauth error %j', error)
+        debug('oauth response %j', result)
 
         /**
          * parse and return the error if there

@@ -1,69 +1,37 @@
 # Adonis Ally
 
-<p>
-  <a href="https://www.npmjs.com/package/adonis-ally"><img src="https://img.shields.io/npm/v/adonis-ally.svg?style=flat-square" alt="Version"></a>
-  <a href="https://travis-ci.org/adonisjs/adonis-ally"><img src="https://img.shields.io/travis/adonisjs/adonis-ally/master.svg?style=flat-square" alt="Build Status"></a>
-  <a href="https://www.npmjs.com/package/adonis-ally"><img src="https://img.shields.io/npm/dt/adonis-ally.svg?style=flat-square" alt="Downloads"></a>
-  <a href="https://opensource.org/licenses/MIT"><img src="https://img.shields.io/npm/l/adonis-ally.svg?style=flat-square" alt="License"></a>
-</p>
+[![NPM Version][npm-image]][npm-url]
+[![Build Status][travis-image]][travis-url]
+[![Appveyor][appveyor-image]][appveyor-url]
+[![Coveralls][coveralls-image]][coveralls-url]
 
-<p>
-  <a href="https://gitter.im/adonisjs/adonis-framework"><img src="https://img.shields.io/badge/gitter-join%20us-1DCE73.svg?style=flat-square" alt="Gitter"></a>
-  <a href="https://trello.com/b/yzpqCgdl/adonis-for-humans"><img src="https://img.shields.io/badge/trello-roadmap-89609E.svg?style=flat-square" alt="Trello"></a>
-  <a href="https://www.patreon.com/adonisframework"><img src="https://img.shields.io/badge/patreon-support%20AdonisJs-brightgreen.svg?style=flat-square" alt="Support AdonisJs"></a>
-</p>
-
-<br>
+<img src="http://res.cloudinary.com/adonisjs/image/upload/q_100/v1497112678/adonis-purple_pzkmzt.svg" width="200px" align="right" hspace="30px" vspace="50px">
 
 Adonis Ally is a 1st party authentication provider for AdonisJs apps. It gives you the functionality to authenticate users using social websites like **Facebook**, **Twitter**, **Google**, **Github** etc :evergreen_tree:
 
-<br>
-<hr>
-<br>
-
-## Table of Contents
-
-* [Setup](#setup)
-* [Available Drivers](#available-drivers)
-* [Config](#config)
-* [Getting Started](#getting-started)
-* [Contribution Guidelines](#contribution-guidelines)
-
-<br>
-## <a name="setup"></a>Setup
+## <a name="setup"></a> Setup
 
 The setup process is simple like any other provider for AdonisJs.
 
 #### Install Via Npm
 ```bash
-npm i --save adonis-ally
+adonis install @adonisjs/ally
 ```
 
 #### Register The Provider
 
-The provider needs to be registered inside `bootstrap/app.js` file.
+The provider needs to be registered inside `start/app.js` file.
 
 ```javascript
 const providers = [
-  'adonis-ally/providers/AllyProvider'
-]
-```
-
-#### Register The Middleware
-A global needs to be added in order to make use of ally. The attaches a key called `ally` to the `request` object.
-
-**app/Http/kernel.js**
-
-```javascript
-const globalMiddleware = [
-  'Adonis/Middleware/Ally'
+  '@adonisjs/ally/providers/AllyProvider'
 ]
 ```
 
 BOOM! Now you are good to make use of the ally provider and authenticate your users via available drivers.
 
 <br>
-## <a name="available-drivers"></a>Available Drivers
+## <a name="available-drivers"></a> Available Drivers
 Below is the list of available drivers and you are free to add more.
 
 1. Facebook
@@ -71,9 +39,11 @@ Below is the list of available drivers and you are free to add more.
 3. Google
 4. LinkedIn
 5. Twitter
+6. Instagram
+7. Foursquare
 
 <br>
-## <a name="config"></a>Config
+## <a name="config"></a> Config
 
 Configuration is defined inside a file called `config/services.js` under `ally` object.
 
@@ -90,7 +60,7 @@ ally: {
 ```
 
 <br>
-## <a name="getting-started"></a>Getting Started
+## <a name="getting-started"></a> Getting Started
 
 Below is the list of methods you can make use of to redirect the user and fetch their profile details.
 
@@ -99,7 +69,7 @@ Below is the list of methods you can make use of to redirect the user and fetch 
 Get the redirect url for the 3rd party website.
 
 ```javascript
-const url = yield request.ally.driver('facebook').getRedirectUrl()
+const url = await ally.driver('facebook').getRedirectUrl()
 ```
 
 #### redirect
@@ -107,7 +77,7 @@ const url = yield request.ally.driver('facebook').getRedirectUrl()
 Redirect to the 3rd party website.
 
 ```javascript
-yield request.ally.driver('facebook').redirect()
+await ally.driver('facebook').redirect()
 ```
 
 #### getUser
@@ -115,7 +85,7 @@ yield request.ally.driver('facebook').redirect()
 Get the user details on the redirect URL.
 
 ```javascript
-const user = yield request.ally.driver('facebook').getUser()
+const user = await ally.driver('facebook').getUser()
 ```
 
 The `user` is an instance of `AllyUser` which has following methods to access the user details.
@@ -142,8 +112,46 @@ user.getOriginal() // get the original response object from 3rd party website
 :point_right: [Read the Official Documentation](http://adonisjs.com/docs/social-auth)
 
 <br>
-## <a name="contribution-guidelines"></a>Contribution Guidelines
 
-In favor of active development we accept contributions from everyone. You can contribute by submitting a bug, creating pull requests or even improving documentation.
+## Moving Forward
+Checkout the [official documentation](http://adonisjs.com/docs/ioc-container) at the AdonisJs website for more info.
 
-You can find a complete guide to be followed strictly before submitting your pull requests in the [Official Documentation](http://adonisjs.com/docs/contributing).
+## Tests
+Tests are written using [japa](http://github.com/thetutlage/japa). Run the following commands to run tests.
+
+```bash
+npm run test:local
+
+# report coverage
+npm run test
+
+# on windows
+npm run test:win
+```
+
+## Release History
+
+Checkout [CHANGELOG.md](CHANGELOG.md) file for release history.
+
+## Meta
+
+AdonisJs – [@adonisframework](https://twitter.com/adonisframework) – virk@adonisjs.com
+
+Checkout [LICENSE.txt](LICENSE.txt) for license information
+
+Harminder Virk (Aman) - [https://github.com/thetutlage](https://github.com/thetutlage)
+
+
+[appveyor-image]: https://img.shields.io/appveyor/ci/thetutlage/adonis-ally/master.svg?style=flat-square
+
+[appveyor-url]: https://ci.appveyor.com/project/thetutlage/adonis-ally
+
+[npm-image]: https://img.shields.io/npm/v/@adonisjs/ally.svg?style=flat-square
+[npm-url]: https://npmjs.org/package/@adonisjs/ally
+
+[travis-image]: https://img.shields.io/travis/adonisjs/adonis-ally/master.svg?style=flat-square
+[travis-url]: https://travis-ci.org/poppinss/adonis-ally
+
+[coveralls-image]: https://img.shields.io/coveralls/adonisjs/adonis-ally/develop.svg?style=flat-square
+
+[coveralls-url]: https://coveralls.io/github/adonisjs/adonis-ally

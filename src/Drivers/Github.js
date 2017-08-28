@@ -9,21 +9,27 @@
  * file that was distributed with this source code.
 */
 
+const got = require('got')
+
 const CE = require('../Exceptions')
 const OAuth2Scheme = require('../Schemes/OAuth2')
 const AllyUser = require('../AllyUser')
-const got = require('got')
 const utils = require('../../lib/utils')
-const _ = utils.mixLodash(require('lodash'))
+const _ = require('lodash')
 
+/**
+ * Github driver to authenticate users via OAuth2
+ * scheme.
+ *
+ * @class Github
+ * @constructor
+ */
 class Github extends OAuth2Scheme {
-
   constructor (Config) {
     const config = Config.get('services.ally.github')
 
-    if (!_.hasAll(config, ['clientId', 'clientSecret', 'redirectUri'])) {
-      throw CE.OAuthException.missingConfig('github')
-    }
+    utils.validateDriverConfig('github', config)
+    utils.debug('github', config)
 
     super(config.clientId, config.clientSecret, config.headers)
 
@@ -39,6 +45,8 @@ class Github extends OAuth2Scheme {
   /**
    * Injections to be made by the IoC container
    *
+   * @attribute inject
+   *
    * @return {Array}
    */
   static get inject () {
@@ -48,6 +56,8 @@ class Github extends OAuth2Scheme {
   /**
    * Scope seperator for seperating multiple
    * scopes.
+   *
+   * @attribute scopeSeperator
    *
    * @return {String}
    */
@@ -59,6 +69,8 @@ class Github extends OAuth2Scheme {
    * Base url to be used for constructing
    * facebook oauth urls.
    *
+   * @attribute baseUrl
+   *
    * @return {String}
    */
   get baseUrl () {
@@ -68,6 +80,8 @@ class Github extends OAuth2Scheme {
   /**
    * Relative url to be used for redirecting
    * user.
+   *
+   * @attribute authorizeUrl
    *
    * @return {String} [description]
    */
@@ -79,6 +93,8 @@ class Github extends OAuth2Scheme {
    * Relative url to be used for exchanging
    * access token.
    *
+   * @attribute accessTokenUrl
+   *
    * @return {String}
    */
   get accessTokenUrl () {
@@ -88,7 +104,9 @@ class Github extends OAuth2Scheme {
   /**
    * Returns initial scopes to be used right from the
    * config file. Otherwise it will fallback to the
-   * commonly used scopes
+   * commonly used scopes.
+   *
+   * @method _getInitialScopes
    *
    * @param   {Array} scopes
    *
@@ -102,7 +120,10 @@ class Github extends OAuth2Scheme {
 
   /**
    * Returns the user profile as an object using the
-   * access token
+   * access token.
+   *
+   * @method _getUserProfile
+   * @async
    *
    * @param   {String} accessToken
    *
@@ -110,9 +131,10 @@ class Github extends OAuth2Scheme {
    *
    * @private
    */
-  * _getUserProfile (accessToken) {
+  async _getUserProfile (accessToken) {
     const profileUrl = 'https://api.github.com/user'
-    const response = yield got(profileUrl, {
+
+    const response = await got(profileUrl, {
       headers: {
         'Accept': 'application/vnd.github.v3+json',
         'Authorization': `token ${accessToken}`
@@ -125,7 +147,7 @@ class Github extends OAuth2Scheme {
      * only when the scopes includes user or user:email
      */
     if (_.size(_.intersection(this._scope, ['user', 'user:email']))) {
-      response.body.email = yield this._getUserEmail(accessToken)
+      response.body.email = await this._getUserEmail(accessToken)
     }
 
     return response.body
@@ -134,33 +156,37 @@ class Github extends OAuth2Scheme {
   /**
    * Returns user primary and verified email address.
    *
+   * @method _getUserEmail
+   * @async
+   *
    * @param   {String} accessToken
    *
    * @return  {String}
    *
    * @private
    */
-  * _getUserEmail (accessToken) {
-    const response = yield got('https://api.github.com/user/emails', {
+  async _getUserEmail (accessToken) {
+    const response = await got('https://api.github.com/user/emails', {
       headers: {
         'Accept': 'application/vnd.github.v3+json',
         'Authorization': `token ${accessToken}`
       },
       json: true
     })
-    return _.find(response.body, (email) => {
-      return (email.primary && email.verified)
-    }).email
+    return _.find(response.body, (email) => (email.primary && email.verified)).email
   }
 
   /**
    * Returns the redirect url for a given provider
    *
+   * @method getRedirectUrl
+   * @async
+   *
    * @param  {Array} scope
    *
    * @return {String}
    */
-  * getRedirectUrl (scope) {
+  async getRedirectUrl (scope) {
     scope = _.size(scope) ? scope : this._scope
     return this.getUrl(this._redirectUri, scope, this._redirectUriOptions)
   }
@@ -168,6 +194,8 @@ class Github extends OAuth2Scheme {
   /**
    * Parser error mentioned inside the result property
    * of the oauth response.
+   *
+   * @method parseProviderResultError
    *
    * @param  {Object} response
    *
@@ -182,6 +210,8 @@ class Github extends OAuth2Scheme {
    * Parses the redirect errors returned by github
    * and returns the error message.
    *
+   * @method parseRedirectError
+   *
    * @param  {Object} queryParams
    *
    * @return {String}
@@ -194,13 +224,16 @@ class Github extends OAuth2Scheme {
 
   /**
    * Returns the user profile with it's access token, refresh token
-   * and token expiry
+   * and token expiry.
+   *
+   * @method getUser
+   * @async
    *
    * @param {Object} queryParams
    *
    * @return {Object}
    */
-  * getUser (queryParams) {
+  async getUser (queryParams) {
     const code = queryParams.code
 
     /**
@@ -212,17 +245,20 @@ class Github extends OAuth2Scheme {
       throw CE.OAuthException.tokenExchangeException(errorMessage, null, errorMessage)
     }
 
-    const accessTokenResponse = yield this.getAccessToken(code, this._redirectUri, {
+    const accessTokenResponse = await this.getAccessToken(code, this._redirectUri, {
       grant_type: 'authorization_code'
     })
-    const userProfile = yield this._getUserProfile(accessTokenResponse.accessToken)
+
+    const userProfile = await this._getUserProfile(accessTokenResponse.accessToken)
+
     const user = new AllyUser()
+
     user
       .setOriginal(userProfile)
       .setFields(
         userProfile.id,
         userProfile.name,
-        _.get(userProfile, 'emails.0.value'),
+        userProfile.email,
         userProfile.login,
         userProfile.avatar_url
       )

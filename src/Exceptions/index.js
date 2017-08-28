@@ -9,48 +9,9 @@
  * file that was distributed with this source code.
 */
 
-const NE = require('node-exceptions')
+const GE = require('@adonisjs/generic-exceptions')
 
-class InvalidArgumentException extends NE.InvalidArgumentException {
-
-  /**
-   * Default error code to be used when user does not
-   * specify error code for an error.
-   *
-   * @return {Number}
-   */
-  static get defaultErrorCode () {
-    return 500
-  }
-
-  /**
-   * This exception is raised when a parameter is missing
-   *
-   * @param  {String} message
-   * @param  {Number} [code]
-   *
-   * @return {Object}
-   */
-  static missingParameter (message, code) {
-    return new this(message, code || this.defaultErrorCode, 'E_MISSING_PARAMETER')
-  }
-
-  /**
-   * This exception is raised when a parameter valid is incorrect
-   *
-   * @param  {String} message
-   * @param  {Number} [code]
-   *
-   * @return {Object}
-   */
-  static invalidParameter (message, code) {
-    return new this(message, code || this.defaultErrorCode, 'E_INVALID_PARAMETER')
-  }
-
-}
-
-class OAuthException extends NE.LogicalException {
-
+class OAuthException extends GE.LogicalException {
   /**
    * Default error code to be used when user does not
    * specify error code for an error.
@@ -76,24 +37,9 @@ class OAuthException extends NE.LogicalException {
     error.original = original
     return error
   }
-
-  /**
-   * This exception is raised when the configuration for
-   * the provider has not been defined.
-   *
-   * @param  {String} provider
-   * @param  {Number} [code=500]
-   *
-   * @return {Object}
-   */
-  static missingConfig (provider, code) {
-    return new this(`Make sure to define ${provider} configuration inside config/services.js file`, code || this.defaultErrorCode, 'E_MISSING_OAUTH_CONFIG')
-  }
-
 }
 
-class RuntimeException extends NE.RuntimeException {
-
+class RuntimeException extends GE.RuntimeException {
   /**
    * Default error code to be used when user does not
    * specify error code for an error.
@@ -116,20 +62,6 @@ class RuntimeException extends NE.RuntimeException {
   static cannotInstantiate (className, code) {
     return new this(`${className} class cannot be instantiated directly and must be extended`, code || this.defaultErrorCode, 'E_CANNOT_INSTANTIATE')
   }
-
-  /**
-   * This exception is raised when unable to find the
-   * mentioned driver
-   *
-   * @param  {String} driver
-   * @param  {Number} [code=500]
-   *
-   * @return {Object}
-   */
-  static invalidDriver (driver, code) {
-    return new this(`Cannot find ally driver ${driver}`, code || this.defaultErrorCode, 'E_INVALID_ALLY_DRIVER')
-  }
-
 }
 
-module.exports = { InvalidArgumentException, OAuthException, RuntimeException }
+module.exports = { OAuthException, RuntimeException }
