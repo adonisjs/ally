@@ -418,7 +418,7 @@ test.group('Oauth Drivers | Foursquare', function () {
     test('should generate the redirect_uri with correct signature', async function (assert) {
       const bitbucket = new Bitbucket(config)
       const redirectUrl = qs.escape(config.get().redirectUri)
-      const providerUrl = `https://bitbucket.org/site/oauth2/authorize?redirect_uri=${redirectUrl}&response_type=code&client_id=${config.get().clientId}`
+      const providerUrl = `https://bitbucket.org/site/oauth2/authorize?redirect_uri=${redirectUrl}&scope=${encodeURIComponent('account email')}&response_type=code&client_id=${config.get().clientId}`
       const redirectToUrl = await bitbucket.getRedirectUrl()
       assert.equal(redirectToUrl, providerUrl)
     })
