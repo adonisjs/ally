@@ -103,7 +103,7 @@ class Foursquare extends OAuth2Scheme {
    * @private
    */
   async _getUserProfile (accessToken) {
-		const profileUrl = `https://api.foursquare.com/v2/users/self?oauth_token=${accessToken}&m=foursquare&v=${this._version}`
+    const profileUrl = `https://api.foursquare.com/v2/users/self?oauth_token=${accessToken}&m=foursquare&v=${this._version}`
 
     const response = await got(profileUrl, {
       headers: {

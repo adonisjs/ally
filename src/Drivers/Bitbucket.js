@@ -11,22 +11,20 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
+const got = require('got')
 
 const CE = require('../Exceptions')
 const OAuth2Scheme = require('../Schemes/OAuth2')
 const AllyUser = require('../AllyUser')
-const got = require('got')
 const utils = require('../../lib/utils')
-const _ = utils.mixLodash(require('lodash'))
+const _ = require('lodash')
 
 class Bitbucket extends OAuth2Scheme {
-
   constructor (Config) {
     const config = Config.get('services.ally.bitbucket')
 
-    if (!_.hasAll(config, ['clientId', 'clientSecret', 'redirectUri'])) {
-      throw CE.OAuthException.missingConfig('bitbucket')
-    }
+    utils.validateDriverConfig('bitbucket', config)
+    utils.debug('bitbucket', config)
 
     super(config.clientId, config.clientSecret, config.headers)
 
@@ -42,6 +40,8 @@ class Bitbucket extends OAuth2Scheme {
   /**
    * Injections to be made by the IoC container
    *
+   * @attribute inject
+   *
    * @return {Array}
    */
   static get inject () {
@@ -52,7 +52,9 @@ class Bitbucket extends OAuth2Scheme {
    * Scope seperator for seperating multiple
    * scopes.
    *
-   * @return {String}
+   *  @attribute scopeSeperator
+   *
+   *  @return {String}
    */
   get scopeSeperator () {
     return ' '
@@ -61,6 +63,8 @@ class Bitbucket extends OAuth2Scheme {
   /**
    * Base url to be used for constructing
    * bitbucket oauth urls.
+   *
+   * @attribute baseUrl
    *
    * @return {String}
    */
@@ -72,6 +76,8 @@ class Bitbucket extends OAuth2Scheme {
    * Relative url to be used for redirecting
    * user.
    *
+   * @attribute authorizeUrl
+   *
    * @return {String} [description]
    */
   get authorizeUrl () {
@@ -82,6 +88,8 @@ class Bitbucket extends OAuth2Scheme {
    * Relative url to be used for exchanging
    * access token.
    *
+   * @attribute accessTokenUrl
+   *
    * @return {String}
    */
   get accessTokenUrl () {
@@ -91,7 +99,9 @@ class Bitbucket extends OAuth2Scheme {
   /**
    * Returns initial scopes to be used right from the
    * config file. Otherwise it will fallback to the
-   * commonly used scopes
+   * commonly used scopes.
+   *
+   * @method _getInitialScopes
    *
    * @param   {Array} scopes
    *
@@ -105,7 +115,10 @@ class Bitbucket extends OAuth2Scheme {
 
   /**
    * Returns the user profile as an object using the
-   * access token
+   * access token.
+   *
+   * @method _getUserProfile
+   * @async
    *
    * @param   {String} accessToken
    *
@@ -113,14 +126,15 @@ class Bitbucket extends OAuth2Scheme {
    *
    * @private
    */
-  * _getUserProfile (accessToken) {
+  async _getUserProfile (accessToken) {
     const profileUrl = `${this.baseUrl}api/2.0/user?access_token=${accessToken}`
-    const response = yield got(profileUrl, {
+    const response = await got(profileUrl, {
       headers: {
         'Accept': 'application/json'
       },
       json: true
     })
+
     return response.body
   }
 
@@ -134,32 +148,38 @@ class Bitbucket extends OAuth2Scheme {
    *
    * @private
   */
-  * _getUserEmail (accessToken) {
+  async _getUserEmail (accessToken) {
     const profileUrl = `${this.baseUrl}api/2.0/user/emails?access_token=${accessToken}`
-    const response = yield got(profileUrl, {
+    const response = await got(profileUrl, {
       headers: {
         'Accept': 'application/json'
       },
       json: true
     })
+
     return response.body
   }
 
   /**
    * Returns the redirect url for a given provider.
    *
+   * @method getRedirectUrl
+   * @async
+   *
    * @param  {Array} scope
    *
    * @return {String}
    */
-  * getRedirectUrl (scope) {
+  async getRedirectUrl (scope) {
     scope = _.size(scope) ? scope : this._scope
     return this.getUrl(this._redirectUri, scope, this._redirectUriOptions)
   }
 
   /**
-   * Parses the redirect errors returned by bitbucket
+   * Parses the redirect errors returned by Bit-Bucket
    * and returns the error message.
+   *
+   * @method parseRedirectError
    *
    * @param  {Object} queryParams
    *
@@ -173,11 +193,13 @@ class Bitbucket extends OAuth2Scheme {
    * Returns the user profile with it's access token, refresh token
    * and token expiry
    *
+   * @method getUser
+   *
    * @param {Object} queryParams
    *
    * @return {Object}
    */
-  * getUser (queryParams) {
+  async getUser (queryParams) {
     const code = queryParams.code
 
     /**
@@ -189,11 +211,11 @@ class Bitbucket extends OAuth2Scheme {
       throw CE.OAuthException.tokenExchangeException(errorMessage, null, errorMessage)
     }
 
-    const accessTokenResponse = yield this.getAccessToken(code, this._redirectUri, {
+    const accessTokenResponse = await this.getAccessToken(code, this._redirectUri, {
       grant_type: 'authorization_code'
     })
-    const userProfile = yield this._getUserProfile(accessTokenResponse.accessToken)
-    const userEmail = yield this._getUserEmail(accessTokenResponse.accessToken)
+    const userProfile = await this._getUserProfile(accessTokenResponse.accessToken)
+    const userEmail = await this._getUserEmail(accessTokenResponse.accessToken)
     userProfile.emails = []
     userEmail.values.forEach(function (email) {
       userProfile.emails.push({ value: email.email, primary: email.is_primary, verified: email.is_confirmed })
