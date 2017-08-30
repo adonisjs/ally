@@ -1,3 +1,6 @@
+/**
+ * Created by Raphson on 1/4/17.
+ */
 'use strict'
 
 /*
@@ -8,7 +11,6 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
-
 const got = require('got')
 
 const CE = require('../Exceptions')
@@ -17,30 +19,22 @@ const AllyUser = require('../AllyUser')
 const utils = require('../../lib/utils')
 const _ = require('lodash')
 
-/**
- * Foursquare driver to authenticate users using Oauth2
- * scheme.
- *
- * @class Foursquare
- * @constructor
- */
-class Foursquare extends OAuth2Scheme {
+class Bitbucket extends OAuth2Scheme {
   constructor (Config) {
-    const config = Config.get('services.ally.foursquare')
+    const config = Config.get('services.ally.bitbucket')
 
-    utils.validateDriverConfig('foursquare', config)
-    utils.debug('foursquare', config)
+    utils.validateDriverConfig('bitbucket', config)
+    utils.debug('bitbucket', config)
 
     super(config.clientId, config.clientSecret, config.headers)
 
-    /**
-     * Oauth specific values to be used when creating the redirect
-     * url or fetching user profile.
-     */
+      /**
+       * Oauth specific values to be used when creating the redirect
+       * url or fetching user profile.
+       */
+    this._scope = this._getInitialScopes(config.scope)
     this._redirectUri = config.redirectUri
-
-    this._version = config.version || 20140806
-    this._redirectUriOptions = Object.assign({response_type: 'code'}, config.options)
+    this._redirectUriOptions = _.merge({response_type: 'code'}, config.options)
   }
 
   /**
@@ -55,15 +49,27 @@ class Foursquare extends OAuth2Scheme {
   }
 
   /**
+   * Scope seperator for seperating multiple
+   * scopes.
+   *
+   *  @attribute scopeSeperator
+   *
+   *  @return {String}
+   */
+  get scopeSeperator () {
+    return ' '
+  }
+
+  /**
    * Base url to be used for constructing
-   * facebook oauth urls.
+   * bitbucket oauth urls.
    *
    * @attribute baseUrl
    *
    * @return {String}
    */
   get baseUrl () {
-    return 'https://foursquare.com/'
+    return 'https://bitbucket.org/'
   }
 
   /**
@@ -75,7 +81,7 @@ class Foursquare extends OAuth2Scheme {
    * @return {String} [description]
    */
   get authorizeUrl () {
-    return 'oauth2/authenticate'
+    return 'site/oauth2/authorize'
   }
 
   /**
@@ -87,14 +93,32 @@ class Foursquare extends OAuth2Scheme {
    * @return {String}
    */
   get accessTokenUrl () {
-    return 'oauth2/access_token'
+    return 'site/oauth2/access_token'
+  }
+
+  /**
+   * Returns initial scopes to be used right from the
+   * config file. Otherwise it will fallback to the
+   * commonly used scopes.
+   *
+   * @method _getInitialScopes
+   *
+   * @param   {Array} scopes
+   *
+   * @return  {Array}
+   *
+   * @private
+   */
+  _getInitialScopes (scopes) {
+    return _.size(scopes) ? scopes : ['account', 'email']
   }
 
   /**
    * Returns the user profile as an object using the
-   * access token
+   * access token.
    *
    * @method _getUserProfile
+   * @async
    *
    * @param   {String} accessToken
    *
@@ -103,8 +127,29 @@ class Foursquare extends OAuth2Scheme {
    * @private
    */
   async _getUserProfile (accessToken) {
-    const profileUrl = `https://api.foursquare.com/v2/users/self?oauth_token=${accessToken}&m=foursquare&v=${this._version}`
+    const profileUrl = `${this.baseUrl}api/2.0/user?access_token=${accessToken}`
+    const response = await got(profileUrl, {
+      headers: {
+        'Accept': 'application/json'
+      },
+      json: true
+    })
 
+    return response.body
+  }
+
+  /**
+   * Returns the user emails as an object using the
+   * access token
+   *
+   * @param   {String} accessToken
+   *
+   * @return  {Object}
+   *
+   * @private
+  */
+  async _getUserEmail (accessToken) {
+    const profileUrl = `${this.baseUrl}api/2.0/user/emails?access_token=${accessToken}`
     const response = await got(profileUrl, {
       headers: {
         'Accept': 'application/json'
@@ -121,14 +166,17 @@ class Foursquare extends OAuth2Scheme {
    * @method getRedirectUrl
    * @async
    *
+   * @param  {Array} scope
+   *
    * @return {String}
    */
-  async getRedirectUrl () {
-    return this.getUrl(this._redirectUri, null, this._redirectUriOptions)
+  async getRedirectUrl (scope) {
+    scope = _.size(scope) ? scope : this._scope
+    return this.getUrl(this._redirectUri, scope, this._redirectUriOptions)
   }
 
   /**
-   * Parses the redirect errors returned by facebook
+   * Parses the redirect errors returned by Bit-Bucket
    * and returns the error message.
    *
    * @method parseRedirectError
@@ -138,7 +186,7 @@ class Foursquare extends OAuth2Scheme {
    * @return {String}
    */
   parseRedirectError (queryParams) {
-    return queryParams.error || 'Oauth failed during redirect'
+    return queryParams.error_description || queryParams.error || 'Oauth failed during redirect'
   }
 
   /**
@@ -146,7 +194,6 @@ class Foursquare extends OAuth2Scheme {
    * and token expiry
    *
    * @method getUser
-   * @async
    *
    * @param {Object} queryParams
    *
@@ -159,7 +206,6 @@ class Foursquare extends OAuth2Scheme {
      * Throw an exception when query string does not have
      * code.
      */
-
     if (!code) {
       const errorMessage = this.parseRedirectError(queryParams)
       throw CE.OAuthException.tokenExchangeException(errorMessage, null, errorMessage)
@@ -168,31 +214,19 @@ class Foursquare extends OAuth2Scheme {
     const accessTokenResponse = await this.getAccessToken(code, this._redirectUri, {
       grant_type: 'authorization_code'
     })
-
     const userProfile = await this._getUserProfile(accessTokenResponse.accessToken)
-
-    const avatarUrl = `${userProfile.response.user.photo.prefix}original${userProfile.response.user.photo.suffix}`
-
+    const userEmail = await this._getUserEmail(accessTokenResponse.accessToken)
+    userProfile.emails = []
+    userEmail.values.forEach(function (email) {
+      userProfile.emails.push({ value: email.email, primary: email.is_primary, verified: email.is_confirmed })
+    })
     const user = new AllyUser()
-
-    user
-      .setOriginal(userProfile)
-      .setFields(
-        userProfile.response.user.id,
-        `${userProfile.response.user.firstName} ${userProfile.response.user.lastName}`,
-        userProfile.response.user.contact.email || null,
-        '',
-        avatarUrl
-      )
-      .setToken(
-        accessTokenResponse.accessToken,
-        accessTokenResponse.refreshToken,
-        null,
-        Number(_.get(accessTokenResponse, 'result.expires'))
-      )
+    user.setOriginal(userProfile)
+      .setFields(userProfile.uuid, userProfile.display_name, userProfile.emails[0].value, userProfile.username, userProfile.links.avatar.href)
+      .setToken(accessTokenResponse.accessToken, accessTokenResponse.refreshToken, null, Number(_.get(accessTokenResponse, 'result.expires_in')))
 
     return user
   }
 }
 
-module.exports = Foursquare
+module.exports = Bitbucket

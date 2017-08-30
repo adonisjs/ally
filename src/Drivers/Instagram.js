@@ -159,7 +159,7 @@ class Instagram extends OAuth2Scheme {
   }
 
   /**
-   * Parses the redirect errors returned by facebook
+   * Parses the redirect errors returned by Instagram
    * and returns the error message.
    *
    * @method parseRedirectError
@@ -197,7 +197,6 @@ class Instagram extends OAuth2Scheme {
     const accessTokenResponse = await this.getAccessToken(code, this._redirectUri, {
       grant_type: 'authorization_code'
     })
-
     const userProfile = await this._getUserProfile(accessTokenResponse.accessToken)
 
     const user = new AllyUser()

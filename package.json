@@ -36,7 +36,9 @@
     "standard": "^10.0.3"
   },
   "standard": {
-    "global": ["use"]
+    "global": [
+      "use"
+    ]
   },
   "config": {
     "commitizen": {
