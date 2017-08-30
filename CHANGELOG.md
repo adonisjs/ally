@@ -1,3 +1,13 @@
+<a name="2.0.1"></a>
+## [2.0.1](https://github.com/adonisjs/adonis-ally/compare/v2.0.0...v2.0.1) (2017-08-30)
+
+
+### Bug Fixes
+
+* **provider:** bind manager to ioc.manager ([adedb80](https://github.com/adonisjs/adonis-ally/commit/adedb80))
+
+
+
 <a name="2.0.0"></a>
 # [2.0.0](https://github.com/adonisjs/adonis-ally/compare/v1.1.2...v2.0.0) (2017-08-27)
 
