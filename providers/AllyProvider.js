@@ -33,7 +33,7 @@ class AllyProvider extends ServiceProvider {
    * @return {void}
    */
   _registerManager () {
-    this.app.manager('Adonis/Addons/Ally', () => require('../src/AllyManager'))
+    this.app.manager('Adonis/Addons/Ally', require('../src/AllyManager'))
   }
 
   /**
