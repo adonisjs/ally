@@ -27,7 +27,7 @@
   "license": "MIT",
   "devDependencies": {
     "@adonisjs/fold": "^4.0.2",
-    "coveralls": "^2.13.1",
+    "coveralls": "^3.0.0",
     "cz-conventional-changelog": "^2.0.0",
     "japa": "^1.0.4",
     "japa-cli": "^1.0.1",
