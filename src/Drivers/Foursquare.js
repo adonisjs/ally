@@ -38,6 +38,7 @@ class Foursquare extends OAuth2Scheme {
      * url or fetching user profile.
      */
     this._redirectUri = config.redirectUri
+    this._version = config.version || 20140806
     this._redirectUriOptions = Object.assign({response_type: 'code'}, config.options)
   }
 
@@ -89,22 +90,6 @@ class Foursquare extends OAuth2Scheme {
   }
 
   /**
-   * Pads the date with a leading zero when date
-   * is less than 10
-   *
-   * @method _padDate
-   *
-   * @param  {Number} currentDate
-   *
-   * @return {String}
-   *
-   * @private
-   */
-  _padDate (currentDate) {
-    return currentDate < 10 ? `0${currentDate}` : currentDate
-  }
-
-  /**
    * Returns the user profile as an object using the
    * access token
    *
@@ -117,10 +102,7 @@ class Foursquare extends OAuth2Scheme {
    * @private
    */
   async _getUserProfile (accessToken) {
-    const date = new Date()
-    const formattedDate = `${date.getFullYear()}${this._padDate(date.getMonth() + 1)}${this._padDate(date.getDate())}`
-
-    const profileUrl = `https://api.foursquare.com/v2/users/self?oauth_token=${accessToken}&m=foursquare&v=${formattedDate}`
+    const profileUrl = `https://api.foursquare.com/v2/users/self?oauth_token=${accessToken}&m=foursquare&v=${this._version}`
 
     const response = await got(profileUrl, {
       headers: {
