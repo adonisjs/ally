@@ -88,6 +88,13 @@ Get the user details on the redirect URL.
 const user = await ally.driver('facebook').getUser()
 ```
 
+Get the user details from existing social access_token.
+
+```javascript
+const accessToken = request.input('accessToken')
+const user = await ally.driver('facebook').getUser(accessToken)
+```
+
 The `user` is an instance of `AllyUser` which has following methods to access the user details.
 
 ```javascript

@@ -183,20 +183,26 @@ class Instagram extends OAuth2Scheme {
    * @return {Object}
    */
   async getUser (queryParams) {
-    const code = queryParams.code
+    const { code, accessToken } = queryParams
 
     /**
      * Throw an exception when query string does not have
-     * code.
+     * code or does not have accessToken.
      */
-    if (!code) {
+    if (!code && !accessToken) {
       const errorMessage = this.parseRedirectError(queryParams)
       throw CE.OAuthException.tokenExchangeException(errorMessage, null, errorMessage)
     }
 
-    const accessTokenResponse = await this.getAccessToken(code, this._redirectUri, {
-      grant_type: 'authorization_code'
-    })
+    let accessTokenResponse = null
+
+    if (code) {
+      accessTokenResponse = await this.getAccessToken(code, this._redirectUri, {
+        grant_type: 'authorization_code'
+      })
+    } else {
+      accessTokenResponse = queryParams
+    }
     const userProfile = await this._getUserProfile(accessTokenResponse.accessToken)
 
     const user = new AllyUser()

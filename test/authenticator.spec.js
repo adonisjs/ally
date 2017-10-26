@@ -86,4 +86,20 @@ test.group('Authenticator', function () {
     await ally.scope(['user']).getRedirectUrl()
     assert.deepEqual(ally._scope, [])
   })
+
+  test('should pass the accessToken to the driver instance getUser method when invoked', async function (assert) {
+    class DummyDriver {
+      constructor () {
+        this.queryParams = []
+      }
+
+      async getUser (queryParams) {
+        this.queryParams = queryParams
+      }
+    }
+    const dummyDriver = new DummyDriver()
+    const ally = new Authenticator(dummyDriver, {}, {})
+    await ally.getUser('foo')
+    assert.deepEqual(dummyDriver.queryParams.accessToken, 'foo')
+  })
 })
