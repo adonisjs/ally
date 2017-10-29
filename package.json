@@ -26,17 +26,19 @@
   "author": "adonisjs,amanvirk",
   "license": "MIT",
   "devDependencies": {
-    "@adonisjs/fold": "^4.0.2",
+    "@adonisjs/fold": "^4.0.4",
     "coveralls": "^3.0.0",
-    "cz-conventional-changelog": "^2.0.0",
-    "japa": "^1.0.4",
+    "cz-conventional-changelog": "^2.1.0",
+    "japa": "^1.0.5",
     "japa-cli": "^1.0.1",
-    "nyc": "^11.1.0",
+    "nyc": "^11.2.1",
     "semver": "^5.4.1",
     "standard": "^10.0.3"
   },
   "standard": {
-    "global": ["use"]
+    "global": [
+      "use"
+    ]
   },
   "config": {
     "commitizen": {
@@ -45,7 +47,7 @@
   },
   "dependencies": {
     "@adonisjs/generic-exceptions": "^1.0.0",
-    "debug": "^3.0.1",
+    "debug": "^3.1.0",
     "got": "^7.1.0",
     "lodash": "^4.17.4",
     "oauth": "^0.9.15"
