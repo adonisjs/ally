@@ -37,7 +37,7 @@ test.group('OAuth2', function () {
     }
 
     const facebookUrl = () => new Facebook(clientId, clientSecret).getUrl()
-    assert.throw(facebookUrl, 'E_MISSING_PARAMETER: Missing parameter redirectUri expected by getUrl as 1st parameter')
+    assert.throw(facebookUrl, 'E_MISSING_PARAMETER: Missing parameter redirectUri expected by getUrl method as 1st parameter')
   })
 
   test('should throw an exception when trying to initiate the class without clientId', function (assert) {
@@ -56,7 +56,7 @@ test.group('OAuth2', function () {
     }
 
     const facebook = () => new Facebook()
-    assert.throw(facebook, 'E_MISSING_PARAMETER: Missing parameter clientId expected by oauth2 as 1st parameter')
+    assert.throw(facebook, 'E_MISSING_PARAMETER: Missing parameter clientId expected by oauth2 method as 1st parameter')
   })
 
   test('should throw an exception when trying to initiate the class without clientSecret', function (assert) {
@@ -75,7 +75,7 @@ test.group('OAuth2', function () {
     }
 
     const facebook = () => new Facebook(clientId)
-    assert.throw(facebook, 'E_MISSING_PARAMETER: Missing parameter clientSecret expected by oauth2 as 2nd parameter')
+    assert.throw(facebook, 'E_MISSING_PARAMETER: Missing parameter clientSecret expected by oauth2 method as 2nd parameter')
   })
 
   test('should not append / when the baseUrl ends with /', function (assert) {
