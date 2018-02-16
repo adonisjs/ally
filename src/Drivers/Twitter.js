@@ -143,9 +143,9 @@ class Twitter extends OAuthScheme {
       .setOriginal(userProfile)
       .setFields(
         userProfile.id,
-        userProfile.screen_name,
-        userProfile.email,
         userProfile.name,
+        userProfile.email,
+        userProfile.screen_name,
         userProfile.profile_image_url.replace('_normal.jpg', '.jpg')
       )
       .setToken(accessTokenResponse.accessToken, null, accessTokenResponse.tokenSecret, null)
