@@ -179,28 +179,28 @@ class OAuth {
   getAccessToken (oAuthToken, oAuthVerifier) {
     return new Promise((resolve, reject) => {
       this._getRequestToken()
-      .then((requestToken) => {
-        this.client.getOAuthAccessToken(oAuthToken, requestToken.oAuthTokenSecret, oAuthVerifier, (error, accessToken, tokenSecret, result) => {
-          /**
-           * parse and return the error if there
-           * is an error.
-           */
-          if (error) {
-            return reject(this.parseProviderError(error))
-          }
+        .then((requestToken) => {
+          this.client.getOAuthAccessToken(oAuthToken, requestToken.oAuthTokenSecret, oAuthVerifier, (error, accessToken, tokenSecret, result) => {
+            /**
+             * parse and return the error if there
+             * is an error.
+             */
+            if (error) {
+              return reject(this.parseProviderError(error))
+            }
 
-          /**
-           * parse and return the error when result has
-           * an error property
-           */
-          if (result.error) {
-            return reject(this.parseProviderResultError(result))
-          }
+            /**
+             * parse and return the error when result has
+             * an error property
+             */
+            if (result.error) {
+              return reject(this.parseProviderResultError(result))
+            }
 
-          resolve({ accessToken, tokenSecret, result })
+            resolve({ accessToken, tokenSecret, result })
+          })
         })
-      })
-      .catch(reject)
+        .catch(reject)
     })
   }
 
