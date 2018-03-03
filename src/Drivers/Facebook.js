@@ -239,6 +239,8 @@ class Facebook extends OAuth2Scheme {
     const user = new AllyUser()
     const avatarUrl = `${this.baseUrl}/${userProfile.id}/picture?type=normal`
 
+    const accessTokenExpiration = _.get(accessTokenResponse, 'result.expires_in', null)
+
     /**
      * Build user
      */
@@ -255,7 +257,7 @@ class Facebook extends OAuth2Scheme {
         accessTokenResponse.accessToken,
         accessTokenResponse.refreshToken,
         null,
-        Number(_.get(accessTokenResponse, 'result.expires'))
+        accessTokenExpiration && Number(accessTokenExpiration)
       )
 
     return user
