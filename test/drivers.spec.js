@@ -78,6 +78,34 @@ test.group('Oauth Drivers | Google', function () {
     const redirectToUrl = await google.getRedirectUrl(['foo'])
     assert.equal(redirectToUrl, providerUrl)
   })
+
+  test('should set expires_in to null if not provided', async function (assert) {
+    const google = new Google(config)
+
+    // Mock getAccessToken
+    google.getAccessToken = () => ({})
+
+    // Mock _getUserProfile
+    google._getUserProfile = () => ({})
+
+    const user = await google.getUser({ code: '12345' })
+
+    assert.equal(user.getExpires(), null)
+  })
+
+  test('should correctly parse a valid expires_in', async function (assert) {
+    const google = new Google(config)
+
+    // Mock getAccessToken
+    google.getAccessToken = () => ({ result: { expires_in: '12345' } })
+
+    // Mock _getUserProfile
+    google._getUserProfile = () => ({})
+
+    const user = await google.getUser({ code: '12345' })
+
+    assert.equal(user.getExpires(), 12345)
+  })
 })
 
 test.group('Oauth Drivers | Facebook', function () {
@@ -136,6 +164,34 @@ test.group('Oauth Drivers | Facebook', function () {
     const providerUrl = `https://graph.facebook.com/v2.1/oauth/authorize?redirect_uri=${redirectUrl}&scope=${scope}&response_type=code&client_id=${config.get().clientId}`
     const redirectToUrl = await facebook.getRedirectUrl(['foo'])
     assert.equal(redirectToUrl, providerUrl)
+  })
+
+  test('should set expires_in to null if not provided', async function (assert) {
+    const facebook = new Facebook(config)
+
+    // Mock getAccessToken
+    facebook.getAccessToken = () => ({})
+
+    // Mock _getUserProfile
+    facebook._getUserProfile = () => ({})
+
+    const user = await facebook.getUser({ code: '12345' })
+
+    assert.equal(user.getExpires(), null)
+  })
+
+  test('should correctly parse a valid expires_in', async function (assert) {
+    const facebook = new Facebook(config)
+
+    // Mock getAccessToken
+    facebook.getAccessToken = () => ({ result: { expires_in: '12345' } })
+
+    // Mock _getUserProfile
+    facebook._getUserProfile = () => ({})
+
+    const user = await facebook.getUser({ code: '12345' })
+
+    assert.equal(user.getExpires(), 12345)
   })
 })
 
@@ -196,6 +252,34 @@ test.group('Oauth Drivers | Github', function () {
     const redirectToUrl = await github.getRedirectUrl(['foo'])
     assert.equal(redirectToUrl, providerUrl)
   })
+
+  test('should set expires_in to null if not provided', async function (assert) {
+    const github = new Github(config)
+
+    // Mock getAccessToken
+    github.getAccessToken = () => ({})
+
+    // Mock _getUserProfile
+    github._getUserProfile = () => ({})
+
+    const user = await github.getUser({ code: '12345' })
+
+    assert.equal(user.getExpires(), null)
+  })
+
+  test('should correctly parse a valid expires_in', async function (assert) {
+    const github = new Github(config)
+
+    // Mock getAccessToken
+    github.getAccessToken = () => ({ result: { expires_in: '12345' } })
+
+    // Mock _getUserProfile
+    github._getUserProfile = () => ({})
+
+    const user = await github.getUser({ code: '12345' })
+
+    assert.equal(user.getExpires(), 12345)
+  })
 })
 
 test.group('Oauth Drivers | LinkedIn', function () {
@@ -254,6 +338,34 @@ test.group('Oauth Drivers | LinkedIn', function () {
     const providerUrl = `https://www.linkedin.com/oauth/v2/authorization?redirect_uri=${redirectUrl}&scope=${scope}&response_type=code&client_id=${config.get().clientId}`
     const redirectToUrl = await linkedin.getRedirectUrl(['foo'])
     assert.equal(redirectToUrl, providerUrl)
+  })
+
+  test('should set expires_in to null if not provided', async function (assert) {
+    const linkedin = new LinkedIn(config)
+
+    // Mock getAccessToken
+    linkedin.getAccessToken = () => ({})
+
+    // Mock _getUserProfile
+    linkedin._getUserProfile = () => ({})
+
+    const user = await linkedin.getUser({ code: '12345' })
+
+    assert.equal(user.getExpires(), null)
+  })
+
+  test('should correctly parse a valid expires_in', async function (assert) {
+    const linkedin = new LinkedIn(config)
+
+    // Mock getAccessToken
+    linkedin.getAccessToken = () => ({ result: { expires_in: '12345' } })
+
+    // Mock _getUserProfile
+    linkedin._getUserProfile = () => ({})
+
+    const user = await linkedin.getUser({ code: '12345' })
+
+    assert.equal(user.getExpires(), 12345)
   })
 })
 
@@ -391,5 +503,47 @@ test.group('Foursquare', function () {
     const providerUrl = `https://foursquare.com/oauth2/authenticate?redirect_uri=${redirectUrl}&response_type=code&client_id=${config.get().clientId}`
     const redirectToUrl = await foursquare.getRedirectUrl(['basic'])
     assert.equal(redirectToUrl, providerUrl)
+  })
+
+  test('should set expires_in to null if not provided', async function (assert) {
+    const foursquare = new Foursquare(config)
+
+    // Mock getAccessToken
+    foursquare.getAccessToken = () => ({})
+
+    // Mock _getUserProfile
+    foursquare._getUserProfile = () => ({
+      response: {
+        user: {
+          contact: {},
+          photo: {}
+        }
+      }
+    })
+
+    const user = await foursquare.getUser({ code: '12345' })
+
+    assert.equal(user.getExpires(), null)
+  })
+
+  test('should correctly parse a valid expires_in', async function (assert) {
+    const foursquare = new Foursquare(config)
+
+    // Mock getAccessToken
+    foursquare.getAccessToken = () => ({ result: { expires_in: '12345' } })
+
+    // Mock _getUserProfile
+    foursquare._getUserProfile = () => ({
+      response: {
+        user: {
+          contact: {},
+          photo: {}
+        }
+      }
+    })
+
+    const user = await foursquare.getUser({ code: '12345' })
+
+    assert.equal(user.getExpires(), 12345)
   })
 })

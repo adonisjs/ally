@@ -204,6 +204,8 @@ class Google extends OAuth2Scheme {
 
     const user = new AllyUser()
 
+    const accessTokenExpiration = _.get(accessTokenResponse, 'result.expires_in', null)
+
     user
       .setOriginal(userProfile)
       .setFields(
@@ -217,7 +219,7 @@ class Google extends OAuth2Scheme {
         accessTokenResponse.accessToken,
         accessTokenResponse.refreshToken,
         null,
-        Number(_.get(accessTokenResponse, 'result.expires_in'))
+        accessTokenExpiration && Number(accessTokenExpiration)
       )
     return user
   }
