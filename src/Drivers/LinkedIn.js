@@ -239,8 +239,8 @@ class LinkedIn extends OAuth2Scheme {
    *
    * @param {string} accessToken
    */
-  async getUserByToken (accessToken) {
-    const userProfile = await this._getUserProfile(accessToken)
+  async getUserByToken (accessToken, filds) {
+    const userProfile = await this._getUserProfile(accessToken, filds)
 
     return this._buildAllyUser(userProfile, {accessToken, refreshToken: null})
   }

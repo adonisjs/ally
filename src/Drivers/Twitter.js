@@ -136,7 +136,28 @@ class Twitter extends OAuthScheme {
 
     const accessTokenResponse = await this.getAccessToken(queryParams.oauth_token, queryParams.oauth_verifier)
     const userProfile = await this.getUserProfile(accessTokenResponse.accessToken, accessTokenResponse.tokenSecret)
+    return this._buildAllyUser(userProfile, accessTokenResponse)
+  }
 
+    /**
+   *
+   * @param {string} accessToken
+   */
+  async getUserByTokenAndSecret (accessToken, accessSecret) {
+    const userProfile = await this._getUserProfile(accessToken)
+
+    return this._buildAllyUser(userProfile, {accessToken, tokenSecret: accessSecret})
+  }
+
+  /**
+   * Normalize the user profile response and build an Ally user.
+   *
+   * @param {object} userProfile
+   * @param {object} accessTokenResponse
+   *
+   * @return {object}
+   */
+  _buildAllyUser (userProfile, accessTokenResponse) {
     const user = new AllyUser()
 
     user
