@@ -232,11 +232,30 @@ class LinkedIn extends OAuth2Scheme {
     })
 
     const userProfile = await this._getUserProfile(accessTokenResponse.accessToken, fields)
+    return this._buildAllyUser(userProfile, accessTokenResponse)
+  }
 
+  /**
+   *
+   * @param {string} accessToken
+   */
+  async getUserByToken (accessToken) {
+    const userProfile = await this._getUserProfile(accessToken)
+
+    return this._buildAllyUser(userProfile, {accessToken, refreshToken: null})
+  }
+
+  /**
+   * Normalize the user profile response and build an Ally user.
+   *
+   * @param {object} userProfile
+   * @param {object} accessTokenResponse
+   *
+   * @return {object}
+   */
+  _buildAllyUser (userProfile, accessTokenResponse) {
     const user = new AllyUser()
-
-    user
-      .setOriginal(userProfile)
+    user.setOriginal(userProfile)
       .setFields(
         userProfile.id,
         userProfile.formattedName,
