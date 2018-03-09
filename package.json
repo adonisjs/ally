@@ -9,7 +9,7 @@
     "test": "test"
   },
   "scripts": {
-    "lint": "standard",
+    "lint": "standard \"src/**/*.js\" --fix",
     "pretest": "npm run lint",
     "posttest": "npm run coverage",
     "test:local": "FORCE_COLOR=true node bin/index.js --local",

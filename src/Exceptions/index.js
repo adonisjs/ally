@@ -23,6 +23,21 @@ class OAuthException extends GE.LogicalException {
   }
 
   /**
+   * Raised when is called an invalid method for the configured driver
+   *
+   * @param {Strins} method
+   *
+   * @return {Object}
+   */
+  static invalidMethodException (method, code, original) {
+    const message = `${method} cann't be called for this driver`
+    const error = new this(message, code || this.defaultErrorCode, 'E_INVALID_METHOD')
+    error.original = original
+
+    return error
+  }
+
+  /**
    * This exception is raised when there is an error
    * exchanging token for code.
    *
