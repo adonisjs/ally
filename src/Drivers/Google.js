@@ -206,9 +206,8 @@ class Google extends OAuth2Scheme {
   /**
    *
    * @param {string} accessToken
-   * @param {array} fields
    */
-  async getUserByToken (accessToken, fields) {
+  async getUserByToken (accessToken) {
     const userProfile = await this._getUserProfile(accessToken)
 
     return this._buildAllyUser(userProfile, {accessToken, refreshToken: null})
