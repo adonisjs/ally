@@ -26,12 +26,12 @@
   "author": "adonisjs,amanvirk",
   "license": "MIT",
   "devDependencies": {
-    "@adonisjs/fold": "^4.0.8",
-    "coveralls": "^3.0.1",
+    "@adonisjs/fold": "^4.0.7",
+    "coveralls": "^3.0.0",
     "cz-conventional-changelog": "^2.1.0",
     "japa": "^1.0.6",
     "japa-cli": "^1.0.1",
-    "nyc": "^12.0.1",
+    "nyc": "^11.5.0",
     "semver": "^5.5.0",
     "standard": "^11.0.1"
   },
@@ -48,8 +48,13 @@
   "dependencies": {
     "@adonisjs/generic-exceptions": "^2.0.1",
     "debug": "^3.1.0",
+<<<<<<< HEAD
     "got": "^8.3.1",
     "lodash": "^4.17.10",
+=======
+    "got": "^8.3.0",
+    "lodash": "^4.17.5",
+>>>>>>> 06cc8cb... update dependencies
     "oauth": "^0.9.15"
   },
   "repository": {
