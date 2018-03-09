@@ -10,6 +10,9 @@
 */
 
 const GE = require('@adonisjs/generic-exceptions')
+const CE = require('./Exceptions')
+const Two = require('./Schemes/OAuth2')
+const One = require('./Schemes/OAuth')
 
 /**
  * The public interface to authenticate and get user
@@ -102,6 +105,44 @@ class Authenticator {
   async getUser () {
     const user = await this._driverInstance.getUser(this._request.get(), this._fields)
     this._fields = []
+    return user
+  }
+
+  /**
+   * Returns an instance AllyUser containing the user profile obtained from the given token.
+   * A driver is responsible for normalizing the user fields.
+   *
+   * @method getUserByToken
+   * @param string accessToken
+   * @async
+   *
+   * @return {Object}
+   */
+  async getUserByToken (accessToken) {
+    if (this._driverInstance instanceof One) {
+      throw CE.OAuthException.invalidMethodException('getUserByToken')
+    }
+    const user = await this._driverInstance.getUserByToken(accessToken, this._fields)
+
+    return user
+  }
+
+  /**
+   * Returns an instance AllyUser containing the user profile obtained from the given token.
+   * A driver is responsible for normalizing the user fields.
+   *
+   * @method getUserByToken
+   * @param string accessToken
+   * @async
+   *
+   * @return {Object}
+   */
+  async getUserByTokenAndSecret (accessToken, accessSecret) {
+    if (this._driverInstance instanceof Two) {
+      throw CE.OAuthException.invalidMethodException('getUserByTokenAndSecret')
+    }
+    const user = await this._driverInstance.getUserByTokenAndSecret(accessToken, accessSecret, this._fields)
+
     return user
   }
 }

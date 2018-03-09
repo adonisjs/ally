@@ -11,6 +11,9 @@
 
 const test = require('japa')
 const Authenticator = require('../src/Authenticator')
+const One = require('../src/Schemes/OAuth')
+const Two = require('../src/Schemes/OAuth2')
+const OAuthException = require('../src/Exceptions').OAuthException
 
 test.group('Authenticator', function () {
   test('should be able to add runtime scope', function (assert) {
@@ -85,5 +88,39 @@ test.group('Authenticator', function () {
     const ally = new Authenticator(dummyDriver, {}, {})
     await ally.scope(['user']).getRedirectUrl()
     assert.deepEqual(ally._scope, [])
+  })
+
+  test('should throw an invalid method exception for call getUserByToken method on invalid driver', async function (assert) {
+    assert.plan(1)
+    class DummyDriver extends One {
+      constructor () {
+        super('clientId', 'clientSecret', 'url')
+      }
+    }
+    const dummyDriver = new DummyDriver()
+    const ally = new Authenticator(dummyDriver, {}, {})
+    try {
+      await ally.getUserByToken('randomToken')
+    } catch (error) {
+      console.log()
+      assert.instanceOf(error, OAuthException)
+    }
+  })
+
+  test('should throw an invalid method exception for call getUserByTokenAndSecret method on invalid driver', async function (assert) {
+    assert.plan(1)
+    class DummyDriver extends Two {
+      constructor () {
+        super('clientId', 'clientSecret', 'url')
+      }
+    }
+    const dummyDriver = new DummyDriver()
+    const ally = new Authenticator(dummyDriver, {}, {})
+    try {
+      await ally.getUserByTokenAndSecret('randomToken', 'randomSecret')
+    } catch (error) {
+      console.log()
+      assert.instanceOf(error, OAuthException)
+    }
   })
 })
