@@ -195,13 +195,13 @@ class Bitly extends OAuth2Scheme {
       throw CE.OAuthException.tokenExchangeException(errorMessage, null, errorMessage)
     }
 
-    this.client._baseSite = '';
+    this.client._baseSite = ''
 
     const accessTokenResponse = await this.getAccessToken(code, this._redirectUri, {
       grant_type: 'authorization_code'
     })
 
-    this.client._baseSite = this.baseUrl;
+    this.client._baseSite = this.baseUrl
 
     const userProfile = await this._getUserProfile(accessTokenResponse.accessToken)
 
