@@ -21,6 +21,7 @@ const Instagram = drivers.instagram
 const Twitter = drivers.twitter
 const Foursquare = drivers.foursquare
 const Bitly = drivers.bitly
+const Tumblr = drivers.tumblr
 
 test.group('Oauth Drivers | Google', function () {
   test('should throw an exception when config has not been defined', function (assert) {
@@ -576,5 +577,27 @@ test.group('Bitly', function () {
     const providerUrl = `https://bitly.com/oauth/authorize?redirect_uri=${redirectUrl}&response_type=code&client_id=${config.get().clientId}`
     const redirectToUrl = await bitly.getRedirectUrl()
     assert.equal(redirectToUrl, providerUrl)
+  })
+})
+
+test.group('Oauth Drivers | Tumblr', function () {
+  test('should throw an exception when config has not been defined', function (assert) {
+    const tumblr = () => new Tumblr({get: function () { return null }})
+    assert.throw(tumblr, 'E_MISSING_CONFIG: tumblr is not defined inside config/services.js file')
+  })
+
+  test('should throw an exception when clientid is missing', function (assert) {
+    const tumblr = () => new Tumblr({get: function () { return {clientSecret: '1', redirectUri: '2'} }})
+    assert.throw(tumblr, 'E_MISSING_CONFIG: tumblr is not defined inside config/services.js file')
+  })
+
+  test('should throw an exception when clientSecret is missing', function (assert) {
+    const tumblr = () => new Tumblr({get: function () { return {clientId: '1', redirectUri: '2'} }})
+    assert.throw(tumblr, 'E_MISSING_CONFIG: tumblr is not defined inside config/services.js file')
+  })
+
+  test('should throw an exception when redirectUri is missing', function (assert) {
+    const tumblr = () => new Tumblr({get: function () { return {clientId: '1', clientSecret: '2'} }})
+    assert.throw(tumblr, 'E_MISSING_CONFIG: tumblr is not defined inside config/services.js file')
   })
 })
