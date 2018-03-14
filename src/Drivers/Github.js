@@ -218,8 +218,8 @@ class Github extends OAuth2Scheme {
    */
   parseRedirectError (queryParams) {
     return queryParams.error_description
-    ? `${queryParams.error_description}. Learn more: ${queryParams.error_uri}`
-    : 'Oauth failed during redirect'
+      ? `${queryParams.error_description}. Learn more: ${queryParams.error_uri}`
+      : 'Oauth failed during redirect'
   }
 
   /**
