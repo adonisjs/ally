@@ -20,6 +20,7 @@ const LinkedIn = drivers.linkedin
 const Instagram = drivers.instagram
 const Twitter = drivers.twitter
 const Foursquare = drivers.foursquare
+const Naver = drivers.naver
 
 test.group('Oauth Drivers | Google', function () {
   test('should throw an exception when config has not been defined', function (assert) {
@@ -545,5 +546,63 @@ test.group('Foursquare', function () {
     const user = await foursquare.getUser({ code: '12345' })
 
     assert.equal(user.getExpires(), 12345)
+  })
+})
+
+test.group('Oauth Drivers | Naver', function () {
+  test('should throw an exception when config has not been defined', function (assert) {
+    const naver = () => new Naver({get: function () { return null }})
+    assert.throw(naver, 'E_MISSING_CONFIG: naver is not defined inside config/services.js file')
+  })
+
+  test('should throw an exception when clientid is missing', function (assert) {
+    const naver = () => new Naver({get: function () { return {clientSecret: '1', redirectUri: '2'} }})
+    assert.throw(naver, 'E_MISSING_CONFIG: naver is not defined inside config/services.js file')
+  })
+
+  test('should throw an exception when clientSecret is missing', function (assert) {
+    const naver = () => new Naver({get: function () { return {clientId: '1', redirectUri: '2'} }})
+    assert.throw(naver, 'E_MISSING_CONFIG: naver is not defined inside config/services.js file')
+  })
+
+  test('should throw an exception when redirectUri is missing', function (assert) {
+    const naver = () => new Naver({get: function () { return {clientId: '1', clientSecret: '2'} }})
+    assert.throw(naver, 'E_MISSING_CONFIG: naver is not defined inside config/services.js file')
+  })
+
+  test('should generate the redirect_uri with correct signature', async function (assert) {
+    const naver = new Naver(config)
+    const redirectUrl = qs.escape(config.get().redirectUri)
+    const providerUrl = `https://nid.naver.com/oauth2.0/authorize?redirect_uri=${redirectUrl}&response_type=code&client_id=${config.get().clientId}`
+    const redirectToUrl = await naver.getRedirectUrl()
+    assert.equal(redirectToUrl, providerUrl)
+  })
+
+  test('should make use of the scopes defined in the config file', async function (assert) {
+    const customConfig = {
+      get: function () {
+        return {
+          clientId: 12,
+          clientSecret: 123,
+          redirectUri: 'http://localhost',
+          scope: ['foo']
+        }
+      }
+    }
+    const naver = new Naver(customConfig)
+    const redirectUrl = qs.escape(customConfig.get().redirectUri)
+    const scope = qs.escape(['foo'].join(','))
+    const providerUrl = `https://nid.naver.com/oauth2.0/authorize?redirect_uri=${redirectUrl}&scope=${scope}&response_type=code&client_id=${customConfig.get().clientId}`
+    const redirectToUrl = await naver.getRedirectUrl()
+    assert.equal(redirectToUrl, providerUrl)
+  })
+
+  test('should make use of the scopes passed to the generate method', async function (assert) {
+    const naver = new Naver(config)
+    const redirectUrl = qs.escape(config.get().redirectUri)
+    const scope = qs.escape(['foo'].join(','))
+    const providerUrl = `https://nid.naver.com/oauth2.0/authorize?redirect_uri=${redirectUrl}&scope=${scope}&response_type=code&client_id=${config.get().clientId}`
+    const redirectToUrl = await naver.getRedirectUrl(['foo'])
+    assert.equal(redirectToUrl, providerUrl)
   })
 })

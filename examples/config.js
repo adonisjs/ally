@@ -90,6 +90,21 @@ module.exports = {
       clientId: Env.get('FOURSQUARE_ID'),
       clientSecret: Env.get('FOURSQUARE_SECRET'),
       redirectUri: `${Env.get('APP_URL')}/authenticated/foursquare`
+    },
+
+    /*
+     |--------------------------------------------------------------------------
+     | Naver Configuration
+     |--------------------------------------------------------------------------
+     |
+     | You can access your application credentials from the Naver developers
+     | console. https://developers.naver.com/
+     |
+     */
+    naver: {
+      clientId: Env.get('NAVER_CLIENT_ID'),
+      clientSecret: Env.get('NAVER_CLIENT_SECRET'),
+      redirectUri: `${Env.get('APP_URL')}/authenticated/naver`
     }
   }
 }
