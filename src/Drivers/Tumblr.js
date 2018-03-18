@@ -137,8 +137,6 @@ class Tumblr extends OAuthScheme {
     const accessTokenResponse = await this.getAccessToken(queryParams.oauth_token, queryParams.oauth_verifier)
     const userProfile = await this.getUserProfile(accessTokenResponse.accessToken, accessTokenResponse.tokenSecret)
 
-    console.log('userProfile:', userProfile)
-
     const user = new AllyUser()
 
     user

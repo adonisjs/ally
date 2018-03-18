@@ -18,5 +18,6 @@ module.exports = {
   instagram: require('./Instagram'),
   foursquare: require('./Foursquare'),
   bitly: require('./Bitly'),
-  tumblr: require('./Tumblr')
+  tumblr: require('./Tumblr'),
+  medium: require('./Medium')
 }
