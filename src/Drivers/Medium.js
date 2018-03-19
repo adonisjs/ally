@@ -18,18 +18,17 @@ const utils = require('../../lib/utils')
 const _ = require('lodash')
 
 /**
- * Github driver to authenticate users via OAuth2
- * scheme.
+ * Medium driver to authenticating users via OAuth2Scheme.
  *
- * @class Github
+ * @class Medium
  * @constructor
  */
-class Github extends OAuth2Scheme {
+class Medium extends OAuth2Scheme {
   constructor (Config) {
-    const config = Config.get('services.ally.github')
+    const config = Config.get('services.ally.medium')
 
-    utils.validateDriverConfig('github', config)
-    utils.debug('github', config)
+    utils.validateDriverConfig('medium', config)
+    utils.debug('medium', config)
 
     super(config.clientId, config.clientSecret, config.headers)
 
@@ -39,7 +38,10 @@ class Github extends OAuth2Scheme {
      */
     this._scope = this._getInitialScopes(config.scope)
     this._redirectUri = config.redirectUri
-    this._redirectUriOptions = _.merge({response_type: 'code'}, config.options)
+    this._redirectUriOptions = _.merge({
+      response_type: 'code',
+      state: 1
+    }, config.options)
   }
 
   /**
@@ -67,14 +69,14 @@ class Github extends OAuth2Scheme {
 
   /**
    * Base url to be used for constructing
-   * facebook oauth urls.
+   * google oauth urls.
    *
    * @attribute baseUrl
    *
    * @return {String}
    */
   get baseUrl () {
-    return 'https://github.com/login/oauth'
+    return 'https://medium.com/m'
   }
 
   /**
@@ -86,7 +88,7 @@ class Github extends OAuth2Scheme {
    * @return {String} [description]
    */
   get authorizeUrl () {
-    return 'authorize'
+    return 'oauth/authorize'
   }
 
   /**
@@ -98,7 +100,7 @@ class Github extends OAuth2Scheme {
    * @return {String}
    */
   get accessTokenUrl () {
-    return 'access_token'
+    return 'https://api.medium.com/v1/tokens'
   }
 
   /**
@@ -115,7 +117,7 @@ class Github extends OAuth2Scheme {
    * @private
    */
   _getInitialScopes (scopes) {
-    return _.size(scopes) ? scopes : ['user']
+    return _.size(scopes) ? scopes : ['basicProfile']
   }
 
   /**
@@ -132,52 +134,21 @@ class Github extends OAuth2Scheme {
    * @private
    */
   async _getUserProfile (accessToken) {
-    const profileUrl = 'https://api.github.com/user'
+    const profileUrl = 'https://api.medium.com/v1/me'
 
     const response = await got(profileUrl, {
       headers: {
-        'Accept': 'application/vnd.github.v3+json',
-        'Authorization': `token ${accessToken}`
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${accessToken}`
       },
       json: true
     })
-
-    /**
-     * Get user email address by making another HTTP request
-     * only when the scopes includes user or user:email
-     */
-    if (_.size(_.intersection(this._scope, ['user', 'user:email']))) {
-      response.body.email = await this._getUserEmail(accessToken)
-    }
 
     return response.body
   }
 
   /**
-   * Returns user primary and verified email address.
-   *
-   * @method _getUserEmail
-   * @async
-   *
-   * @param   {String} accessToken
-   *
-   * @return  {String}
-   *
-   * @private
-   */
-  async _getUserEmail (accessToken) {
-    const response = await got('https://api.github.com/user/emails', {
-      headers: {
-        'Accept': 'application/vnd.github.v3+json',
-        'Authorization': `token ${accessToken}`
-      },
-      json: true
-    })
-    return _.find(response.body, (email) => (email.primary && email.verified)).email
-  }
-
-  /**
-   * Returns the redirect url for a given provider
+   * Returns the redirect url for a given provider.
    *
    * @method getRedirectUrl
    * @async
@@ -192,22 +163,7 @@ class Github extends OAuth2Scheme {
   }
 
   /**
-   * Parser error mentioned inside the result property
-   * of the oauth response.
-   *
-   * @method parseProviderResultError
-   *
-   * @param  {Object} response
-   *
-   * @throws {OAuthException} If response has error property
-   */
-  parseProviderResultError (response) {
-    const message = response.error_description || response.error
-    return CE.OAuthException.tokenExchangeException(message, null, response)
-  }
-
-  /**
-   * Parses the redirect errors returned by github
+   * Parses the redirect errors returned by google
    * and returns the error message.
    *
    * @method parseRedirectError
@@ -217,9 +173,7 @@ class Github extends OAuth2Scheme {
    * @return {String}
    */
   parseRedirectError (queryParams) {
-    return queryParams.error_description
-      ? `${queryParams.error_description}. Learn more: ${queryParams.error_uri}`
-      : 'Oauth failed during redirect'
+    return queryParams.error || 'Oauth failed during redirect'
   }
 
   /**
@@ -245,24 +199,28 @@ class Github extends OAuth2Scheme {
       throw CE.OAuthException.tokenExchangeException(errorMessage, null, errorMessage)
     }
 
+    this.client._baseSite = ''
+
     const accessTokenResponse = await this.getAccessToken(code, this._redirectUri, {
       grant_type: 'authorization_code'
     })
+
+    this.client._baseSite = this.baseUrl
 
     const userProfile = await this._getUserProfile(accessTokenResponse.accessToken)
 
     const user = new AllyUser()
 
-    const accessTokenExpiration = _.get(accessTokenResponse, 'result.expires_in', null)
+    const accessTokenExpiration = _.get(accessTokenResponse, 'result.expire_at', null)
 
     user
       .setOriginal(userProfile)
       .setFields(
-        userProfile.id,
-        userProfile.name,
-        userProfile.email,
-        userProfile.login,
-        userProfile.avatar_url
+        userProfile.data.id,
+        userProfile.data.name,
+        null,
+        userProfile.data.username,
+        userProfile.data.imageUrl
       )
       .setToken(
         accessTokenResponse.accessToken,
@@ -274,4 +232,4 @@ class Github extends OAuth2Scheme {
   }
 }
 
-module.exports = Github
+module.exports = Medium
