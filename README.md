@@ -41,6 +41,8 @@ Below is the list of available drivers and you are free to add more.
 5. Twitter
 6. Instagram
 7. Foursquare
+8. Bitly
+9. Tumblr
 
 <br>
 ## <a name="config"></a> Config
