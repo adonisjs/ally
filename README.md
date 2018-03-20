@@ -88,6 +88,18 @@ Get the user details on the redirect URL.
 const user = await ally.driver('facebook').getUser()
 ```
 
+If you are working with api and you have an OAuth2 access token you can get the user calling the `getUserByToken` method.
+
+```javascript
+const user = await ally.driver('facebook').getUserByToken(accessToken)
+```
+When you have a OAuth1 access token and Access secret key you can call
+```javascript
+const user = await ally.driver('facebook').getUserByToken(accessToken, accessSecret)
+```
+
+All this methods the `user` is an instance of `AllyUser` which has following methods to access the user details.
+
 The `user` is an instance of `AllyUser` which has following methods to access the user details.
 
 ```javascript
