@@ -10,8 +10,6 @@
 */
 
 const GE = require('@adonisjs/generic-exceptions')
-const CE = require('./Exceptions')
-const Two = require('./Schemes/OAuth2')
 const One = require('./Schemes/OAuth')
 
 /**
@@ -118,32 +116,19 @@ class Authenticator {
    *
    * @return {Object}
    */
-  async getUserByToken (accessToken) {
-    if (this._driverInstance instanceof One) {
-      throw CE.OAuthException.invalidMethodException('getUserByToken')
+  async getUserByToken (accessToken, accessSecret) {
+    const isOAuthOne = this._driverInstance instanceof One
+    if (isOAuthOne) {
+      if (!accessSecret) {
+        throw GE
+          .InvalidArgumentException
+          .invalidParameter('Current ally driver uses OAuth1 protocol and hence accessSecret is required as 2nd param to get user profile')
+      }
+
+      return this._driverInstance.getUserByToken(accessToken, accessSecret, this._fields)
     }
-    const user = await this._driverInstance.getUserByToken(accessToken, this._fields)
 
-    return user
-  }
-
-  /**
-   * Returns an instance AllyUser containing the user profile obtained from the given token.
-   * A driver is responsible for normalizing the user fields.
-   *
-   * @method getUserByToken
-   * @param string accessToken
-   * @async
-   *
-   * @return {Object}
-   */
-  async getUserByTokenAndSecret (accessToken, accessSecret) {
-    if (this._driverInstance instanceof Two) {
-      throw CE.OAuthException.invalidMethodException('getUserByTokenAndSecret')
-    }
-    const user = await this._driverInstance.getUserByTokenAndSecret(accessToken, accessSecret, this._fields)
-
-    return user
+    return this._driverInstance.getUserByToken(accessToken, this._fields)
   }
 }
 
