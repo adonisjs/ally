@@ -115,6 +115,40 @@ class Foursquare extends OAuth2Scheme {
   }
 
   /**
+   * Normalize the user profile response and build an Ally user.
+   *
+   * @param {object} userProfile
+   * @param {object} accessTokenResponse
+   *
+   * @return {object}
+   *
+   * @private
+   */
+  _buildAllyUser (userProfile, accessTokenResponse) {
+    const avatarUrl = `${userProfile.response.user.photo.prefix}original${userProfile.response.user.photo.suffix}`
+
+    const user = new AllyUser()
+
+    user
+      .setOriginal(userProfile)
+      .setFields(
+        userProfile.response.user.id,
+        `${userProfile.response.user.firstName} ${userProfile.response.user.lastName}`,
+        userProfile.response.user.contact.email || null,
+        '',
+        avatarUrl
+      )
+      .setToken(
+        accessTokenResponse.accessToken,
+        accessTokenResponse.refreshToken,
+        null,
+        Number(_.get(accessTokenResponse, 'result.expires'))
+      )
+
+    return user
+  }
+
+  /**
    * Returns the redirect url for a given provider.
    *
    * @method getRedirectUrl
@@ -178,40 +212,6 @@ class Foursquare extends OAuth2Scheme {
     const userProfile = await this._getUserProfile(accessToken)
 
     return this._buildAllyUser(userProfile, {accessToken, refreshToken: null})
-  }
-
-  /**
-   * Normalize the user profile response and build an Ally user.
-   *
-   * @param {object} userProfile
-   * @param {object} accessTokenResponse
-   *
-   * @return {object}
-   */
-  _buildAllyUser (userProfile, accessTokenResponse) {
-    const avatarUrl = `${userProfile.response.user.photo.prefix}original${userProfile.response.user.photo.suffix}`
-
-    const user = new AllyUser()
-
-    const accessTokenExpiration = _.get(accessTokenResponse, 'result.expires_in', null)
-
-    user
-      .setOriginal(userProfile)
-      .setFields(
-        userProfile.response.user.id,
-        `${userProfile.response.user.firstName} ${userProfile.response.user.lastName}`,
-        userProfile.response.user.contact.email || null,
-        '',
-        avatarUrl
-      )
-      .setToken(
-        accessTokenResponse.accessToken,
-        accessTokenResponse.refreshToken,
-        null,
-        accessTokenExpiration && Number(accessTokenExpiration)
-      )
-
-    return user
   }
 }
 

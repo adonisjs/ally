@@ -144,6 +144,36 @@ class Instagram extends OAuth2Scheme {
   }
 
   /**
+   * Normalize the user profile response and build an Ally user.
+   *
+   * @param {object} userProfile
+   * @param {object} accessTokenResponse
+   *
+   * @return {object}
+   *
+   * @private
+   */
+  _buildAllyUser (userProfile, accessTokenResponse) {
+    const user = new AllyUser()
+    user.setOriginal(userProfile)
+      .setFields(
+        userProfile.data.id,
+        userProfile.data.full_name,
+        null,
+        userProfile.data.username,
+        userProfile.data.profile_picture
+      )
+      .setToken(
+        accessTokenResponse.accessToken,
+        accessTokenResponse.refreshToken,
+        null,
+        null
+      )
+
+    return user
+  }
+
+  /**
    * Returns the redirect url for a given provider.
    *
    * @method getRedirectUrl
@@ -209,34 +239,6 @@ class Instagram extends OAuth2Scheme {
     const userProfile = await this._getUserProfile(accessToken)
 
     return this._buildAllyUser(userProfile, {accessToken, refreshToken: null})
-  }
-
-  /**
-   * Normalize the user profile response and build an Ally user.
-   *
-   * @param {object} userProfile
-   * @param {object} accessTokenResponse
-   *
-   * @return {object}
-   */
-  _buildAllyUser (userProfile, accessTokenResponse) {
-    const user = new AllyUser()
-    user.setOriginal(userProfile)
-      .setFields(
-        userProfile.data.id,
-        userProfile.data.full_name,
-        null,
-        userProfile.data.username,
-        userProfile.data.profile_picture
-      )
-      .setToken(
-        accessTokenResponse.accessToken,
-        accessTokenResponse.refreshToken,
-        null,
-        null
-      )
-
-    return user
   }
 }
 

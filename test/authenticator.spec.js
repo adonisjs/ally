@@ -12,8 +12,7 @@
 const test = require('japa')
 const Authenticator = require('../src/Authenticator')
 const One = require('../src/Schemes/OAuth')
-const Two = require('../src/Schemes/OAuth2')
-const OAuthException = require('../src/Exceptions').OAuthException
+const GE = require('@adonisjs/generic-exceptions')
 
 test.group('Authenticator', function () {
   test('should be able to add runtime scope', function (assert) {
@@ -90,7 +89,7 @@ test.group('Authenticator', function () {
     assert.deepEqual(ally._scope, [])
   })
 
-  test('should throw an invalid method exception for call getUserByToken method on invalid driver', async function (assert) {
+  test('should throw an invalid parameter exception when OAuth One is called without access secret key', async function (assert) {
     assert.plan(1)
     class DummyDriver extends One {
       constructor () {
@@ -103,24 +102,7 @@ test.group('Authenticator', function () {
       await ally.getUserByToken('randomToken')
     } catch (error) {
       console.log()
-      assert.instanceOf(error, OAuthException)
-    }
-  })
-
-  test('should throw an invalid method exception for call getUserByTokenAndSecret method on invalid driver', async function (assert) {
-    assert.plan(1)
-    class DummyDriver extends Two {
-      constructor () {
-        super('clientId', 'clientSecret', 'url')
-      }
-    }
-    const dummyDriver = new DummyDriver()
-    const ally = new Authenticator(dummyDriver, {}, {})
-    try {
-      await ally.getUserByTokenAndSecret('randomToken', 'randomSecret')
-    } catch (error) {
-      console.log()
-      assert.instanceOf(error, OAuthException)
+      assert.instanceOf(error, GE.InvalidArgumentException)
     }
   })
 })
