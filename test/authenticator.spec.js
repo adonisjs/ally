@@ -11,6 +11,8 @@
 
 const test = require('japa')
 const Authenticator = require('../src/Authenticator')
+const One = require('../src/Schemes/OAuth')
+const GE = require('@adonisjs/generic-exceptions')
 
 test.group('Authenticator', function () {
   test('should be able to add runtime scope', function (assert) {
@@ -85,5 +87,22 @@ test.group('Authenticator', function () {
     const ally = new Authenticator(dummyDriver, {}, {})
     await ally.scope(['user']).getRedirectUrl()
     assert.deepEqual(ally._scope, [])
+  })
+
+  test('should throw an invalid parameter exception when OAuth One is called without access secret key', async function (assert) {
+    assert.plan(1)
+    class DummyDriver extends One {
+      constructor () {
+        super('clientId', 'clientSecret', 'url')
+      }
+    }
+    const dummyDriver = new DummyDriver()
+    const ally = new Authenticator(dummyDriver, {}, {})
+    try {
+      await ally.getUserByToken('randomToken')
+    } catch (error) {
+      console.log()
+      assert.instanceOf(error, GE.InvalidArgumentException)
+    }
   })
 })

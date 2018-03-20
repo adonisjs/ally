@@ -10,6 +10,7 @@
 */
 
 const GE = require('@adonisjs/generic-exceptions')
+const One = require('./Schemes/OAuth')
 
 /**
  * The public interface to authenticate and get user
@@ -35,7 +36,7 @@ class Authenticator {
    * @return {Object}
    */
   scope (scope) {
-    if (scope instanceof Array === false) {
+    if (!Array.isArray(scope)) {
       throw GE
         .InvalidArgumentException
         .invalidParameter('Value for scope must be an array', scope)
@@ -53,7 +54,7 @@ class Authenticator {
    * @return {Object}
    */
   fields (fields) {
-    if (fields instanceof Array === false) {
+    if (!Array.isArray(fields)) {
       throw GE
         .InvalidArgumentException
         .invalidParameter('Value for fields must be an array', fields)
@@ -103,6 +104,31 @@ class Authenticator {
     const user = await this._driverInstance.getUser(this._request.get(), this._fields)
     this._fields = []
     return user
+  }
+
+  /**
+   * Returns an instance AllyUser containing the user profile obtained from the given token.
+   * A driver is responsible for normalizing the user fields.
+   *
+   * @method getUserByToken
+   * @param string accessToken
+   * @async
+   *
+   * @return {Object}
+   */
+  async getUserByToken (accessToken, accessSecret) {
+    const isOAuthOne = this._driverInstance instanceof One
+    if (isOAuthOne) {
+      if (!accessSecret) {
+        throw GE
+          .InvalidArgumentException
+          .invalidParameter('Current ally driver uses OAuth1 protocol and hence accessSecret is required as 2nd param to get user profile')
+      }
+
+      return this._driverInstance.getUserByToken(accessToken, accessSecret, this._fields)
+    }
+
+    return this._driverInstance.getUserByToken(accessToken, this._fields)
   }
 }
 

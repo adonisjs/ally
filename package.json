@@ -9,7 +9,7 @@
     "test": "test"
   },
   "scripts": {
-    "lint": "standard",
+    "lint": "standard \"src/**/*.js\"",
     "pretest": "npm run lint",
     "posttest": "npm run coverage",
     "test:local": "FORCE_COLOR=true node bin/index.js --local",
@@ -26,13 +26,13 @@
   "author": "adonisjs,amanvirk",
   "license": "MIT",
   "devDependencies": {
-    "@adonisjs/fold": "^4.0.4",
+    "@adonisjs/fold": "^4.0.7",
     "coveralls": "^3.0.0",
     "cz-conventional-changelog": "^2.1.0",
-    "japa": "^1.0.5",
+    "japa": "^1.0.6",
     "japa-cli": "^1.0.1",
-    "nyc": "^11.2.1",
-    "semver": "^5.4.1",
+    "nyc": "^11.5.0",
+    "semver": "^5.5.0",
     "standard": "^10.0.3"
   },
   "standard": {
@@ -46,10 +46,10 @@
     }
   },
   "dependencies": {
-    "@adonisjs/generic-exceptions": "^1.0.0",
+    "@adonisjs/generic-exceptions": "^2.0.0",
     "debug": "^3.1.0",
-    "got": "^7.1.0",
-    "lodash": "^4.17.4",
+    "got": "^8.3.0",
+    "lodash": "^4.17.5",
     "oauth": "^0.9.15"
   },
   "repository": {

@@ -154,6 +154,37 @@ class Github extends OAuth2Scheme {
   }
 
   /**
+   * Normalize the user profile response and build an Ally user.
+   *
+   * @param {object} userProfile
+   * @param {object} accessTokenResponse
+   *
+   * @return {object}
+   *
+   * @private
+   */
+  _buildAllyUser (userProfile, accessTokenResponse) {
+    const user = new AllyUser()
+
+    user.setOriginal(userProfile)
+      .setFields(
+        userProfile.id,
+        userProfile.name,
+        userProfile.email,
+        userProfile.login,
+        userProfile.avatar_url
+      )
+      .setToken(
+        accessTokenResponse.accessToken,
+        accessTokenResponse.refreshToken,
+        null,
+        Number(_.get(accessTokenResponse, 'result.expires_in'))
+      )
+
+    return user
+  }
+
+  /**
    * Returns user primary and verified email address.
    *
    * @method _getUserEmail
@@ -244,31 +275,22 @@ class Github extends OAuth2Scheme {
       const errorMessage = this.parseRedirectError(queryParams)
       throw CE.OAuthException.tokenExchangeException(errorMessage, null, errorMessage)
     }
-
     const accessTokenResponse = await this.getAccessToken(code, this._redirectUri, {
       grant_type: 'authorization_code'
     })
-
     const userProfile = await this._getUserProfile(accessTokenResponse.accessToken)
 
-    const user = new AllyUser()
+    return this._buildAllyUser(userProfile, accessTokenResponse)
+  }
 
-    user
-      .setOriginal(userProfile)
-      .setFields(
-        userProfile.id,
-        userProfile.name,
-        userProfile.email,
-        userProfile.login,
-        userProfile.avatar_url
-      )
-      .setToken(
-        accessTokenResponse.accessToken,
-        accessTokenResponse.refreshToken,
-        null,
-        Number(_.get(accessTokenResponse, 'result.expires_in'))
-      )
-    return user
+  /**
+   *
+   * @param {string} accessToken
+   */
+  async getUserByToken (accessToken) {
+    const userProfile = await this._getUserProfile(accessToken)
+
+    return this._buildAllyUser(userProfile, {accessToken, refreshToken: null})
   }
 }
 

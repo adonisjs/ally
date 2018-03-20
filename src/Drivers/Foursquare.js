@@ -115,6 +115,40 @@ class Foursquare extends OAuth2Scheme {
   }
 
   /**
+   * Normalize the user profile response and build an Ally user.
+   *
+   * @param {object} userProfile
+   * @param {object} accessTokenResponse
+   *
+   * @return {object}
+   *
+   * @private
+   */
+  _buildAllyUser (userProfile, accessTokenResponse) {
+    const avatarUrl = `${userProfile.response.user.photo.prefix}original${userProfile.response.user.photo.suffix}`
+
+    const user = new AllyUser()
+
+    user
+      .setOriginal(userProfile)
+      .setFields(
+        userProfile.response.user.id,
+        `${userProfile.response.user.firstName} ${userProfile.response.user.lastName}`,
+        userProfile.response.user.contact.email || null,
+        '',
+        avatarUrl
+      )
+      .setToken(
+        accessTokenResponse.accessToken,
+        accessTokenResponse.refreshToken,
+        null,
+        Number(_.get(accessTokenResponse, 'result.expires'))
+      )
+
+    return user
+  }
+
+  /**
    * Returns the redirect url for a given provider.
    *
    * @method getRedirectUrl
@@ -162,34 +196,22 @@ class Foursquare extends OAuth2Scheme {
       const errorMessage = this.parseRedirectError(queryParams)
       throw CE.OAuthException.tokenExchangeException(errorMessage, null, errorMessage)
     }
-
     const accessTokenResponse = await this.getAccessToken(code, this._redirectUri, {
       grant_type: 'authorization_code'
     })
-
     const userProfile = await this._getUserProfile(accessTokenResponse.accessToken)
 
-    const avatarUrl = `${userProfile.response.user.photo.prefix}original${userProfile.response.user.photo.suffix}`
+    return this._buildAllyUser(userProfile, accessTokenResponse)
+  }
 
-    const user = new AllyUser()
+  /**
+   *
+   * @param {string} accessToken
+   */
+  async getUserByToken (accessToken) {
+    const userProfile = await this._getUserProfile(accessToken)
 
-    user
-      .setOriginal(userProfile)
-      .setFields(
-        userProfile.response.user.id,
-        `${userProfile.response.user.firstName} ${userProfile.response.user.lastName}`,
-        userProfile.response.user.contact.email || null,
-        '',
-        avatarUrl
-      )
-      .setToken(
-        accessTokenResponse.accessToken,
-        accessTokenResponse.refreshToken,
-        null,
-        Number(_.get(accessTokenResponse, 'result.expires'))
-      )
-
-    return user
+    return this._buildAllyUser(userProfile, {accessToken, refreshToken: null})
   }
 }
 

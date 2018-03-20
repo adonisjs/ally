@@ -88,6 +88,33 @@ class Twitter extends OAuthScheme {
   }
 
   /**
+   * Normalize the user profile response and build an Ally user.
+   *
+   * @param {object} userProfile
+   * @param {object} accessTokenResponse
+   *
+   * @return {object}
+   *
+   * @private
+   */
+  _buildAllyUser (userProfile, accessTokenResponse) {
+    const user = new AllyUser()
+
+    user
+      .setOriginal(userProfile)
+      .setFields(
+        userProfile.id,
+        userProfile.screen_name,
+        userProfile.email,
+        userProfile.name,
+        userProfile.profile_image_url.replace('_normal.jpg', '.jpg')
+      )
+      .setToken(accessTokenResponse.accessToken, null, accessTokenResponse.tokenSecret, null)
+
+    return user
+  }
+
+  /**
    * Returns the redirect url for a given provider
    *
    * @method getRedirectUrl
@@ -136,21 +163,17 @@ class Twitter extends OAuthScheme {
 
     const accessTokenResponse = await this.getAccessToken(queryParams.oauth_token, queryParams.oauth_verifier)
     const userProfile = await this.getUserProfile(accessTokenResponse.accessToken, accessTokenResponse.tokenSecret)
+    return this._buildAllyUser(userProfile, accessTokenResponse)
+  }
 
-    const user = new AllyUser()
+  /**
+   *
+   * @param {string} accessToken
+   */
+  async getUserByToken (accessToken, accessSecret) {
+    const userProfile = await this.getUserProfile(accessToken, accessSecret)
 
-    user
-      .setOriginal(userProfile)
-      .setFields(
-        userProfile.id,
-        userProfile.screen_name,
-        userProfile.email,
-        userProfile.name,
-        userProfile.profile_image_url.replace('_normal.jpg', '.jpg')
-      )
-      .setToken(accessTokenResponse.accessToken, null, accessTokenResponse.tokenSecret, null)
-
-    return user
+    return this._buildAllyUser(userProfile, {accessToken, tokenSecret: accessSecret})
   }
 }
 

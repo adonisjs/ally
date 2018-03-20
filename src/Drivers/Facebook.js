@@ -163,6 +163,37 @@ class Facebook extends OAuth2Scheme {
     return response.body
   }
 
+    /**
+   * Normalize the user profile response and build an Ally user.
+   *
+   * @param {object} userProfile
+   * @param {object} accessTokenResponse
+   *
+   * @return {object}
+   *
+   * @private
+   */
+  _buildAllyUser (userProfile, accessTokenResponse) {
+    const user = new AllyUser()
+    const avatarUrl = `${this.baseUrl}/${userProfile.id}/picture?type=normal`
+    user.setOriginal(userProfile)
+      .setFields(
+        userProfile.id,
+        userProfile.name,
+        userProfile.email,
+        userProfile.name,
+        avatarUrl
+      )
+      .setToken(
+        accessTokenResponse.accessToken,
+        accessTokenResponse.refreshToken,
+        null,
+        Number(_.get(accessTokenResponse, 'result.expires'))
+      )
+
+    return user
+  }
+
   /**
    * Returns the redirect url for a given provider.
    *
@@ -233,32 +264,20 @@ class Facebook extends OAuth2Scheme {
     const accessTokenResponse = await this.getAccessToken(code, this._redirectUri, {
       grant_type: 'authorization_code'
     })
-
     const userProfile = await this._getUserProfile(accessTokenResponse.accessToken, fields)
 
-    const user = new AllyUser()
-    const avatarUrl = `${this.baseUrl}/${userProfile.id}/picture?type=normal`
+    return this._buildAllyUser(userProfile, accessTokenResponse)
+  }
 
-    /**
-     * Build user
-     */
-    user
-      .setOriginal(userProfile)
-      .setFields(
-        userProfile.id,
-        userProfile.name,
-        userProfile.email,
-        userProfile.name,
-        avatarUrl
-      )
-      .setToken(
-        accessTokenResponse.accessToken,
-        accessTokenResponse.refreshToken,
-        null,
-        Number(_.get(accessTokenResponse, 'result.expires'))
-      )
+  /**
+   *
+   * @param {string} accessToken
+   * @param {array} fields
+   */
+  async getUserByToken (accessToken, fields) {
+    const userProfile = await this._getUserProfile(accessToken, fields)
 
-    return user
+    return this._buildAllyUser(userProfile, {accessToken, refreshToken: null})
   }
 }
 
