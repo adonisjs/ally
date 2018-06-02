@@ -218,8 +218,8 @@ class Github extends OAuth2Scheme {
    */
   parseRedirectError (queryParams) {
     return queryParams.error_description
-    ? `${queryParams.error_description}. Learn more: ${queryParams.error_uri}`
-    : 'Oauth failed during redirect'
+      ? `${queryParams.error_description}. Learn more: ${queryParams.error_uri}`
+      : 'Oauth failed during redirect'
   }
 
   /**
@@ -253,6 +253,8 @@ class Github extends OAuth2Scheme {
 
     const user = new AllyUser()
 
+    const accessTokenExpiration = _.get(accessTokenResponse, 'result.expires_in', null)
+
     user
       .setOriginal(userProfile)
       .setFields(
@@ -266,7 +268,7 @@ class Github extends OAuth2Scheme {
         accessTokenResponse.accessToken,
         accessTokenResponse.refreshToken,
         null,
-        Number(_.get(accessTokenResponse, 'result.expires_in'))
+        accessTokenExpiration && Number(accessTokenExpiration)
       )
     return user
   }

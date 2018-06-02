@@ -35,7 +35,7 @@ class Authenticator {
    * @return {Object}
    */
   scope (scope) {
-    if (scope instanceof Array === false) {
+    if (!Array.isArray(scope)) {
       throw GE
         .InvalidArgumentException
         .invalidParameter('Value for scope must be an array', scope)
@@ -53,7 +53,7 @@ class Authenticator {
    * @return {Object}
    */
   fields (fields) {
-    if (fields instanceof Array === false) {
+    if (!Array.isArray(fields)) {
       throw GE
         .InvalidArgumentException
         .invalidParameter('Value for fields must be an array', fields)

@@ -1,3 +1,16 @@
+<a name="2.0.3"></a>
+## [2.0.3](https://github.com/adonisjs/adonis-ally/compare/v2.0.1...v2.0.3) (2018-06-02)
+
+
+### Bug Fixes
+
+* **drivers:** set token expiration to null when doesn't exists ([404d090](https://github.com/adonisjs/adonis-ally/commit/404d090)), closes [#47](https://github.com/adonisjs/adonis-ally/issues/47)
+* **lint:** fix linting issue ([2b0795a](https://github.com/adonisjs/adonis-ally/commit/2b0795a))
+* **package:** update got to version 8.0.0 ([#31](https://github.com/adonisjs/adonis-ally/issues/31)) ([7e21557](https://github.com/adonisjs/adonis-ally/commit/7e21557))
+* **twitter:** inverse nickname & username ([#43](https://github.com/adonisjs/adonis-ally/issues/43)) ([0ec3b35](https://github.com/adonisjs/adonis-ally/commit/0ec3b35))
+
+
+
 <a name="2.0.2"></a>
 ## [2.0.2](https://github.com/adonisjs/adonis-ally/compare/v2.0.1...v2.0.2) (2017-10-29)
 
