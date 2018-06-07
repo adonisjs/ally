@@ -96,11 +96,13 @@ class Authenticator {
    *
    * @method getUser
    * @async
+   * @param {String} accessToken
    *
    * @return {Object}
    */
-  async getUser () {
-    const user = await this._driverInstance.getUser(this._request.get(), this._fields)
+  async getUser (accessToken) {
+    const queryParams = accessToken ? { accessToken } : this._request.get()
+    const user = await this._driverInstance.getUser(queryParams, this._fields)
     this._fields = []
     return user
   }
