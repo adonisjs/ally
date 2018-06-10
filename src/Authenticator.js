@@ -118,13 +118,14 @@ class Authenticator {
    */
   async getUserByToken (accessToken, accessSecret) {
     const isOAuthOne = this._driverInstance instanceof One
-    if (isOAuthOne) {
-      if (!accessSecret) {
-        throw GE
-          .InvalidArgumentException
-          .invalidParameter('Current ally driver uses OAuth1 protocol and hence accessSecret is required as 2nd param to get user profile')
-      }
 
+    if (isOAuthOne && !accessSecret) {
+      throw GE
+        .InvalidArgumentException
+        .invalidParameter('Missing accessSecret as 2nd params, required by OAuth1 protocol')
+    }
+
+    if (isOAuthOne) {
       return this._driverInstance.getUserByToken(accessToken, accessSecret, this._fields)
     }
 
