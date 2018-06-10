@@ -1,3 +1,19 @@
+<a name="2.0.4"></a>
+## [2.0.4](https://github.com/adonisjs/adonis-ally/compare/v2.0.3...v2.0.4) (2018-06-10)
+
+
+### Bug Fixes
+
+* **allyuser:** cast expires to number only when defined ([0382b30](https://github.com/adonisjs/adonis-ally/commit/0382b30))
+
+
+### Features
+
+* **authenticator:** allow accessing user using oauth token ([f605f73](https://github.com/adonisjs/adonis-ally/commit/f605f73))
+* **oauth2:** update oauth2 drivers for user access ([1d99793](https://github.com/adonisjs/adonis-ally/commit/1d99793))
+
+
+
 <a name="2.0.3"></a>
 ## [2.0.3](https://github.com/adonisjs/adonis-ally/compare/v2.0.1...v2.0.3) (2018-06-02)
 
