@@ -126,6 +126,7 @@ class Foursquare extends OAuth2Scheme {
    */
   _buildAllyUser (userProfile, accessTokenResponse) {
     const avatarUrl = `${userProfile.response.user.photo.prefix}original${userProfile.response.user.photo.suffix}`
+    const expires = _.get(accessTokenResponse, 'result.expires_in')
 
     const user = new AllyUser()
 
@@ -142,7 +143,7 @@ class Foursquare extends OAuth2Scheme {
         accessTokenResponse.accessToken,
         accessTokenResponse.refreshToken,
         null,
-        Number(_.get(accessTokenResponse, 'result.expires'))
+        expires ? Number(expires) : null
       )
 
     return user

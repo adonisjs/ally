@@ -186,6 +186,8 @@ class LinkedIn extends OAuth2Scheme {
    */
   _buildAllyUser (userProfile, accessTokenResponse) {
     const user = new AllyUser()
+    const expires = _.get(accessTokenResponse, 'result.expires_in')
+
     user.setOriginal(userProfile)
       .setFields(
         userProfile.id,
@@ -198,7 +200,7 @@ class LinkedIn extends OAuth2Scheme {
         accessTokenResponse.accessToken,
         accessTokenResponse.refreshToken,
         null,
-        Number(_.get(accessTokenResponse, 'result.expires_in'))
+        expires ? Number(expires) : null
       )
 
     return user

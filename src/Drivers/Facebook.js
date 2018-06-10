@@ -163,7 +163,7 @@ class Facebook extends OAuth2Scheme {
     return response.body
   }
 
-    /**
+  /**
    * Normalize the user profile response and build an Ally user.
    *
    * @param {object} userProfile
@@ -175,7 +175,10 @@ class Facebook extends OAuth2Scheme {
    */
   _buildAllyUser (userProfile, accessTokenResponse) {
     const user = new AllyUser()
+    const expires = _.get(accessTokenResponse, 'result.expires_in')
+
     const avatarUrl = `${this.baseUrl}/${userProfile.id}/picture?type=normal`
+
     user.setOriginal(userProfile)
       .setFields(
         userProfile.id,
@@ -188,7 +191,7 @@ class Facebook extends OAuth2Scheme {
         accessTokenResponse.accessToken,
         accessTokenResponse.refreshToken,
         null,
-        Number(_.get(accessTokenResponse, 'result.expires'))
+        expires ? Number(expires) : null
       )
 
     return user
