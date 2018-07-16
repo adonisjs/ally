@@ -3,11 +3,14 @@
   "version": "2.0.4",
   "description": "Social authenticator for AdonisJs Framework",
   "main": "index.js",
-  "directories": {
-    "example": "examples",
-    "lib": "lib",
-    "test": "test"
-  },
+  "files": [
+    "examples",
+    "lib",
+    "providers",
+    "src",
+    "instructions.js",
+    "instructions.md"
+  ],
   "scripts": {
     "mrm": "mrm --preset=@adonisjs/mrm-preset",
     "pretest": "npm run lint",
