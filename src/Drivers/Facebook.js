@@ -40,7 +40,7 @@ class Facebook extends OAuth2Scheme {
     this._scope = this._getInitialScopes(config.scope)
     this._fields = this._getInitialFields(config.fields)
     this._redirectUri = config.redirectUri
-    this._redirectUriOptions = Object.assign({response_type: 'code'}, config.options)
+    this._redirectUriOptions = Object.assign({ response_type: 'code' }, config.options)
   }
 
   /**
@@ -280,7 +280,7 @@ class Facebook extends OAuth2Scheme {
   async getUserByToken (accessToken, fields) {
     const userProfile = await this._getUserProfile(accessToken, fields)
 
-    return this._buildAllyUser(userProfile, {accessToken, refreshToken: null})
+    return this._buildAllyUser(userProfile, { accessToken, refreshToken: null })
   }
 }
 

@@ -39,7 +39,7 @@ class Github extends OAuth2Scheme {
      */
     this._scope = this._getInitialScopes(config.scope)
     this._redirectUri = config.redirectUri
-    this._redirectUriOptions = _.merge({response_type: 'code'}, config.options)
+    this._redirectUriOptions = _.merge({ response_type: 'code' }, config.options)
   }
 
   /**
@@ -291,7 +291,7 @@ class Github extends OAuth2Scheme {
   async getUserByToken (accessToken) {
     const userProfile = await this._getUserProfile(accessToken)
 
-    return this._buildAllyUser(userProfile, {accessToken, refreshToken: null})
+    return this._buildAllyUser(userProfile, { accessToken, refreshToken: null })
   }
 }
 

@@ -166,7 +166,7 @@ test.group('OAuth2', function () {
     class Facebook extends OAuth2 {
     }
     const facebook = new Facebook(clientId, clientSecret)
-    const parsedError = facebook.parseProviderError({statusCode: 400, data: JSON.stringify({error_description: 'foo'})})
+    const parsedError = facebook.parseProviderError({ statusCode: 400, data: JSON.stringify({ error_description: 'foo' }) })
     assert.equal(parsedError.name, 'OAuthException')
     assert.equal(parsedError.message, 'E_OAUTH_TOKEN_EXCHANGE: foo')
   })
@@ -175,7 +175,7 @@ test.group('OAuth2', function () {
     class Facebook extends OAuth2 {
     }
     const facebook = new Facebook(clientId, clientSecret)
-    const parsedError = facebook.parseProviderError({statusCode: 400})
+    const parsedError = facebook.parseProviderError({ statusCode: 400 })
     assert.equal(parsedError.name, 'OAuthException')
     assert.equal(parsedError.message, 'E_OAUTH_TOKEN_EXCHANGE: null')
   })

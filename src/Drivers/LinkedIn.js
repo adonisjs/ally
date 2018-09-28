@@ -39,7 +39,7 @@ class LinkedIn extends OAuth2Scheme {
     this._scope = this._getInitialScopes(config.scope)
     this._fields = this._getInitialFields(config.fields)
     this._redirectUri = config.redirectUri
-    this._redirectUriOptions = _.merge({response_type: 'code'}, config.options)
+    this._redirectUriOptions = _.merge({ response_type: 'code' }, config.options)
   }
 
   /**
@@ -274,7 +274,7 @@ class LinkedIn extends OAuth2Scheme {
   async getUserByToken (accessToken, filds) {
     const userProfile = await this._getUserProfile(accessToken, filds)
 
-    return this._buildAllyUser(userProfile, {accessToken, refreshToken: null})
+    return this._buildAllyUser(userProfile, { accessToken, refreshToken: null })
   }
 }
 

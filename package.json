@@ -15,7 +15,7 @@
     "mrm": "mrm --preset=@adonisjs/mrm-preset",
     "pretest": "npm run lint",
     "test:local": "FORCE_COLOR=true node bin/index.js --local",
-    "test": "nyc japa",
+    "test": "nyc node japaFile.js",
     "test:win": "node ./node_modules/japa-cli/index.js",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "commit": "git-cz",
@@ -31,17 +31,17 @@
   "license": "MIT",
   "devDependencies": {
     "@adonisjs/fold": "^4.0.9",
-    "@adonisjs/mrm-preset": "^1.0.9",
+    "@adonisjs/mrm-preset": "^1.0.13",
     "commitizen": "^2.10.1",
     "coveralls": "^3.0.2",
     "cz-conventional-changelog": "^2.1.0",
-    "japa": "^1.0.6",
+    "japa": "^2.0.3",
     "japa-cli": "^1.0.1",
     "mrm": "^1.2.1",
-    "nyc": "^12.0.2",
+    "nyc": "^13.0.1",
     "pkg-ok": "^2.2.0",
-    "semver": "^5.5.0",
-    "standard": "^11.0.1"
+    "semver": "^5.5.1",
+    "standard": "^12.0.1"
   },
   "standard": {
     "global": [
@@ -55,9 +55,9 @@
   },
   "dependencies": {
     "@adonisjs/generic-exceptions": "^2.0.1",
-    "debug": "^3.1.0",
-    "got": "^8.3.2",
-    "lodash": "^4.17.10",
+    "debug": "^4.0.1",
+    "got": "^9.2.2",
+    "lodash": "^4.17.11",
     "oauth": "^0.9.15"
   },
   "repository": {
@@ -70,8 +70,7 @@
   "homepage": "https://github.com/adonisjs/adonis-ally#readme",
   "nyc": {
     "exclude": [
-      "test",
-      "japaFile.js"
+      "test"
     ]
   }
 }

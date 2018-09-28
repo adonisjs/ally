@@ -23,22 +23,22 @@ const Foursquare = drivers.foursquare
 
 test.group('Oauth Drivers | Google', function () {
   test('should throw an exception when config has not been defined', function (assert) {
-    const google = () => new Google({get: function () { return null }})
+    const google = () => new Google({ get: function () { return null } })
     assert.throw(google, 'E_MISSING_CONFIG: google is not defined inside config/services.js file')
   })
 
   test('should throw an exception when clientid is missing', function (assert) {
-    const google = () => new Google({get: function () { return {clientSecret: '1', redirectUri: '2'} }})
+    const google = () => new Google({ get: function () { return { clientSecret: '1', redirectUri: '2' } } })
     assert.throw(google, 'E_MISSING_CONFIG: google is not defined inside config/services.js file')
   })
 
   test('should throw an exception when clientSecret is missing', function (assert) {
-    const google = () => new Google({get: function () { return {clientId: '1', redirectUri: '2'} }})
+    const google = () => new Google({ get: function () { return { clientId: '1', redirectUri: '2' } } })
     assert.throw(google, 'E_MISSING_CONFIG: google is not defined inside config/services.js file')
   })
 
   test('should throw an exception when redirectUri is missing', function (assert) {
-    const google = () => new Google({get: function () { return {clientId: '1', clientSecret: '2'} }})
+    const google = () => new Google({ get: function () { return { clientId: '1', clientSecret: '2' } } })
     assert.throw(google, 'E_MISSING_CONFIG: google is not defined inside config/services.js file')
   })
 
@@ -110,22 +110,22 @@ test.group('Oauth Drivers | Google', function () {
 
 test.group('Oauth Drivers | Facebook', function () {
   test('should throw an exception when config has not been defined', function (assert) {
-    const facebook = () => new Facebook({get: function () { return null }})
+    const facebook = () => new Facebook({ get: function () { return null } })
     assert.throw(facebook, 'E_MISSING_CONFIG: facebook is not defined inside config/services.js file')
   })
 
   test('should throw an exception when clientid is missing', function (assert) {
-    const facebook = () => new Facebook({get: function () { return {clientSecret: '1', redirectUri: '2'} }})
+    const facebook = () => new Facebook({ get: function () { return { clientSecret: '1', redirectUri: '2' } } })
     assert.throw(facebook, 'E_MISSING_CONFIG: facebook is not defined inside config/services.js file')
   })
 
   test('should throw an exception when clientSecret is missing', function (assert) {
-    const facebook = () => new Facebook({get: function () { return {clientId: '1', redirectUri: '2'} }})
+    const facebook = () => new Facebook({ get: function () { return { clientId: '1', redirectUri: '2' } } })
     assert.throw(facebook, 'E_MISSING_CONFIG: facebook is not defined inside config/services.js file')
   })
 
   test('should throw an exception when redirectUri is missing', function (assert) {
-    const facebook = () => new Facebook({get: function () { return {clientId: '1', clientSecret: '2'} }})
+    const facebook = () => new Facebook({ get: function () { return { clientId: '1', clientSecret: '2' } } })
     assert.throw(facebook, 'E_MISSING_CONFIG: facebook is not defined inside config/services.js file')
   })
 
@@ -197,22 +197,22 @@ test.group('Oauth Drivers | Facebook', function () {
 
 test.group('Oauth Drivers | Github', function () {
   test('should throw an exception when config has not been defined', function (assert) {
-    const github = () => new Github({get: function () { return null }})
+    const github = () => new Github({ get: function () { return null } })
     assert.throw(github, 'E_MISSING_CONFIG: github is not defined inside config/services.js file')
   })
 
   test('should throw an exception when clientid is missing', function (assert) {
-    const github = () => new Github({get: function () { return {clientSecret: '1', redirectUri: '2'} }})
+    const github = () => new Github({ get: function () { return { clientSecret: '1', redirectUri: '2' } } })
     assert.throw(github, 'E_MISSING_CONFIG: github is not defined inside config/services.js file')
   })
 
   test('should throw an exception when clientSecret is missing', function (assert) {
-    const github = () => new Github({get: function () { return {clientId: '1', redirectUri: '2'} }})
+    const github = () => new Github({ get: function () { return { clientId: '1', redirectUri: '2' } } })
     assert.throw(github, 'E_MISSING_CONFIG: github is not defined inside config/services.js file')
   })
 
   test('should throw an exception when redirectUri is missing', function (assert) {
-    const github = () => new Github({get: function () { return {clientId: '1', clientSecret: '2'} }})
+    const github = () => new Github({ get: function () { return { clientId: '1', clientSecret: '2' } } })
     assert.throw(github, 'E_MISSING_CONFIG: github is not defined inside config/services.js file')
   })
 
@@ -284,22 +284,22 @@ test.group('Oauth Drivers | Github', function () {
 
 test.group('Oauth Drivers | LinkedIn', function () {
   test('should throw an exception when config has not been defined', function (assert) {
-    const linkedin = () => new LinkedIn({get: function () { return null }})
+    const linkedin = () => new LinkedIn({ get: function () { return null } })
     assert.throw(linkedin, 'E_MISSING_CONFIG: linkedin is not defined inside config/services.js file')
   })
 
   test('should throw an exception when clientid is missing', function (assert) {
-    const linkedin = () => new LinkedIn({get: function () { return {clientSecret: '1', redirectUri: '2'} }})
+    const linkedin = () => new LinkedIn({ get: function () { return { clientSecret: '1', redirectUri: '2' } } })
     assert.throw(linkedin, 'E_MISSING_CONFIG: linkedin is not defined inside config/services.js file')
   })
 
   test('should throw an exception when clientSecret is missing', function (assert) {
-    const linkedin = () => new LinkedIn({get: function () { return {clientId: '1', redirectUri: '2'} }})
+    const linkedin = () => new LinkedIn({ get: function () { return { clientId: '1', redirectUri: '2' } } })
     assert.throw(linkedin, 'E_MISSING_CONFIG: linkedin is not defined inside config/services.js file')
   })
 
   test('should throw an exception when redirectUri is missing', function (assert) {
-    const linkedin = () => new LinkedIn({get: function () { return {clientId: '1', clientSecret: '2'} }})
+    const linkedin = () => new LinkedIn({ get: function () { return { clientId: '1', clientSecret: '2' } } })
     assert.throw(linkedin, 'E_MISSING_CONFIG: linkedin is not defined inside config/services.js file')
   })
 
@@ -371,22 +371,22 @@ test.group('Oauth Drivers | LinkedIn', function () {
 
 test.group('Oauth Drivers | Instagram', function () {
   test('should throw an exception when config has not been defined', function (assert) {
-    const instagram = () => new Instagram({get: function () { return null }})
+    const instagram = () => new Instagram({ get: function () { return null } })
     assert.throw(instagram, 'E_MISSING_CONFIG: instagram is not defined inside config/services.js file')
   })
 
   test('should throw an exception when clientid is missing', function (assert) {
-    const instagram = () => new Instagram({get: function () { return {clientSecret: '1', redirectUri: '2'} }})
+    const instagram = () => new Instagram({ get: function () { return { clientSecret: '1', redirectUri: '2' } } })
     assert.throw(instagram, 'E_MISSING_CONFIG: instagram is not defined inside config/services.js file')
   })
 
   test('should throw an exception when clientSecret is missing', function (assert) {
-    const instagram = () => new Instagram({get: function () { return {clientId: '1', redirectUri: '2'} }})
+    const instagram = () => new Instagram({ get: function () { return { clientId: '1', redirectUri: '2' } } })
     assert.throw(instagram, 'E_MISSING_CONFIG: instagram is not defined inside config/services.js file')
   })
 
   test('should throw an exception when redirectUri is missing', function (assert) {
-    const instagram = () => new Instagram({get: function () { return {clientId: '1', clientSecret: '2'} }})
+    const instagram = () => new Instagram({ get: function () { return { clientId: '1', clientSecret: '2' } } })
     assert.throw(instagram, 'E_MISSING_CONFIG: instagram is not defined inside config/services.js file')
   })
 
@@ -430,44 +430,44 @@ test.group('Oauth Drivers | Instagram', function () {
 
 test.group('Oauth Drivers | Twitter', function () {
   test('should throw an exception when config has not been defined', function (assert) {
-    const twitter = () => new Twitter({get: function () { return null }})
+    const twitter = () => new Twitter({ get: function () { return null } })
     assert.throw(twitter, 'E_MISSING_CONFIG: twitter is not defined inside config/services.js file')
   })
 
   test('should throw an exception when clientid is missing', function (assert) {
-    const twitter = () => new Twitter({get: function () { return {clientSecret: '1', redirectUri: '2'} }})
+    const twitter = () => new Twitter({ get: function () { return { clientSecret: '1', redirectUri: '2' } } })
     assert.throw(twitter, 'E_MISSING_CONFIG: twitter is not defined inside config/services.js file')
   })
 
   test('should throw an exception when clientSecret is missing', function (assert) {
-    const twitter = () => new Twitter({get: function () { return {clientId: '1', redirectUri: '2'} }})
+    const twitter = () => new Twitter({ get: function () { return { clientId: '1', redirectUri: '2' } } })
     assert.throw(twitter, 'E_MISSING_CONFIG: twitter is not defined inside config/services.js file')
   })
 
   test('should throw an exception when redirectUri is missing', function (assert) {
-    const twitter = () => new Twitter({get: function () { return {clientId: '1', clientSecret: '2'} }})
+    const twitter = () => new Twitter({ get: function () { return { clientId: '1', clientSecret: '2' } } })
     assert.throw(twitter, 'E_MISSING_CONFIG: twitter is not defined inside config/services.js file')
   })
 })
 
 test.group('Foursquare', function () {
   test('should throw an exception when config has not been defined', function (assert) {
-    const foursquare = () => new Foursquare({get: function () { return null }})
+    const foursquare = () => new Foursquare({ get: function () { return null } })
     assert.throw(foursquare, 'E_MISSING_CONFIG: foursquare is not defined inside config/services.js file')
   })
 
   test('should throw an exception when clientid is missing', function (assert) {
-    const foursquare = () => new Foursquare({get: function () { return {clientSecret: '1', redirectUri: '2'} }})
+    const foursquare = () => new Foursquare({ get: function () { return { clientSecret: '1', redirectUri: '2' } } })
     assert.throw(foursquare, 'E_MISSING_CONFIG: foursquare is not defined inside config/services.js file')
   })
 
   test('should throw an exception when clientSecret is missing', function (assert) {
-    const foursquare = () => new Foursquare({get: function () { return {clientId: '1', redirectUri: '2'} }})
+    const foursquare = () => new Foursquare({ get: function () { return { clientId: '1', redirectUri: '2' } } })
     assert.throw(foursquare, 'E_MISSING_CONFIG: foursquare is not defined inside config/services.js file')
   })
 
   test('should throw an exception when redirectUri is missing', function (assert) {
-    const foursquare = () => new Foursquare({get: function () { return {clientId: '1', clientSecret: '2'} }})
+    const foursquare = () => new Foursquare({ get: function () { return { clientId: '1', clientSecret: '2' } } })
     assert.throw(foursquare, 'E_MISSING_CONFIG: foursquare is not defined inside config/services.js file')
   })
 

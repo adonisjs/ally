@@ -173,7 +173,7 @@ class Twitter extends OAuthScheme {
   async getUserByToken (accessToken, accessSecret) {
     const userProfile = await this.getUserProfile(accessToken, accessSecret)
 
-    return this._buildAllyUser(userProfile, {accessToken, tokenSecret: accessSecret})
+    return this._buildAllyUser(userProfile, { accessToken, tokenSecret: accessSecret })
   }
 }
 

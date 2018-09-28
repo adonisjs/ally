@@ -32,8 +32,8 @@ test.group('AllyUser', function () {
 
   test('should be able to set original user response object', function (assert) {
     const user = new AllyUser()
-    user.setOriginal({name: 'name'})
-    assert.deepEqual(user.getOriginal(), {name: 'name'})
+    user.setOriginal({ name: 'name' })
+    assert.deepEqual(user.getOriginal(), { name: 'name' })
   })
 
   test('should be able to set partial user token details', function (assert) {

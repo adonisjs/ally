@@ -39,7 +39,7 @@ class Foursquare extends OAuth2Scheme {
      */
     this._redirectUri = config.redirectUri
     this._version = config.version || 20140806
-    this._redirectUriOptions = Object.assign({response_type: 'code'}, config.options)
+    this._redirectUriOptions = Object.assign({ response_type: 'code' }, config.options)
   }
 
   /**
@@ -212,7 +212,7 @@ class Foursquare extends OAuth2Scheme {
   async getUserByToken (accessToken) {
     const userProfile = await this._getUserProfile(accessToken)
 
-    return this._buildAllyUser(userProfile, {accessToken, refreshToken: null})
+    return this._buildAllyUser(userProfile, { accessToken, refreshToken: null })
   }
 }
 

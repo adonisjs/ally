@@ -66,9 +66,9 @@ test.group('Authenticator', function () {
       }
     }
     const dummyDriver = new DummyDriver()
-    const ally = new Authenticator(dummyDriver, {get: function () {
-      return {code: 'foo'}
-    }}, {})
+    const ally = new Authenticator(dummyDriver, { get: function () {
+      return { code: 'foo' }
+    } }, {})
     await ally.getUser()
     assert.deepEqual(dummyDriver.queryParams.code, 'foo')
   })

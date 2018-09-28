@@ -114,7 +114,7 @@ class OAuth {
         if (error) {
           return reject(error)
         }
-        resolve({oAuthToken, oAuthTokenSecret, result})
+        resolve({ oAuthToken, oAuthTokenSecret, result })
       })
     })
   }

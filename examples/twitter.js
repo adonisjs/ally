@@ -13,10 +13,10 @@ http.get('/twitter', async function (request, response) {
   try {
     const twitter = ally.driver('twitter')
     const url = await twitter.getRedirectUrl()
-    response.writeHead(200, {'content-type': 'text/html'})
+    response.writeHead(200, { 'content-type': 'text/html' })
     response.write(`<a href="${url}">Login With Twitter</a>`)
   } catch (e) {
-    response.writeHead(500, {'content-type': 'application/json'})
+    response.writeHead(500, { 'content-type': 'application/json' })
     response.write(JSON.stringify({ error: e }))
   }
   response.end()
@@ -27,11 +27,11 @@ http.get('/twitter/authenticated', async function (request, response) {
   const twitter = ally.driver('twitter')
   try {
     const user = await twitter.getUser()
-    response.writeHead(200, {'content-type': 'application/json'})
+    response.writeHead(200, { 'content-type': 'application/json' })
     response.write(JSON.stringify({ original: user.getOriginal(), profile: user.toJSON() }))
   } catch (e) {
     console.log(e)
-    response.writeHead(500, {'content-type': 'application/json'})
+    response.writeHead(500, { 'content-type': 'application/json' })
     response.write(JSON.stringify({ error: e }))
   }
   response.end()
