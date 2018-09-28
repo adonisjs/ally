@@ -43,7 +43,7 @@ class Github extends OAuth2Scheme {
     /**
      * Public scopes
      */
-    this.scope = this._getInitialScopes(config.scope)
+    this.scope = _.size(config.scope) ? config.scope : ['user']
   }
 
   /**
@@ -103,23 +103,6 @@ class Github extends OAuth2Scheme {
    */
   get accessTokenUrl () {
     return 'access_token'
-  }
-
-  /**
-   * Returns initial scopes to be used right from the
-   * config file. Otherwise it will fallback to the
-   * commonly used scopes.
-   *
-   * @method _getInitialScopes
-   *
-   * @param   {Array} scopes
-   *
-   * @return  {Array}
-   *
-   * @private
-   */
-  _getInitialScopes (scopes) {
-    return _.size(scopes) ? scopes : ['user']
   }
 
   /**

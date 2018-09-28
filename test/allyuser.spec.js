@@ -12,15 +12,15 @@
 const test = require('japa')
 const AllyUser = require('../src/AllyUser')
 
-test.group('AllyUser', function () {
-  test('should be able to set partial user fields', function (assert) {
+test.group('AllyUser', () => {
+  test('should be able to set partial user fields', (assert) => {
     const user = new AllyUser()
     user.setFields(10, 'name')
     assert.equal(user.getName(), 'name')
     assert.equal(user.getId(), 10)
   })
 
-  test('should be able to set all user fields', function (assert) {
+  test('should be able to set all user fields', (assert) => {
     const user = new AllyUser()
     user.setFields(10, 'name', 'email', 'nickname', 'avatar')
     assert.equal(user.getName(), 'name')
@@ -30,19 +30,19 @@ test.group('AllyUser', function () {
     assert.equal(user.getAvatar(), 'avatar')
   })
 
-  test('should be able to set original user response object', function (assert) {
+  test('should be able to set original user response object', (assert) => {
     const user = new AllyUser()
     user.setOriginal({ name: 'name' })
     assert.deepEqual(user.getOriginal(), { name: 'name' })
   })
 
-  test('should be able to set partial user token details', function (assert) {
+  test('should be able to set partial user token details', (assert) => {
     const user = new AllyUser()
     user.setToken('1000')
     assert.equal(user.getAccessToken(), '1000')
   })
 
-  test('should be able to set user token details', function (assert) {
+  test('should be able to set user token details', (assert) => {
     const user = new AllyUser()
     user.setToken('1000', '2000', '3000', 3500)
     assert.equal(user.getAccessToken(), '1000')
@@ -51,7 +51,7 @@ test.group('AllyUser', function () {
     assert.equal(user.getExpires(), 3500)
   })
 
-  test('should return a merged user object using toJSON', function (assert) {
+  test('should return a merged user object using toJSON', (assert) => {
     const user = new AllyUser()
     user.setFields(10, 'name', 'email', 'nickname', 'avatar')
     user.setToken('1000', '2000', '3000', 3500)

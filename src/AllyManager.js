@@ -54,9 +54,7 @@ class AllyManager {
       throw GE.InvalidArgumentException.invalidParameter('Cannot get driver instance without a name')
     }
 
-    name = name.toLowerCase()
-    const Driver = Drivers[name] || this._drivers[name]
-
+    const Driver = Drivers[name.toLowerCase()] || this._drivers[name.toLowerCase()]
     if (!Driver) {
       throw GE.InvalidArgumentException.invalidParameter(`${name} is not a valid ally driver`)
     }

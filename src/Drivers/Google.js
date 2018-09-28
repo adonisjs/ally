@@ -39,7 +39,7 @@ class Google extends OAuth2Scheme {
     this._redirectUri = config.redirectUri
     this._redirectUriOptions = _.merge({ response_type: 'code' }, config.options)
 
-    this.scope = this._getInitialScopes(config.scope)
+    this.scope = _.size(config.scope) ? config.scope : ['openid', 'profile', 'email']
   }
 
   /**
@@ -99,23 +99,6 @@ class Google extends OAuth2Scheme {
    */
   get accessTokenUrl () {
     return 'token'
-  }
-
-  /**
-   * Returns initial scopes to be used right from the
-   * config file. Otherwise it will fallback to the
-   * commonly used scopes.
-   *
-   * @method _getInitialScopes
-   *
-   * @param   {Array} scopes
-   *
-   * @return  {Array}
-   *
-   * @private
-   */
-  _getInitialScopes (scopes) {
-    return _.size(scopes) ? scopes : ['openid', 'profile', 'email']
   }
 
   /**

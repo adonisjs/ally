@@ -94,7 +94,15 @@ class OAuth {
       throw GE.InvalidArgumentException.missingParameter('oauth', 'callbackUrl', '3rd')
     }
 
-    this.client = new NodeOAuth(this.requestTokenUrl, this.accessTokenUrl, clientId, clientSecret, '1.0', callbackUrl, 'HMAC-SHA1')
+    this.client = new NodeOAuth(
+      this.requestTokenUrl,
+      this.accessTokenUrl,
+      clientId,
+      clientSecret,
+      '1.0',
+      callbackUrl,
+      'HMAC-SHA1'
+    )
   }
 
   /**
@@ -102,7 +110,6 @@ class OAuth {
    * the redirect uri and getting the access token.
    *
    * @method _getRequestToken
-   * @async
    *
    * @return  {Object}
    *
@@ -161,6 +168,7 @@ class OAuth {
   async getUrl () {
     const requestToken = await this._getRequestToken()
     debug('generated request token %s', requestToken.oAuthToken)
+
     return `${this.authorizeUrl}?oauth_token=${requestToken.oAuthToken}`
   }
 

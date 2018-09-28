@@ -122,6 +122,7 @@ class Authenticator {
     if (isOAuthOne) {
       return this._driverInstance.getUserByToken(accessToken, accessSecret)
     }
+
     return this._driverInstance.getUserByToken(accessToken)
   }
 }

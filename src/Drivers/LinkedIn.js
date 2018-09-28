@@ -35,8 +35,19 @@ class LinkedIn extends OAuth2Scheme {
     this._redirectUri = config.redirectUri
     this._redirectUriOptions = _.merge({ response_type: 'code' }, config.options)
 
-    this.scope = this._getInitialScopes(config.scope)
-    this.fields = this._getInitialFields(config.fields)
+    this.scope = _.size(config.scope) ? config.scope : ['r_basicprofile', 'r_emailaddress']
+    this.fields = _.size(config.fields) ? config.fields : [
+      'id',
+      'first-name',
+      'last-name',
+      'formatted-name',
+      'email-address',
+      'location',
+      'industry',
+      'public-profile-url',
+      'picture-url',
+      'picture-urls::(original)'
+    ]
   }
 
   /**
@@ -96,51 +107,6 @@ class LinkedIn extends OAuth2Scheme {
    */
   get accessTokenUrl () {
     return 'accessToken'
-  }
-
-  /**
-   * Returns initial scopes to be used right from the
-   * config file. Otherwise it will fallback to the
-   * commonly used scopes.
-   *
-   * @method _getInitialScopes
-   *
-   * @param   {Array} scopes
-   *
-   * @return  {Array}
-   *
-   * @private
-   */
-  _getInitialScopes (scopes) {
-    return _.size(scopes) ? scopes : ['r_basicprofile', 'r_emailaddress']
-  }
-
-  /**
-   * Returns the initial fields to be used right from the
-   * config file. Otherwise it will fallback to the
-   * commonly used fields.
-   *
-   * @method _getInitialFields
-   *
-   * @param   {Array} fields
-   *
-   * @return  {Array}
-   *
-   * @private
-   */
-  _getInitialFields (fields) {
-    return _.size(fields) ? fields : [
-      'id',
-      'first-name',
-      'last-name',
-      'formatted-name',
-      'email-address',
-      'location',
-      'industry',
-      'public-profile-url',
-      'picture-url',
-      'picture-urls::(original)'
-    ]
   }
 
   /**

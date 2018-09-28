@@ -43,8 +43,8 @@ class Facebook extends OAuth2Scheme {
     /**
      * Public fields to be mutated from outside
      */
-    this.scope = this._getInitialScopes(config.scope)
-    this.fields = this._getInitialFields(config.fields)
+    this.scope = _.size(config.scope) ? config.scope : ['email']
+    this.fields = _.size(config.fields) ? config.fields : ['name', 'email', 'gender', 'verified', 'link']
   }
 
   /**
@@ -104,40 +104,6 @@ class Facebook extends OAuth2Scheme {
    */
   get accessTokenUrl () {
     return 'oauth/access_token'
-  }
-
-  /**
-   * Returns initial scopes to be used right from the
-   * config file. Otherwise it will fallback to the
-   * commonly used scopes.
-   *
-   * @method _getInitialScopes
-   *
-   * @param   {Array} scopes
-   *
-   * @return  {Array}
-   *
-   * @private
-   */
-  _getInitialScopes (scopes) {
-    return _.size(scopes) ? scopes : ['email']
-  }
-
-  /**
-   * Returns the initial fields to be used right from the
-   * config file. Otherwise it will fallback to the
-   * commonly used fields.
-   *
-   * @method _getInitialFields
-   *
-   * @param   {Array} fields
-   *
-   * @return  {Array}
-   *
-   * @private
-   */
-  _getInitialFields (fields) {
-    return _.size(fields) ? fields : ['name', 'email', 'gender', 'verified', 'link']
   }
 
   /**
@@ -265,8 +231,8 @@ class Facebook extends OAuth2Scheme {
     const accessTokenResponse = await this.getAccessToken(code, this._redirectUri, {
       grant_type: 'authorization_code'
     })
-    const userProfile = await this._getUserProfile(accessTokenResponse.accessToken)
 
+    const userProfile = await this._getUserProfile(accessTokenResponse.accessToken)
     return this._buildAllyUser(userProfile, accessTokenResponse)
   }
 
@@ -277,7 +243,6 @@ class Facebook extends OAuth2Scheme {
    */
   async getUserByToken (accessToken) {
     const userProfile = await this._getUserProfile(accessToken)
-
     return this._buildAllyUser(userProfile, { accessToken, refreshToken: null })
   }
 }
