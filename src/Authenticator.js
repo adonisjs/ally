@@ -24,8 +24,6 @@ class Authenticator {
     this._driverInstance = driverInstance
     this._request = request
     this._response = response
-    this._scope = [] // runtime scopes for a single request
-    this._fields = [] // runtime fields for a single request
   }
 
   /**
@@ -42,7 +40,7 @@ class Authenticator {
         .invalidParameter('Value for scope must be an array', scope)
     }
 
-    this._scope = scope
+    this._driverInstance.scope = scope
     return this
   }
 
@@ -60,7 +58,7 @@ class Authenticator {
         .invalidParameter('Value for fields must be an array', fields)
     }
 
-    this._fields = fields
+    this._driverInstance.fields = fields
     return this
   }
 
@@ -73,9 +71,7 @@ class Authenticator {
    * @return {String}
    */
   async getRedirectUrl () {
-    const url = await this._driverInstance.getRedirectUrl(this._scope)
-    this._scope = []
-    return url
+    return this._driverInstance.getRedirectUrl()
   }
 
   /**
@@ -101,9 +97,7 @@ class Authenticator {
    * @return {Object}
    */
   async getUser () {
-    const user = await this._driverInstance.getUser(this._request.get(), this._fields)
-    this._fields = []
-    return user
+    return this._driverInstance.getUser(this._request.get())
   }
 
   /**
@@ -126,10 +120,9 @@ class Authenticator {
     }
 
     if (isOAuthOne) {
-      return this._driverInstance.getUserByToken(accessToken, accessSecret, this._fields)
+      return this._driverInstance.getUserByToken(accessToken, accessSecret)
     }
-
-    return this._driverInstance.getUserByToken(accessToken, this._fields)
+    return this._driverInstance.getUserByToken(accessToken)
   }
 }
 

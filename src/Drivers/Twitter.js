@@ -57,7 +57,7 @@ class Twitter extends OAuthScheme {
    *
    * @attribute requestTokenUrl
    *
-   * @return {String} [description]
+   * @return {String}
    */
   get requestTokenUrl () {
     return 'https://api.twitter.com/oauth/request_token'
@@ -69,7 +69,7 @@ class Twitter extends OAuthScheme {
    *
    * @attribute authorizeUrl
    *
-   * @return {String} [description]
+   * @return {String}
    */
   get authorizeUrl () {
     return 'https://api.twitter.com/oauth/authenticate'

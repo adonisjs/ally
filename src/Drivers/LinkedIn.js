@@ -32,14 +32,11 @@ class LinkedIn extends OAuth2Scheme {
 
     super(config.clientId, config.clientSecret, config.headers)
 
-    /**
-     * Oauth specific values to be used when creating the redirect
-     * url or fetching user profile.
-     */
-    this._scope = this._getInitialScopes(config.scope)
-    this._fields = this._getInitialFields(config.fields)
     this._redirectUri = config.redirectUri
     this._redirectUriOptions = _.merge({ response_type: 'code' }, config.options)
+
+    this.scope = this._getInitialScopes(config.scope)
+    this.fields = this._getInitialFields(config.fields)
   }
 
   /**
@@ -83,7 +80,7 @@ class LinkedIn extends OAuth2Scheme {
    *
    * @attribute authorizeUrl
    *
-   * @return {String} [description]
+   * @return {String}
    */
   get authorizeUrl () {
     return 'authorization'
@@ -153,15 +150,13 @@ class LinkedIn extends OAuth2Scheme {
    * @attribute _getUserProfile
    *
    * @param   {String} accessToken
-   * @param   {Array} [fields]
    *
    * @return  {Object}
    *
    * @private
    */
-  async _getUserProfile (accessToken, fields) {
-    fields = _.size(fields) ? fields : this._fields
-    const profileUrl = `https://api.linkedin.com/v1/people/~:(${fields.join(',')})`
+  async _getUserProfile (accessToken) {
+    const profileUrl = `https://api.linkedin.com/v1/people/~:(${this.fields.join(',')})`
 
     const response = await got(profileUrl, {
       headers: {
@@ -212,13 +207,10 @@ class LinkedIn extends OAuth2Scheme {
    * @method getRedirectUrl
    * @async
    *
-   * @param  {Array} scope
-   *
    * @return {String}
    */
-  async getRedirectUrl (scope) {
-    scope = _.size(scope) ? scope : this._scope
-    return this.getUrl(this._redirectUri, scope, this._redirectUriOptions)
+  async getRedirectUrl () {
+    return this.getUrl(this._redirectUri, this.scope, this._redirectUriOptions)
   }
 
   /**
@@ -243,11 +235,10 @@ class LinkedIn extends OAuth2Scheme {
    * @async
    *
    * @param {Object} queryParams
-   * @param {Array} [fields]
    *
    * @return {Object}
    */
-  async getUser (queryParams, fields) {
+  async getUser (queryParams) {
     const code = queryParams.code
 
     /**
@@ -263,16 +254,21 @@ class LinkedIn extends OAuth2Scheme {
       grant_type: 'authorization_code'
     })
 
-    const userProfile = await this._getUserProfile(accessTokenResponse.accessToken, fields)
+    const userProfile = await this._getUserProfile(accessTokenResponse.accessToken)
     return this._buildAllyUser(userProfile, accessTokenResponse)
   }
 
   /**
+   * Get user by access token
    *
-   * @param {string} accessToken
+   * @method getUserByToken
+   *
+   * @param  {String}       accessToken
+   *
+   * @return {void}
    */
-  async getUserByToken (accessToken, filds) {
-    const userProfile = await this._getUserProfile(accessToken, filds)
+  async getUserByToken (accessToken) {
+    const userProfile = await this._getUserProfile(accessToken)
 
     return this._buildAllyUser(userProfile, { accessToken, refreshToken: null })
   }

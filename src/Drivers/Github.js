@@ -37,9 +37,13 @@ class Github extends OAuth2Scheme {
      * Oauth specific values to be used when creating the redirect
      * url or fetching user profile.
      */
-    this._scope = this._getInitialScopes(config.scope)
     this._redirectUri = config.redirectUri
     this._redirectUriOptions = _.merge({ response_type: 'code' }, config.options)
+
+    /**
+     * Public scopes
+     */
+    this.scope = this._getInitialScopes(config.scope)
   }
 
   /**
@@ -146,7 +150,7 @@ class Github extends OAuth2Scheme {
      * Get user email address by making another HTTP request
      * only when the scopes includes user or user:email
      */
-    if (_.size(_.intersection(this._scope, ['user', 'user:email']))) {
+    if (_.size(_.intersection(this.scope, ['user', 'user:email']))) {
       response.body.email = await this._getUserEmail(accessToken)
     }
 
@@ -214,13 +218,10 @@ class Github extends OAuth2Scheme {
    * @method getRedirectUrl
    * @async
    *
-   * @param  {Array} scope
-   *
    * @return {String}
    */
-  async getRedirectUrl (scope) {
-    scope = _.size(scope) ? scope : this._scope
-    return this.getUrl(this._redirectUri, scope, this._redirectUriOptions)
+  async getRedirectUrl () {
+    return this.getUrl(this._redirectUri, this.scope, this._redirectUriOptions)
   }
 
   /**

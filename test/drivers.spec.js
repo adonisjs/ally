@@ -70,12 +70,14 @@ test.group('Oauth Drivers | Google', function () {
     assert.equal(redirectToUrl, providerUrl)
   })
 
-  test('should make use of the scopes passed to the generate method', async function (assert) {
+  test('should make use of the scopes defined on instance later', async function (assert) {
     const google = new Google(config)
     const redirectUrl = qs.escape(config.get().redirectUri)
     const scope = qs.escape(['foo'].join(' '))
     const providerUrl = `https://accounts.google.com/o/oauth2/auth?redirect_uri=${redirectUrl}&scope=${scope}&response_type=code&client_id=${config.get().clientId}`
-    const redirectToUrl = await google.getRedirectUrl(['foo'])
+
+    google.scope = ['foo']
+    const redirectToUrl = await google.getRedirectUrl()
     assert.equal(redirectToUrl, providerUrl)
   })
 
@@ -157,12 +159,14 @@ test.group('Oauth Drivers | Facebook', function () {
     assert.equal(redirectToUrl, providerUrl)
   })
 
-  test('should make use of the scopes passed to the generate method', async function (assert) {
+  test('should make use of the scopes defined on the instance', async function (assert) {
     const facebook = new Facebook(config)
     const redirectUrl = qs.escape(config.get().redirectUri)
     const scope = qs.escape(['foo'].join(','))
     const providerUrl = `https://graph.facebook.com/v2.1/oauth/authorize?redirect_uri=${redirectUrl}&scope=${scope}&response_type=code&client_id=${config.get().clientId}`
-    const redirectToUrl = await facebook.getRedirectUrl(['foo'])
+
+    facebook.scope = ['foo']
+    const redirectToUrl = await facebook.getRedirectUrl()
     assert.equal(redirectToUrl, providerUrl)
   })
 
@@ -244,12 +248,14 @@ test.group('Oauth Drivers | Github', function () {
     assert.equal(redirectToUrl, providerUrl)
   })
 
-  test('should make use of the scopes passed to the generate method', async function (assert) {
+  test('should make use of the scopes defined on the instance', async function (assert) {
     const github = new Github(config)
     const redirectUrl = qs.escape(config.get().redirectUri)
     const scope = qs.escape(['foo'].join(' '))
     const providerUrl = `https://github.com/login/oauth/authorize?redirect_uri=${redirectUrl}&scope=${scope}&response_type=code&client_id=${config.get().clientId}`
-    const redirectToUrl = await github.getRedirectUrl(['foo'])
+
+    github.scope = ['foo']
+    const redirectToUrl = await github.getRedirectUrl()
     assert.equal(redirectToUrl, providerUrl)
   })
 
@@ -331,12 +337,14 @@ test.group('Oauth Drivers | LinkedIn', function () {
     assert.equal(redirectToUrl, providerUrl)
   })
 
-  test('should make use of the scopes passed to the generate method', async function (assert) {
+  test('should make use of the scopes defined on the instance', async function (assert) {
     const linkedin = new LinkedIn(config)
     const redirectUrl = qs.escape(config.get().redirectUri)
     const scope = qs.escape(['foo'].join(' '))
     const providerUrl = `https://www.linkedin.com/oauth/v2/authorization?redirect_uri=${redirectUrl}&scope=${scope}&response_type=code&client_id=${config.get().clientId}`
-    const redirectToUrl = await linkedin.getRedirectUrl(['foo'])
+
+    linkedin.scope = ['foo']
+    const redirectToUrl = await linkedin.getRedirectUrl()
     assert.equal(redirectToUrl, providerUrl)
   })
 
@@ -418,12 +426,14 @@ test.group('Oauth Drivers | Instagram', function () {
     assert.equal(redirectToUrl, providerUrl)
   })
 
-  test('should make use of the scopes passed to the generate method', async function (assert) {
+  test('should make use of the scopes defined on the instance', async function (assert) {
     const instagram = new Instagram(config)
     const redirectUrl = qs.escape(config.get().redirectUri)
     const scope = qs.escape(['basic'].join(' '))
     const providerUrl = `https://api.instagram.com/oauth/authorize?redirect_uri=${redirectUrl}&scope=${scope}&response_type=code&client_id=${config.get().clientId}`
-    const redirectToUrl = await instagram.getRedirectUrl(['basic'])
+
+    instagram.scope = ['basic']
+    const redirectToUrl = await instagram.getRedirectUrl()
     assert.equal(redirectToUrl, providerUrl)
   })
 })
@@ -497,11 +507,13 @@ test.group('Foursquare', function () {
     assert.equal(redirectToUrl, providerUrl)
   })
 
-  test('should make use of the scopes passed to the generate method', async function (assert) {
+  test('should make use of the scopes defined on the instance', async function (assert) {
     const foursquare = new Foursquare(config)
     const redirectUrl = qs.escape(config.get().redirectUri)
     const providerUrl = `https://foursquare.com/oauth2/authenticate?redirect_uri=${redirectUrl}&response_type=code&client_id=${config.get().clientId}`
-    const redirectToUrl = await foursquare.getRedirectUrl(['basic'])
+
+    foursquare.scope = ['basic']
+    const redirectToUrl = await foursquare.getRedirectUrl()
     assert.equal(redirectToUrl, providerUrl)
   })
 

@@ -18,13 +18,13 @@ test.group('Authenticator', function () {
   test('should be able to add runtime scope', function (assert) {
     const ally = new Authenticator({}, {}, {})
     ally.scope(['user', 'friends'])
-    assert.deepEqual(ally._scope, ['user', 'friends'])
+    assert.deepEqual(ally._driverInstance.scope, ['user', 'friends'])
   })
 
   test('should be able to add runtime fields', function (assert) {
     const ally = new Authenticator({}, {}, {})
     ally.fields(['name', 'email'])
-    assert.deepEqual(ally._fields, ['name', 'email'])
+    assert.deepEqual(ally._driverInstance.fields, ['name', 'email'])
   })
 
   test('should be throw an exception when scope values are not an array', function (assert) {
@@ -45,8 +45,7 @@ test.group('Authenticator', function () {
         this.scope = []
       }
 
-      async getRedirectUrl (scope) {
-        this.scope = scope
+      async getRedirectUrl () {
       }
     }
     const dummyDriver = new DummyDriver()
@@ -73,24 +72,9 @@ test.group('Authenticator', function () {
     assert.deepEqual(dummyDriver.queryParams.code, 'foo')
   })
 
-  test('should clear the _scope property after calling the getRedirectUrl method', async function (assert) {
-    class DummyDriver {
-      constructor () {
-        this.scope = []
-      }
-
-      async getRedirectUrl (scope) {
-        this.scope = scope
-      }
-    }
-    const dummyDriver = new DummyDriver()
-    const ally = new Authenticator(dummyDriver, {}, {})
-    await ally.scope(['user']).getRedirectUrl()
-    assert.deepEqual(ally._scope, [])
-  })
-
   test('should throw an invalid parameter exception when OAuth One is called without access secret key', async function (assert) {
     assert.plan(1)
+
     class DummyDriver extends One {
       constructor () {
         super('clientId', 'clientSecret', 'url')
@@ -101,7 +85,6 @@ test.group('Authenticator', function () {
     try {
       await ally.getUserByToken('randomToken')
     } catch (error) {
-      console.log()
       assert.instanceOf(error, GE.InvalidArgumentException)
     }
   })

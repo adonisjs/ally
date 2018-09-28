@@ -37,10 +37,14 @@ class Facebook extends OAuth2Scheme {
      * Oauth specific values to be used when creating the redirect
      * url or fetching user profile.
      */
-    this._scope = this._getInitialScopes(config.scope)
-    this._fields = this._getInitialFields(config.fields)
     this._redirectUri = config.redirectUri
     this._redirectUriOptions = Object.assign({ response_type: 'code' }, config.options)
+
+    /**
+     * Public fields to be mutated from outside
+     */
+    this.scope = this._getInitialScopes(config.scope)
+    this.fields = this._getInitialFields(config.fields)
   }
 
   /**
@@ -143,15 +147,13 @@ class Facebook extends OAuth2Scheme {
    * @method _getInitialFields
    *
    * @param   {String} accessToken
-   * @param   {Array} [fields]
    *
    * @return  {Object}
    *
    * @private
    */
-  async _getUserProfile (accessToken, fields) {
-    fields = _.size(fields) ? fields : this._fields
-    const profileUrl = `${this.baseUrl}/me?access_token=${accessToken}&fields=${fields.join(',')}`
+  async _getUserProfile (accessToken) {
+    const profileUrl = `${this.baseUrl}/me?access_token=${accessToken}&fields=${this.fields.join(',')}`
 
     const response = await got(profileUrl, {
       headers: {
@@ -202,13 +204,10 @@ class Facebook extends OAuth2Scheme {
    *
    * @method getRedirectUrl
    *
-   * @param  {Array} scope
-   *
    * @return {String}
    */
-  async getRedirectUrl (scope) {
-    scope = _.size(scope) ? scope : this._scope
-    return this.getUrl(this._redirectUri, scope, this._redirectUriOptions)
+  async getRedirectUrl () {
+    return this.getUrl(this._redirectUri, this.scope, this._redirectUriOptions)
   }
 
   /**
@@ -248,11 +247,10 @@ class Facebook extends OAuth2Scheme {
    * @method getUser
    *
    * @param {Object} queryParams
-   * @param {Array} [fields]
    *
    * @return {Object}
    */
-  async getUser (queryParams, fields) {
+  async getUser (queryParams) {
     const code = queryParams.code
 
     /**
@@ -267,7 +265,7 @@ class Facebook extends OAuth2Scheme {
     const accessTokenResponse = await this.getAccessToken(code, this._redirectUri, {
       grant_type: 'authorization_code'
     })
-    const userProfile = await this._getUserProfile(accessTokenResponse.accessToken, fields)
+    const userProfile = await this._getUserProfile(accessTokenResponse.accessToken)
 
     return this._buildAllyUser(userProfile, accessTokenResponse)
   }
@@ -277,8 +275,8 @@ class Facebook extends OAuth2Scheme {
    * @param {string} accessToken
    * @param {array} fields
    */
-  async getUserByToken (accessToken, fields) {
-    const userProfile = await this._getUserProfile(accessToken, fields)
+  async getUserByToken (accessToken) {
+    const userProfile = await this._getUserProfile(accessToken)
 
     return this._buildAllyUser(userProfile, { accessToken, refreshToken: null })
   }

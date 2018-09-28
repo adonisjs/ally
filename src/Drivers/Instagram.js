@@ -36,9 +36,10 @@ class Instagram extends OAuth2Scheme {
      * Oauth specific values to be used when creating the redirect
      * url or fetching user profile.
      */
-    this._scope = this._getInitialScopes(config.scope)
     this._redirectUri = config.redirectUri
     this._redirectUriOptions = _.merge({ response_type: 'code' }, config.options)
+
+    this.scope = this._getInitialScopes(config.scope)
   }
 
   /**
@@ -179,13 +180,10 @@ class Instagram extends OAuth2Scheme {
    * @method getRedirectUrl
    * @async
    *
-   * @param  {Array} scope
-   *
    * @return {String}
    */
-  async getRedirectUrl (scope) {
-    scope = _.size(scope) ? scope : this._scope
-    return this.getUrl(this._redirectUri, scope, this._redirectUriOptions)
+  async getRedirectUrl () {
+    return this.getUrl(this._redirectUri, this.scope, this._redirectUriOptions)
   }
 
   /**
