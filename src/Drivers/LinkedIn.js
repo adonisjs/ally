@@ -62,6 +62,18 @@ class LinkedIn extends OAuth2Scheme {
   }
 
   /**
+   * Returns a boolean telling if driver supports
+   * state
+   *
+   * @method supportStates
+   *
+   * @return {Boolean}
+   */
+  get supportStates () {
+    return true
+  }
+
+  /**
    * Scope seperator for seperating multiple
    * scopes.
    *
@@ -171,12 +183,14 @@ class LinkedIn extends OAuth2Scheme {
    * Returns the redirect url for a given provider.
    *
    * @method getRedirectUrl
-   * @async
+   *
+   * @param {String} [state]
    *
    * @return {String}
    */
-  async getRedirectUrl () {
-    return this.getUrl(this._redirectUri, this.scope, this._redirectUriOptions)
+  async getRedirectUrl (state) {
+    const options = state ? Object.assign(this._redirectUriOptions, { state }) : this._redirectUriOptions
+    return this.getUrl(this._redirectUri, this.scope, options)
   }
 
   /**
@@ -201,11 +215,13 @@ class LinkedIn extends OAuth2Scheme {
    * @async
    *
    * @param {Object} queryParams
+   * @param {String} [originalState]
    *
    * @return {Object}
    */
-  async getUser (queryParams) {
+  async getUser (queryParams, originalState) {
     const code = queryParams.code
+    const state = queryParams.state
 
     /**
      * Throw an exception when query string does not have
@@ -214,6 +230,13 @@ class LinkedIn extends OAuth2Scheme {
     if (!code) {
       const errorMessage = this.parseRedirectError(queryParams)
       throw CE.OAuthException.tokenExchangeException(errorMessage, null, errorMessage)
+    }
+
+    /**
+     * Valid state with original state
+     */
+    if (state && originalState !== state) {
+      throw CE.OAuthException.invalidState()
     }
 
     const accessTokenResponse = await this.getAccessToken(code, this._redirectUri, {

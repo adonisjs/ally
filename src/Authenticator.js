@@ -11,6 +11,7 @@
 
 const GE = require('@adonisjs/generic-exceptions')
 const One = require('./Schemes/OAuth')
+const uuid = require('uuid/v4')
 
 /**
  * The public interface to authenticate and get user
@@ -24,6 +25,7 @@ class Authenticator {
     this._driverInstance = driverInstance
     this._request = request
     this._response = response
+    this._isStateless = false
   }
 
   /**
@@ -41,6 +43,18 @@ class Authenticator {
     }
 
     this._driverInstance.scope = scope
+    return this
+  }
+
+  /**
+   * Make the authenticator stateless
+   *
+   * @method stateless
+   *
+   * @return {Object}
+   */
+  stateless () {
+    this._isStateless = true
     return this
   }
 
@@ -66,24 +80,31 @@ class Authenticator {
    * Returns the redirect uri using the driverInstance
    *
    * @method getRedirectUrl
-   * @async
+   *
+   * @param {String} state
    *
    * @return {String}
    */
-  async getRedirectUrl () {
-    return this._driverInstance.getRedirectUrl()
+  async getRedirectUrl (state) {
+    return this._driverInstance.getRedirectUrl(state)
   }
 
   /**
    * Redirects request to the provider website url.
    *
    * @method redirect
-   * @async
    *
    * @return {void}
    */
   async redirect () {
-    const url = await this.getRedirectUrl()
+    let state = null
+
+    if (!this._isStateless && this._driverInstance.supportStates) {
+      state = uuid()
+      this._response.cookie('oauth_state', state)
+    }
+
+    const url = await this.getRedirectUrl(state)
     this._response.status(302).redirect(url)
   }
 
@@ -97,7 +118,14 @@ class Authenticator {
    * @return {Object}
    */
   async getUser () {
-    return this._driverInstance.getUser(this._request.get())
+    let originalState = null
+
+    if (!this._isStateless && this._driverInstance.supportStates) {
+      originalState = this._request.cookie('oauth_state')
+      this._response.clearCookie('oauth_state')
+    }
+
+    return this._driverInstance.getUser(this._request.get(), originalState)
   }
 
   /**

@@ -11,10 +11,14 @@ ioc.bind('Adonis/Src/Config', () => {
 http.get('/github', async function (request, response) {
   const ally = new Ally(request, response)
   const github = ally.driver('github')
-  response.writeHead(200, { 'content-type': 'text/html' })
-  const url = await github.getRedirectUrl()
-  response.write(`<a href="${url}">Login With Github</a>`)
-  response.end()
+
+  if (request.input('redirect')) {
+    await github.redirect()
+  } else {
+    response.writeHead(200, { 'content-type': 'text/html' })
+    response.write(`<a href="/github?redirect=true">Login With Github</a>`)
+    response.end()
+  }
 })
 
 http.get('/github/authenticated', async function (request, response) {

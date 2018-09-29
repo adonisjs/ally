@@ -54,6 +54,18 @@ class Foursquare extends OAuth2Scheme {
   }
 
   /**
+   * Returns a boolean telling if driver supports
+   * state
+   *
+   * @method supportStates
+   *
+   * @return {Boolean}
+   */
+  get supportStates () {
+    return false
+  }
+
+  /**
    * Base url to be used for constructing
    * facebook oauth urls.
    *

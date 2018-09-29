@@ -10,16 +10,15 @@ ioc.bind('Adonis/Src/Config', () => {
 
 http.get('/twitter', async function (request, response) {
   const ally = new Ally(request, response)
-  try {
-    const twitter = ally.driver('twitter')
-    const url = await twitter.getRedirectUrl()
+  const twitter = ally.driver('twitter')
+
+  if (request.input('redirect')) {
+    await twitter.redirect()
+  } else {
     response.writeHead(200, { 'content-type': 'text/html' })
-    response.write(`<a href="${url}">Login With Twitter</a>`)
-  } catch (e) {
-    response.writeHead(500, { 'content-type': 'application/json' })
-    response.write(JSON.stringify({ error: e }))
+    response.write(`<a href="/twitter?redirect=true">Login With Twitter</a>`)
+    response.end()
   }
-  response.end()
 })
 
 http.get('/twitter/authenticated', async function (request, response) {

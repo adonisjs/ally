@@ -10,7 +10,11 @@
 */
 
 module.exports = {
-  get: function () {
+  get: function (key) {
+    if (key === 'app.appKey') {
+      return 'bubblegum'
+    }
+
     return {
       clientId: '102030101',
       clientSecret: 'sakdksadlk',

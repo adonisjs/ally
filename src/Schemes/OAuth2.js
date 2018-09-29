@@ -148,6 +148,7 @@ class OAuth2 {
     if (!redirectUri) {
       throw GE.InvalidArgumentException.missingParameter('getUrl', 'redirectUri', '1st')
     }
+
     const scopeHash = _.size(scope) ? { scope: scope.join(this.scopeSeperator) } : null
     const options = _.merge({ redirect_uri: redirectUri }, scopeHash, extras)
     debug('generating redirect uri using %j options', options)

@@ -42,6 +42,18 @@ class Twitter extends OAuthScheme {
   }
 
   /**
+   * Returns a boolean telling if driver supports
+   * state
+   *
+   * @method supportStates
+   *
+   * @return {Boolean}
+   */
+  get supportStates () {
+    return false
+  }
+
+  /**
    * Url to be used for fetching user profile.
    *
    * @attribute profileUrl

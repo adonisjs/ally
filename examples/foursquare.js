@@ -14,10 +14,14 @@ ioc.bind('Adonis/Src/Config', () => {
 http.get('/foursquare', async function (request, response) {
   const ally = new Ally(request, response)
   const foursquare = ally.driver('foursquare')
-  response.writeHead(200, { 'content-type': 'text/html' })
-  const url = await foursquare.getRedirectUrl()
-  response.write(`<a href="${url}">Login With Foursquare</a>`)
-  response.end()
+
+  if (request.input('redirect')) {
+    await foursquare.redirect()
+  } else {
+    response.writeHead(200, { 'content-type': 'text/html' })
+    response.write(`<a href="/foursquare?redirect=true">Login With FourSquare</a>`)
+    response.end()
+  }
 })
 
 http.get('/foursquare/authenticated', async function (request, response) {

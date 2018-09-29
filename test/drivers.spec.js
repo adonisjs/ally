@@ -108,6 +108,56 @@ test.group('Oauth Drivers | Google', function () {
 
     assert.equal(user.getExpires(), 12345)
   })
+
+  test('pass state when exists', async (assert) => {
+    const google = new Google(config)
+    const redirectUrl = qs.escape(config.get().redirectUri)
+    const scope = qs.escape(['openid', 'profile', 'email'].join(' '))
+    const state = '1234'
+
+    const providerUrl = `https://accounts.google.com/o/oauth2/auth?redirect_uri=${redirectUrl}&scope=${scope}&response_type=code&state=${state}&client_id=${config.get().clientId}`
+
+    const redirectToUrl = await google.getRedirectUrl(state)
+    assert.equal(redirectToUrl, providerUrl)
+  })
+
+  test('return error when state exists and original state is missing', async (assert) => {
+    const google = new Google(config)
+    assert.plan(1)
+
+    try {
+      await google.getUser({ code: 1, state: '1234' })
+    } catch (error) {
+      assert.equal(error.message, 'E_OAUTH_STATE_MISMATCH: Oauth state mis-match')
+    }
+  })
+
+  test('return error when state exists and original state is different', async (assert) => {
+    const google = new Google(config)
+    assert.plan(1)
+
+    try {
+      await google.getUser({ code: 1, state: '1234' }, '123')
+    } catch (error) {
+      assert.equal(error.message, 'E_OAUTH_STATE_MISMATCH: Oauth state mis-match')
+    }
+  })
+
+  test('work fine when state and original state are same', async (assert) => {
+    const google = new Google(config)
+    assert.plan(1)
+
+    google.getAccessToken = function () {
+      return { accessToken: null }
+    }
+    google._getUserProfile = function () {}
+    google._buildAllyUser = function () {
+      return 'fakeuser'
+    }
+
+    const user = await google.getUser({ code: 1, state: '1234' }, '1234')
+    assert.equal(user, 'fakeuser')
+  })
 })
 
 test.group('Oauth Drivers | Facebook', function () {
@@ -196,6 +246,56 @@ test.group('Oauth Drivers | Facebook', function () {
     const user = await facebook.getUser({ code: '12345' })
 
     assert.equal(user.getExpires(), 12345)
+  })
+
+  test('pass state when exists', async (assert) => {
+    const facebook = new Facebook(config)
+    const redirectUrl = qs.escape(config.get().redirectUri)
+    const scope = qs.escape(['email'].join(','))
+    const state = '1234'
+
+    const providerUrl = `https://graph.facebook.com/v2.1/oauth/authorize?redirect_uri=${redirectUrl}&scope=${scope}&response_type=code&state=${state}&client_id=${config.get().clientId}`
+
+    const redirectToUrl = await facebook.getRedirectUrl(state)
+    assert.equal(redirectToUrl, providerUrl)
+  })
+
+  test('return error when state exists and original state is missing', async (assert) => {
+    const facebook = new Facebook(config)
+    assert.plan(1)
+
+    try {
+      await facebook.getUser({ code: 1, state: '1234' })
+    } catch (error) {
+      assert.equal(error.message, 'E_OAUTH_STATE_MISMATCH: Oauth state mis-match')
+    }
+  })
+
+  test('return error when state exists and original state is different', async (assert) => {
+    const facebook = new Facebook(config)
+    assert.plan(1)
+
+    try {
+      await facebook.getUser({ code: 1, state: '1234' }, '123')
+    } catch (error) {
+      assert.equal(error.message, 'E_OAUTH_STATE_MISMATCH: Oauth state mis-match')
+    }
+  })
+
+  test('work fine when state and original state are same', async (assert) => {
+    const facebook = new Facebook(config)
+    assert.plan(1)
+
+    facebook.getAccessToken = function () {
+      return { accessToken: null }
+    }
+    facebook._getUserProfile = function () {}
+    facebook._buildAllyUser = function () {
+      return 'fakeuser'
+    }
+
+    const user = await facebook.getUser({ code: 1, state: '1234' }, '1234')
+    assert.equal(user, 'fakeuser')
   })
 })
 
@@ -286,6 +386,56 @@ test.group('Oauth Drivers | Github', function () {
 
     assert.equal(user.getExpires(), 12345)
   })
+
+  test('pass state when exists', async (assert) => {
+    const github = new Github(config)
+    const redirectUrl = qs.escape(config.get().redirectUri)
+    const scope = qs.escape(['user'].join(','))
+    const state = '1234'
+
+    const providerUrl = `https://github.com/login/oauth/authorize?redirect_uri=${redirectUrl}&scope=${scope}&response_type=code&state=${state}&client_id=${config.get().clientId}`
+
+    const redirectToUrl = await github.getRedirectUrl(state)
+    assert.equal(redirectToUrl, providerUrl)
+  })
+
+  test('return error when state exists and original state is missing', async (assert) => {
+    const github = new Github(config)
+    assert.plan(1)
+
+    try {
+      await github.getUser({ code: 1, state: '1234' })
+    } catch (error) {
+      assert.equal(error.message, 'E_OAUTH_STATE_MISMATCH: Oauth state mis-match')
+    }
+  })
+
+  test('return error when state exists and original state is different', async (assert) => {
+    const github = new Github(config)
+    assert.plan(1)
+
+    try {
+      await github.getUser({ code: 1, state: '1234' }, '123')
+    } catch (error) {
+      assert.equal(error.message, 'E_OAUTH_STATE_MISMATCH: Oauth state mis-match')
+    }
+  })
+
+  test('work fine when state and original state are same', async (assert) => {
+    const github = new Github(config)
+    assert.plan(1)
+
+    github.getAccessToken = function () {
+      return { accessToken: null }
+    }
+    github._getUserProfile = function () {}
+    github._buildAllyUser = function () {
+      return 'fakeuser'
+    }
+
+    const user = await github.getUser({ code: 1, state: '1234' }, '1234')
+    assert.equal(user, 'fakeuser')
+  })
 })
 
 test.group('Oauth Drivers | LinkedIn', function () {
@@ -375,6 +525,56 @@ test.group('Oauth Drivers | LinkedIn', function () {
 
     assert.equal(user.getExpires(), 12345)
   })
+
+  test('pass state when exists', async (assert) => {
+    const linkedin = new LinkedIn(config)
+    const redirectUrl = qs.escape(config.get().redirectUri)
+    const scope = qs.escape(['r_basicprofile', 'r_emailaddress'].join(' '))
+    const state = '1234'
+
+    const providerUrl = `https://www.linkedin.com/oauth/v2/authorization?redirect_uri=${redirectUrl}&scope=${scope}&response_type=code&state=${state}&client_id=${config.get().clientId}`
+
+    const redirectToUrl = await linkedin.getRedirectUrl(state)
+    assert.equal(redirectToUrl, providerUrl)
+  })
+
+  test('return error when state exists and original state is missing', async (assert) => {
+    const linkedin = new LinkedIn(config)
+    assert.plan(1)
+
+    try {
+      await linkedin.getUser({ code: 1, state: '1234' })
+    } catch (error) {
+      assert.equal(error.message, 'E_OAUTH_STATE_MISMATCH: Oauth state mis-match')
+    }
+  })
+
+  test('return error when state exists and original state is different', async (assert) => {
+    const linkedin = new LinkedIn(config)
+    assert.plan(1)
+
+    try {
+      await linkedin.getUser({ code: 1, state: '1234' }, '123')
+    } catch (error) {
+      assert.equal(error.message, 'E_OAUTH_STATE_MISMATCH: Oauth state mis-match')
+    }
+  })
+
+  test('work fine when state and original state are same', async (assert) => {
+    const linkedin = new LinkedIn(config)
+    assert.plan(1)
+
+    linkedin.getAccessToken = function () {
+      return { accessToken: null }
+    }
+    linkedin._getUserProfile = function () {}
+    linkedin._buildAllyUser = function () {
+      return 'fakeuser'
+    }
+
+    const user = await linkedin.getUser({ code: 1, state: '1234' }, '1234')
+    assert.equal(user, 'fakeuser')
+  })
 })
 
 test.group('Oauth Drivers | Instagram', function () {
@@ -435,6 +635,56 @@ test.group('Oauth Drivers | Instagram', function () {
     instagram.scope = ['basic']
     const redirectToUrl = await instagram.getRedirectUrl()
     assert.equal(redirectToUrl, providerUrl)
+  })
+
+  test('pass state when exists', async (assert) => {
+    const instagram = new Instagram(config)
+    const redirectUrl = qs.escape(config.get().redirectUri)
+    const scope = qs.escape(['basic'].join(' '))
+    const state = '1234'
+
+    const providerUrl = `https://api.instagram.com/oauth/authorize?redirect_uri=${redirectUrl}&scope=${scope}&response_type=code&state=${state}&client_id=${config.get().clientId}`
+
+    const redirectToUrl = await instagram.getRedirectUrl(state)
+    assert.equal(redirectToUrl, providerUrl)
+  })
+
+  test('return error when state exists and original state is missing', async (assert) => {
+    const instagram = new Instagram(config)
+    assert.plan(1)
+
+    try {
+      await instagram.getUser({ code: 1, state: '1234' })
+    } catch (error) {
+      assert.equal(error.message, 'E_OAUTH_STATE_MISMATCH: Oauth state mis-match')
+    }
+  })
+
+  test('return error when state exists and original state is different', async (assert) => {
+    const instagram = new Instagram(config)
+    assert.plan(1)
+
+    try {
+      await instagram.getUser({ code: 1, state: '1234' }, '123')
+    } catch (error) {
+      assert.equal(error.message, 'E_OAUTH_STATE_MISMATCH: Oauth state mis-match')
+    }
+  })
+
+  test('work fine when state and original state are same', async (assert) => {
+    const instagram = new Instagram(config)
+    assert.plan(1)
+
+    instagram.getAccessToken = function () {
+      return { accessToken: null }
+    }
+    instagram._getUserProfile = function () {}
+    instagram._buildAllyUser = function () {
+      return 'fakeuser'
+    }
+
+    const user = await instagram.getUser({ code: 1, state: '1234' }, '1234')
+    assert.equal(user, 'fakeuser')
   })
 })
 

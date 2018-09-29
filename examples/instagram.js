@@ -11,10 +11,14 @@ ioc.bind('Adonis/Src/Config', () => {
 http.get('/instagram', async function (request, response) {
   const ally = new Ally(request, response)
   const instagram = ally.driver('instagram')
-  response.writeHead(200, { 'content-type': 'text/html' })
-  const url = await instagram.getRedirectUrl()
-  response.write(`<a href="${url}">Login With Instagram</a>`)
-  response.end()
+
+  if (request.input('redirect')) {
+    await instagram.redirect()
+  } else {
+    response.writeHead(200, { 'content-type': 'text/html' })
+    response.write(`<a href="/instagram?redirect=true">Login With Instagram</a>`)
+    response.end()
+  }
 })
 
 http.get('/instagram/authenticated', async function (request, response) {
