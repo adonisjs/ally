@@ -37,9 +37,13 @@ class Github extends OAuth2Scheme {
      * Oauth specific values to be used when creating the redirect
      * url or fetching user profile.
      */
-    this._scope = this._getInitialScopes(config.scope)
     this._redirectUri = config.redirectUri
-    this._redirectUriOptions = _.merge({response_type: 'code'}, config.options)
+    this._redirectUriOptions = _.merge({ response_type: 'code' }, config.options)
+
+    /**
+     * Public scopes
+     */
+    this.scope = _.size(config.scope) ? config.scope : ['user']
   }
 
   /**
@@ -51,6 +55,18 @@ class Github extends OAuth2Scheme {
    */
   static get inject () {
     return ['Adonis/Src/Config']
+  }
+
+  /**
+   * Returns a boolean telling if driver supports
+   * state
+   *
+   * @method supportStates
+   *
+   * @return {Boolean}
+   */
+  get supportStates () {
+    return true
   }
 
   /**
@@ -102,23 +118,6 @@ class Github extends OAuth2Scheme {
   }
 
   /**
-   * Returns initial scopes to be used right from the
-   * config file. Otherwise it will fallback to the
-   * commonly used scopes.
-   *
-   * @method _getInitialScopes
-   *
-   * @param   {Array} scopes
-   *
-   * @return  {Array}
-   *
-   * @private
-   */
-  _getInitialScopes (scopes) {
-    return _.size(scopes) ? scopes : ['user']
-  }
-
-  /**
    * Returns the user profile as an object using the
    * access token.
    *
@@ -146,7 +145,7 @@ class Github extends OAuth2Scheme {
      * Get user email address by making another HTTP request
      * only when the scopes includes user or user:email
      */
-    if (_.size(_.intersection(this._scope, ['user', 'user:email']))) {
+    if (_.size(_.intersection(this.scope, ['user', 'user:email']))) {
       response.body.email = await this._getUserEmail(accessToken)
     }
 
@@ -212,15 +211,14 @@ class Github extends OAuth2Scheme {
    * Returns the redirect url for a given provider
    *
    * @method getRedirectUrl
-   * @async
    *
-   * @param  {Array} scope
+   * @param {String} [state]
    *
    * @return {String}
    */
-  async getRedirectUrl (scope) {
-    scope = _.size(scope) ? scope : this._scope
-    return this.getUrl(this._redirectUri, scope, this._redirectUriOptions)
+  async getRedirectUrl (state) {
+    const options = state ? Object.assign(this._redirectUriOptions, { state }) : this._redirectUriOptions
+    return this.getUrl(this._redirectUri, this.scope, options)
   }
 
   /**
@@ -262,11 +260,13 @@ class Github extends OAuth2Scheme {
    * @async
    *
    * @param {Object} queryParams
+   * @param {String} [originalState]
    *
    * @return {Object}
    */
-  async getUser (queryParams) {
+  async getUser (queryParams, originalState) {
     const code = queryParams.code
+    const state = queryParams.state
 
     /**
      * Throw an exception when query string does not have
@@ -276,11 +276,19 @@ class Github extends OAuth2Scheme {
       const errorMessage = this.parseRedirectError(queryParams)
       throw CE.OAuthException.tokenExchangeException(errorMessage, null, errorMessage)
     }
+
+    /**
+     * Valid state with original state
+     */
+    if (state && originalState !== state) {
+      throw CE.OAuthException.invalidState()
+    }
+
     const accessTokenResponse = await this.getAccessToken(code, this._redirectUri, {
       grant_type: 'authorization_code'
     })
-    const userProfile = await this._getUserProfile(accessTokenResponse.accessToken)
 
+    const userProfile = await this._getUserProfile(accessTokenResponse.accessToken)
     return this._buildAllyUser(userProfile, accessTokenResponse)
   }
 
@@ -291,7 +299,7 @@ class Github extends OAuth2Scheme {
   async getUserByToken (accessToken) {
     const userProfile = await this._getUserProfile(accessToken)
 
-    return this._buildAllyUser(userProfile, {accessToken, refreshToken: null})
+    return this._buildAllyUser(userProfile, { accessToken, refreshToken: null })
   }
 }
 

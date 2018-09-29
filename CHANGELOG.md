@@ -1,3 +1,25 @@
+<a name="2.1.0"></a>
+# [2.1.0](https://github.com/adonisjs/adonis-ally/compare/v2.0.5...v2.1.0) (2018-09-29)
+
+
+### Code Refactoring
+
+* **expose scope and fields as public properties:** all drivers now allows mutating scopes and f ([0ac72ca](https://github.com/adonisjs/adonis-ally/commit/0ac72ca))
+
+
+### Features
+
+* add state when performing oauth ([c3d2689](https://github.com/adonisjs/adonis-ally/commit/c3d2689)), closes [#2](https://github.com/adonisjs/adonis-ally/issues/2)
+
+
+### BREAKING CHANGES
+
+* **expose scope and fields as public properties:** Anyone using the driver instance directly now have to mutate scope array directly
+vs passing scope array to getRedireUrl method and mutate fields array directly vs passing fields
+array to getUser method
+
+
+
 <a name="2.0.5"></a>
 ## [2.0.5](https://github.com/adonisjs/adonis-ally/compare/v2.0.4...v2.0.5) (2018-07-16)
 

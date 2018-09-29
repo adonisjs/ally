@@ -148,6 +148,7 @@ class OAuth2 {
     if (!redirectUri) {
       throw GE.InvalidArgumentException.missingParameter('getUrl', 'redirectUri', '1st')
     }
+
     const scopeHash = _.size(scope) ? { scope: scope.join(this.scopeSeperator) } : null
     const options = _.merge({ redirect_uri: redirectUri }, scopeHash, extras)
     debug('generating redirect uri using %j options', options)
@@ -170,7 +171,7 @@ class OAuth2 {
    */
   getAccessToken (code, redirectUri, extras) {
     return new Promise((resolve, reject) => {
-      const options = _.merge({redirect_uri: redirectUri}, extras)
+      const options = _.merge({ redirect_uri: redirectUri }, extras)
       this.client.getOAuthAccessToken(code, options, (error, accessToken, refreshToken, result) => {
         debug('oauth error %j', error)
         debug('oauth response %j', result)
@@ -191,7 +192,7 @@ class OAuth2 {
           return reject(this.parseProviderResultError(result))
         }
 
-        resolve({accessToken, refreshToken, result})
+        resolve({ accessToken, refreshToken, result })
       })
     })
   }

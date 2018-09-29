@@ -16,12 +16,12 @@ const clientId = '10012020'
 const clientSecret = '1000w0sa'
 
 test.group('OAuth2', function () {
-  test('should throw an exception when oauth2 class is initiated directly', function (assert) {
+  test('should throw an exception when oauth2 class is initiated directly', (assert) => {
     const oauth2 = () => new OAuth2(clientId, clientSecret)
     assert.throw(oauth2, 'E_CANNOT_INSTANTIATE: OAuth2 class cannot be instantiated directly and must be extended')
   })
 
-  test('should throw an exception when redirect uri is not passed to the getUrl method', function (assert) {
+  test('should throw an exception when redirect uri is not passed to the getUrl method', (assert) => {
     class Facebook extends OAuth2 {
       get baseUrl () {
         return 'https://graph.facebook.com/v2.1'
@@ -40,7 +40,7 @@ test.group('OAuth2', function () {
     assert.throw(facebookUrl, 'E_MISSING_PARAMETER: Missing parameter redirectUri expected by getUrl method as 1st parameter')
   })
 
-  test('should throw an exception when trying to initiate the class without clientId', function (assert) {
+  test('should throw an exception when trying to initiate the class without clientId', (assert) => {
     class Facebook extends OAuth2 {
       get baseUrl () {
         return 'https://graph.facebook.com/v2.1'
@@ -59,7 +59,7 @@ test.group('OAuth2', function () {
     assert.throw(facebook, 'E_MISSING_PARAMETER: Missing parameter clientId expected by oauth2 method as 1st parameter')
   })
 
-  test('should throw an exception when trying to initiate the class without clientSecret', function (assert) {
+  test('should throw an exception when trying to initiate the class without clientSecret', (assert) => {
     class Facebook extends OAuth2 {
       get baseUrl () {
         return 'https://graph.facebook.com/v2.1'
@@ -78,7 +78,7 @@ test.group('OAuth2', function () {
     assert.throw(facebook, 'E_MISSING_PARAMETER: Missing parameter clientSecret expected by oauth2 method as 2nd parameter')
   })
 
-  test('should not append / when the baseUrl ends with /', function (assert) {
+  test('should not append / when the baseUrl ends with /', (assert) => {
     class Facebook extends OAuth2 {
       get baseUrl () {
         return 'https://graph.facebook.com/v2.1/'
@@ -99,7 +99,7 @@ test.group('OAuth2', function () {
     assert.equal(facebookUrl, expectedUrl)
   })
 
-  test('should return the redirect url using the getUrl method', function (assert) {
+  test('should return the redirect url using the getUrl method', (assert) => {
     class Facebook extends OAuth2 {
       get baseUrl () {
         return 'https://graph.facebook.com/v2.1'
@@ -120,7 +120,7 @@ test.group('OAuth2', function () {
     assert.equal(facebookUrl, expectedUrl)
   })
 
-  test('should append the scopes to the redirect url when defined', function (assert) {
+  test('should append the scopes to the redirect url when defined', (assert) => {
     class Facebook extends OAuth2 {
       get baseUrl () {
         return 'https://graph.facebook.com/v2.1'
@@ -141,7 +141,7 @@ test.group('OAuth2', function () {
     assert.equal(facebookUrl, expectedUrl)
   })
 
-  test('should append the secret to the redirect url when defined', function (assert) {
+  test('should append the secret to the redirect url when defined', (assert) => {
     class Facebook extends OAuth2 {
       get baseUrl () {
         return 'https://graph.facebook.com/v2.1'
@@ -162,20 +162,20 @@ test.group('OAuth2', function () {
     assert.equal(facebookUrl, expectedUrl)
   })
 
-  test('should be able to parse standard oauth error', function (assert) {
+  test('should be able to parse standard oauth error', (assert) => {
     class Facebook extends OAuth2 {
     }
     const facebook = new Facebook(clientId, clientSecret)
-    const parsedError = facebook.parseProviderError({statusCode: 400, data: JSON.stringify({error_description: 'foo'})})
+    const parsedError = facebook.parseProviderError({ statusCode: 400, data: JSON.stringify({ error_description: 'foo' }) })
     assert.equal(parsedError.name, 'OAuthException')
     assert.equal(parsedError.message, 'E_OAUTH_TOKEN_EXCHANGE: foo')
   })
 
-  test('should return original error back as a message when error message does not have data property', function (assert) {
+  test('should return original error back as a message when error message does not have data property', (assert) => {
     class Facebook extends OAuth2 {
     }
     const facebook = new Facebook(clientId, clientSecret)
-    const parsedError = facebook.parseProviderError({statusCode: 400})
+    const parsedError = facebook.parseProviderError({ statusCode: 400 })
     assert.equal(parsedError.name, 'OAuthException')
     assert.equal(parsedError.message, 'E_OAUTH_TOKEN_EXCHANGE: null')
   })

@@ -11,6 +11,7 @@
 
 const GE = require('@adonisjs/generic-exceptions')
 const One = require('./Schemes/OAuth')
+const uuid = require('uuid/v4')
 
 /**
  * The public interface to authenticate and get user
@@ -24,8 +25,7 @@ class Authenticator {
     this._driverInstance = driverInstance
     this._request = request
     this._response = response
-    this._scope = [] // runtime scopes for a single request
-    this._fields = [] // runtime fields for a single request
+    this._isStateless = false
   }
 
   /**
@@ -42,7 +42,19 @@ class Authenticator {
         .invalidParameter('Value for scope must be an array', scope)
     }
 
-    this._scope = scope
+    this._driverInstance.scope = scope
+    return this
+  }
+
+  /**
+   * Make the authenticator stateless
+   *
+   * @method stateless
+   *
+   * @return {Object}
+   */
+  stateless () {
+    this._isStateless = true
     return this
   }
 
@@ -60,7 +72,7 @@ class Authenticator {
         .invalidParameter('Value for fields must be an array', fields)
     }
 
-    this._fields = fields
+    this._driverInstance.fields = fields
     return this
   }
 
@@ -68,26 +80,31 @@ class Authenticator {
    * Returns the redirect uri using the driverInstance
    *
    * @method getRedirectUrl
-   * @async
+   *
+   * @param {String} state
    *
    * @return {String}
    */
-  async getRedirectUrl () {
-    const url = await this._driverInstance.getRedirectUrl(this._scope)
-    this._scope = []
-    return url
+  async getRedirectUrl (state) {
+    return this._driverInstance.getRedirectUrl(state)
   }
 
   /**
    * Redirects request to the provider website url.
    *
    * @method redirect
-   * @async
    *
    * @return {void}
    */
   async redirect () {
-    const url = await this.getRedirectUrl()
+    let state = null
+
+    if (!this._isStateless && this._driverInstance.supportStates) {
+      state = uuid()
+      this._response.cookie('oauth_state', state)
+    }
+
+    const url = await this.getRedirectUrl(state)
     this._response.status(302).redirect(url)
   }
 
@@ -101,9 +118,14 @@ class Authenticator {
    * @return {Object}
    */
   async getUser () {
-    const user = await this._driverInstance.getUser(this._request.get(), this._fields)
-    this._fields = []
-    return user
+    let originalState = null
+
+    if (!this._isStateless && this._driverInstance.supportStates) {
+      originalState = this._request.cookie('oauth_state')
+      this._response.clearCookie('oauth_state')
+    }
+
+    return this._driverInstance.getUser(this._request.get(), originalState)
   }
 
   /**
@@ -126,10 +148,10 @@ class Authenticator {
     }
 
     if (isOAuthOne) {
-      return this._driverInstance.getUserByToken(accessToken, accessSecret, this._fields)
+      return this._driverInstance.getUserByToken(accessToken, accessSecret)
     }
 
-    return this._driverInstance.getUserByToken(accessToken, this._fields)
+    return this._driverInstance.getUserByToken(accessToken)
   }
 }
 

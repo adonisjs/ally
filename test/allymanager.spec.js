@@ -14,24 +14,24 @@ const { ioc } = require('@adonisjs/fold')
 const AllyManager = require('../src/AllyManager')
 const config = require('./setup/config')
 
-test.group('AllyManager', function (group) {
+test.group('AllyManager', (group) => {
   group.before(function () {
     ioc.bind('Adonis/Src/Config', function () {
       return config
     })
   })
 
-  test('should return an instance of ally using the driver method', function (assert) {
+  test('should return an instance of ally using the driver method', (assert) => {
     const fb = AllyManager.driver('facebook')
     assert.equal(fb.constructor.name, 'Facebook')
   })
 
-  test('should throw an exception when unable to find the requested driver', function (assert) {
+  test('should throw an exception when unable to find the requested driver', (assert) => {
     const foo = () => AllyManager.driver('foo')
     assert.throw(foo, 'E_INVALID_PARAMETER: foo is not a valid ally driver')
   })
 
-  test('should be able to extend ally to add new drivers', function (assert) {
+  test('should be able to extend ally to add new drivers', (assert) => {
     class FooDriver {}
     AllyManager.extend('foo', new FooDriver())
     const foo = AllyManager.driver('foo')

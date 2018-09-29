@@ -32,14 +32,22 @@ class LinkedIn extends OAuth2Scheme {
 
     super(config.clientId, config.clientSecret, config.headers)
 
-    /**
-     * Oauth specific values to be used when creating the redirect
-     * url or fetching user profile.
-     */
-    this._scope = this._getInitialScopes(config.scope)
-    this._fields = this._getInitialFields(config.fields)
     this._redirectUri = config.redirectUri
-    this._redirectUriOptions = _.merge({response_type: 'code'}, config.options)
+    this._redirectUriOptions = _.merge({ response_type: 'code' }, config.options)
+
+    this.scope = _.size(config.scope) ? config.scope : ['r_basicprofile', 'r_emailaddress']
+    this.fields = _.size(config.fields) ? config.fields : [
+      'id',
+      'first-name',
+      'last-name',
+      'formatted-name',
+      'email-address',
+      'location',
+      'industry',
+      'public-profile-url',
+      'picture-url',
+      'picture-urls::(original)'
+    ]
   }
 
   /**
@@ -51,6 +59,18 @@ class LinkedIn extends OAuth2Scheme {
    */
   static get inject () {
     return ['Adonis/Src/Config']
+  }
+
+  /**
+   * Returns a boolean telling if driver supports
+   * state
+   *
+   * @method supportStates
+   *
+   * @return {Boolean}
+   */
+  get supportStates () {
+    return true
   }
 
   /**
@@ -83,7 +103,7 @@ class LinkedIn extends OAuth2Scheme {
    *
    * @attribute authorizeUrl
    *
-   * @return {String} [description]
+   * @return {String}
    */
   get authorizeUrl () {
     return 'authorization'
@@ -102,66 +122,19 @@ class LinkedIn extends OAuth2Scheme {
   }
 
   /**
-   * Returns initial scopes to be used right from the
-   * config file. Otherwise it will fallback to the
-   * commonly used scopes.
-   *
-   * @method _getInitialScopes
-   *
-   * @param   {Array} scopes
-   *
-   * @return  {Array}
-   *
-   * @private
-   */
-  _getInitialScopes (scopes) {
-    return _.size(scopes) ? scopes : ['r_basicprofile', 'r_emailaddress']
-  }
-
-  /**
-   * Returns the initial fields to be used right from the
-   * config file. Otherwise it will fallback to the
-   * commonly used fields.
-   *
-   * @method _getInitialFields
-   *
-   * @param   {Array} fields
-   *
-   * @return  {Array}
-   *
-   * @private
-   */
-  _getInitialFields (fields) {
-    return _.size(fields) ? fields : [
-      'id',
-      'first-name',
-      'last-name',
-      'formatted-name',
-      'email-address',
-      'location',
-      'industry',
-      'public-profile-url',
-      'picture-url',
-      'picture-urls::(original)'
-    ]
-  }
-
-  /**
    * Returns the user profile as an object using the
    * access token.
    *
    * @attribute _getUserProfile
    *
    * @param   {String} accessToken
-   * @param   {Array} [fields]
    *
    * @return  {Object}
    *
    * @private
    */
-  async _getUserProfile (accessToken, fields) {
-    fields = _.size(fields) ? fields : this._fields
-    const profileUrl = `https://api.linkedin.com/v1/people/~:(${fields.join(',')})`
+  async _getUserProfile (accessToken) {
+    const profileUrl = `https://api.linkedin.com/v1/people/~:(${this.fields.join(',')})`
 
     const response = await got(profileUrl, {
       headers: {
@@ -210,15 +183,14 @@ class LinkedIn extends OAuth2Scheme {
    * Returns the redirect url for a given provider.
    *
    * @method getRedirectUrl
-   * @async
    *
-   * @param  {Array} scope
+   * @param {String} [state]
    *
    * @return {String}
    */
-  async getRedirectUrl (scope) {
-    scope = _.size(scope) ? scope : this._scope
-    return this.getUrl(this._redirectUri, scope, this._redirectUriOptions)
+  async getRedirectUrl (state) {
+    const options = state ? Object.assign(this._redirectUriOptions, { state }) : this._redirectUriOptions
+    return this.getUrl(this._redirectUri, this.scope, options)
   }
 
   /**
@@ -243,12 +215,13 @@ class LinkedIn extends OAuth2Scheme {
    * @async
    *
    * @param {Object} queryParams
-   * @param {Array} [fields]
+   * @param {String} [originalState]
    *
    * @return {Object}
    */
-  async getUser (queryParams, fields) {
+  async getUser (queryParams, originalState) {
     const code = queryParams.code
+    const state = queryParams.state
 
     /**
      * Throw an exception when query string does not have
@@ -259,22 +232,34 @@ class LinkedIn extends OAuth2Scheme {
       throw CE.OAuthException.tokenExchangeException(errorMessage, null, errorMessage)
     }
 
+    /**
+     * Valid state with original state
+     */
+    if (state && originalState !== state) {
+      throw CE.OAuthException.invalidState()
+    }
+
     const accessTokenResponse = await this.getAccessToken(code, this._redirectUri, {
       grant_type: 'authorization_code'
     })
 
-    const userProfile = await this._getUserProfile(accessTokenResponse.accessToken, fields)
+    const userProfile = await this._getUserProfile(accessTokenResponse.accessToken)
     return this._buildAllyUser(userProfile, accessTokenResponse)
   }
 
   /**
+   * Get user by access token
    *
-   * @param {string} accessToken
+   * @method getUserByToken
+   *
+   * @param  {String}       accessToken
+   *
+   * @return {void}
    */
-  async getUserByToken (accessToken, filds) {
-    const userProfile = await this._getUserProfile(accessToken, filds)
+  async getUserByToken (accessToken) {
+    const userProfile = await this._getUserProfile(accessToken)
 
-    return this._buildAllyUser(userProfile, {accessToken, refreshToken: null})
+    return this._buildAllyUser(userProfile, { accessToken, refreshToken: null })
   }
 }
 

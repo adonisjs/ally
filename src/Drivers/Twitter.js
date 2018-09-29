@@ -42,6 +42,18 @@ class Twitter extends OAuthScheme {
   }
 
   /**
+   * Returns a boolean telling if driver supports
+   * state
+   *
+   * @method supportStates
+   *
+   * @return {Boolean}
+   */
+  get supportStates () {
+    return false
+  }
+
+  /**
    * Url to be used for fetching user profile.
    *
    * @attribute profileUrl
@@ -57,7 +69,7 @@ class Twitter extends OAuthScheme {
    *
    * @attribute requestTokenUrl
    *
-   * @return {String} [description]
+   * @return {String}
    */
   get requestTokenUrl () {
     return 'https://api.twitter.com/oauth/request_token'
@@ -69,7 +81,7 @@ class Twitter extends OAuthScheme {
    *
    * @attribute authorizeUrl
    *
-   * @return {String} [description]
+   * @return {String}
    */
   get authorizeUrl () {
     return 'https://api.twitter.com/oauth/authenticate'
@@ -173,7 +185,7 @@ class Twitter extends OAuthScheme {
   async getUserByToken (accessToken, accessSecret) {
     const userProfile = await this.getUserProfile(accessToken, accessSecret)
 
-    return this._buildAllyUser(userProfile, {accessToken, tokenSecret: accessSecret})
+    return this._buildAllyUser(userProfile, { accessToken, tokenSecret: accessSecret })
   }
 }
 

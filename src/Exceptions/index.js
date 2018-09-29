@@ -37,6 +37,19 @@ class OAuthException extends GE.LogicalException {
     error.original = original
     return error
   }
+
+  /**
+   * Raised when the state is invalid for OAuth request
+   *
+   * @method invalidState
+   *
+   * @return {Object}
+   */
+  static invalidState () {
+    const message = 'Oauth state mis-match'
+    const error = new this(message, 401, 'E_OAUTH_STATE_MISMATCH')
+    return error
+  }
 }
 
 class RuntimeException extends GE.RuntimeException {

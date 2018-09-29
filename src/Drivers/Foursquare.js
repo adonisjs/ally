@@ -39,7 +39,7 @@ class Foursquare extends OAuth2Scheme {
      */
     this._redirectUri = config.redirectUri
     this._version = config.version || 20140806
-    this._redirectUriOptions = Object.assign({response_type: 'code'}, config.options)
+    this._redirectUriOptions = Object.assign({ response_type: 'code' }, config.options)
   }
 
   /**
@@ -51,6 +51,18 @@ class Foursquare extends OAuth2Scheme {
    */
   static get inject () {
     return ['Adonis/Src/Config']
+  }
+
+  /**
+   * Returns a boolean telling if driver supports
+   * state
+   *
+   * @method supportStates
+   *
+   * @return {Boolean}
+   */
+  get supportStates () {
+    return false
   }
 
   /**
@@ -197,11 +209,12 @@ class Foursquare extends OAuth2Scheme {
       const errorMessage = this.parseRedirectError(queryParams)
       throw CE.OAuthException.tokenExchangeException(errorMessage, null, errorMessage)
     }
+
     const accessTokenResponse = await this.getAccessToken(code, this._redirectUri, {
       grant_type: 'authorization_code'
     })
-    const userProfile = await this._getUserProfile(accessTokenResponse.accessToken)
 
+    const userProfile = await this._getUserProfile(accessTokenResponse.accessToken)
     return this._buildAllyUser(userProfile, accessTokenResponse)
   }
 
@@ -211,8 +224,7 @@ class Foursquare extends OAuth2Scheme {
    */
   async getUserByToken (accessToken) {
     const userProfile = await this._getUserProfile(accessToken)
-
-    return this._buildAllyUser(userProfile, {accessToken, refreshToken: null})
+    return this._buildAllyUser(userProfile, { accessToken, refreshToken: null })
   }
 }
 
