@@ -21,11 +21,16 @@ const uuid = require('uuid/v4')
  * @constructor
  */
 class Authenticator {
-  constructor (driverInstance, request, response) {
+  constructor (Config, driverInstance, request, response) {
     this._driverInstance = driverInstance
     this._request = request
     this._response = response
     this._isStateless = false
+    this._cookieOptions = Config.merge('app.cookie', {
+      path: '/',
+      sameSite: false,
+      httpOnly: true
+    })
   }
 
   /**
@@ -101,7 +106,7 @@ class Authenticator {
 
     if (!this._isStateless && this._driverInstance.supportStates) {
       state = uuid()
-      this._response.cookie('oauth_state', state)
+      this._response.cookie('oauth_state', state, this._cookieOptions)
     }
 
     const url = await this.getRedirectUrl(state)
