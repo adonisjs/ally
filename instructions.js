@@ -13,7 +13,7 @@ const path = require('path')
 
 module.exports = async (cli) => {
   try {
-    const fromPath = path.join(__dirname, 'examples/config.js')
+    const fromPath = path.join(__dirname, 'templates/config.js')
     const toPath = path.join(cli.helpers.configPath(), 'services.js')
     await cli.copy(fromPath, toPath)
     cli.command.completed('create', 'config/services.js')

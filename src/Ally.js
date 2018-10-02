@@ -20,7 +20,8 @@ const Authenticator = require('./Authenticator')
  * @constructor
  */
 class Ally {
-  constructor (request, response) {
+  constructor (Config, request, response) {
+    this.Config = Config
     this._request = request
     this._response = response
   }
@@ -37,7 +38,7 @@ class Ally {
    */
   driver (name) {
     const driverInstance = AllyManager.driver(name)
-    return new Authenticator(driverInstance, this._request, this._response)
+    return new Authenticator(this.Config, driverInstance, this._request, this._response)
   }
 }
 

@@ -9,7 +9,7 @@ ioc.bind('Adonis/Src/Config', () => {
 })
 
 http.get('/github', async function (request, response) {
-  const ally = new Ally(request, response)
+  const ally = new Ally(ioc.use('Adonis/Src/Config'), request, response)
   const github = ally.driver('github')
 
   if (request.input('redirect')) {
@@ -22,7 +22,7 @@ http.get('/github', async function (request, response) {
 })
 
 http.get('/github/authenticated', async function (request, response) {
-  const ally = new Ally(request, response)
+  const ally = new Ally(ioc.use('Adonis/Src/Config'), request, response)
   const github = ally.driver('github')
   try {
     const user = await github.getUser()

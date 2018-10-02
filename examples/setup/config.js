@@ -20,5 +20,9 @@ module.exports = {
       clientSecret: process.env.CLIENT_SECRET,
       redirectUri: process.env.REDIRECT_URI
     }
+  },
+
+  merge (key, value) {
+    return value
   }
 }

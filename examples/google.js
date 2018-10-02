@@ -9,7 +9,7 @@ ioc.bind('Adonis/Src/Config', () => {
 })
 
 http.get('/google', async function (request, response) {
-  const ally = new Ally(request, response)
+  const ally = new Ally(ioc.use('Adonis/Src/Config'), request, response)
   const google = ally.driver('google')
 
   if (request.input('redirect')) {
@@ -22,7 +22,7 @@ http.get('/google', async function (request, response) {
 })
 
 http.get('/google/authenticated', async function (request, response) {
-  const ally = new Ally(request, response)
+  const ally = new Ally(ioc.use('Adonis/Src/Config'), request, response)
   const google = ally.driver('google')
   try {
     const user = await google.getUser()

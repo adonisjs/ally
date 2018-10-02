@@ -58,9 +58,10 @@ class AllyProvider extends ServiceProvider {
   boot () {
     const Context = this.app.use('Adonis/Src/HttpContext')
     const Ally = this.app.use('Adonis/Addons/Ally')
+    const Config = this.app.use('Adonis/Src/Config')
 
     Context.getter('ally', function () {
-      return new Ally(this.request, this.response)
+      return new Ally(Config, this.request, this.response)
     }, true)
   }
 }
