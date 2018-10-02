@@ -1,3 +1,13 @@
+<a name="2.1.1"></a>
+## [2.1.1](https://github.com/adonisjs/adonis-ally/compare/v2.1.0...v2.1.1) (2018-10-02)
+
+
+### Bug Fixes
+
+* **authenticator:** use correct cookie options for oauth state to work ([e1bf087](https://github.com/adonisjs/adonis-ally/commit/e1bf087)), closes [#59](https://github.com/adonisjs/adonis-ally/issues/59)
+
+
+
 <a name="2.1.0"></a>
 # [2.1.0](https://github.com/adonisjs/adonis-ally/compare/v2.0.5...v2.1.0) (2018-09-29)
 
