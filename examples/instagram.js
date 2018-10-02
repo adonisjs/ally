@@ -9,7 +9,7 @@ ioc.bind('Adonis/Src/Config', () => {
 })
 
 http.get('/instagram', async function (request, response) {
-  const ally = new Ally(request, response)
+  const ally = new Ally(ioc.use('Adonis/Src/Config'), request, response)
   const instagram = ally.driver('instagram')
 
   if (request.input('redirect')) {
@@ -22,7 +22,7 @@ http.get('/instagram', async function (request, response) {
 })
 
 http.get('/instagram/authenticated', async function (request, response) {
-  const ally = new Ally(request, response)
+  const ally = new Ally(ioc.use('Adonis/Src/Config'), request, response)
   const instagram = ally.driver('instagram')
   try {
     const user = await instagram.getUser()

@@ -9,7 +9,7 @@ ioc.bind('Adonis/Src/Config', () => {
 })
 
 http.get('/linkedin', async function (request, response) {
-  const ally = new Ally(request, response)
+  const ally = new Ally(ioc.use('Adonis/Src/Config'), request, response)
   const linkedin = ally.driver('linkedin')
 
   if (request.input('redirect')) {
@@ -22,7 +22,7 @@ http.get('/linkedin', async function (request, response) {
 })
 
 http.get('/linkedin/authenticated', async function (request, response) {
-  const ally = new Ally(request, response)
+  const ally = new Ally(ioc.use('Adonis/Src/Config'), request, response)
   const linkedin = ally.driver('linkedin')
   try {
     const user = await linkedin.getUser()

@@ -9,7 +9,7 @@ ioc.bind('Adonis/Src/Config', () => {
 })
 
 http.get('/twitter', async function (request, response) {
-  const ally = new Ally(request, response)
+  const ally = new Ally(ioc.use('Adonis/Src/Config'), request, response)
   const twitter = ally.driver('twitter')
 
   if (request.input('redirect')) {
@@ -22,7 +22,7 @@ http.get('/twitter', async function (request, response) {
 })
 
 http.get('/twitter/authenticated', async function (request, response) {
-  const ally = new Ally(request, response)
+  const ally = new Ally(ioc.use('Adonis/Src/Config'), request, response)
   const twitter = ally.driver('twitter')
   try {
     const user = await twitter.getUser()

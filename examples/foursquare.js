@@ -12,7 +12,7 @@ ioc.bind('Adonis/Src/Config', () => {
 })
 
 http.get('/foursquare', async function (request, response) {
-  const ally = new Ally(request, response)
+  const ally = new Ally(ioc.use('Adonis/Src/Config'), request, response)
   const foursquare = ally.driver('foursquare')
 
   if (request.input('redirect')) {
@@ -25,7 +25,7 @@ http.get('/foursquare', async function (request, response) {
 })
 
 http.get('/foursquare/authenticated', async function (request, response) {
-  const ally = new Ally(request, response)
+  const ally = new Ally(ioc.use('Adonis/Src/Config'), request, response)
   const foursquare = ally.driver('foursquare')
   try {
     const user = await foursquare.getUser()
