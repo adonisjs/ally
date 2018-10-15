@@ -9,7 +9,8 @@
     "providers",
     "src",
     "instructions.js",
-    "instructions.md"
+    "instructions.md",
+    "templates"
   ],
   "scripts": {
     "mrm": "mrm --preset=@adonisjs/mrm-preset",
