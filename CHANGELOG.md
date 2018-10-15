@@ -1,3 +1,14 @@
+<a name="2.1.2"></a>
+## [2.1.2](https://github.com/adonisjs/adonis-ally/compare/v2.1.1...v2.1.2) (2018-10-15)
+
+
+### Bug Fixes
+
+* **package:** publish templates directory ([877d1fd](https://github.com/adonisjs/adonis-ally/commit/877d1fd))
+* **twitter:** fetch id_str and https picture ([#60](https://github.com/adonisjs/adonis-ally/issues/60)) ([7e11c57](https://github.com/adonisjs/adonis-ally/commit/7e11c57))
+
+
+
 <a name="2.1.1"></a>
 ## [2.1.1](https://github.com/adonisjs/adonis-ally/compare/v2.1.0...v2.1.1) (2018-10-02)
 
