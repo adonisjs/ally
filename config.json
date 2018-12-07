@@ -8,5 +8,5 @@
     "coveralls"
   ],
   "appveyorUsername": "thetutlage",
-  "minNodeVersion": "8.0.0"
+  "minNodeVersion": "9.0.0"
 }
