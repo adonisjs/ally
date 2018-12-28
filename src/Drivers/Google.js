@@ -127,7 +127,7 @@ class Google extends OAuth2Scheme {
    * @private
    */
   async _getUserProfile (accessToken) {
-    const profileUrl = 'https://www.googleapis.com/plus/v1/people/me'
+    const profileUrl = 'https://www.googleapis.com/oauth2/v3/userinfo'
 
     const response = await got(profileUrl, {
       headers: {
@@ -156,11 +156,11 @@ class Google extends OAuth2Scheme {
 
     user.setOriginal(userProfile)
       .setFields(
-        userProfile.id,
-        userProfile.displayName,
-        _.get(userProfile, 'emails.0.value'),
-        userProfile.displayName,
-        _.get(userProfile, 'image.url')
+        userProfile.sub,
+        userProfile.name,
+        userProfile.email,
+        userProfile.name,
+        userProfile.picture
       )
       .setToken(
         accessTokenResponse.accessToken,
