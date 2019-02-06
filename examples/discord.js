@@ -14,7 +14,7 @@ http.get('/discord', async (request, response) => {
     await discord.redirect()
   } else {
     response.writeHead(200, { 'content-type': 'text/html' })
-    response.write(`<a href="/discord?redirect=true">Login With Google</a>`)
+    response.write(`<a href="/discord?redirect=true">Login With Discord</a>`)
     response.end()
   }
 })
