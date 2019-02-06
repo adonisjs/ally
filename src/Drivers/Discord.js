@@ -3,11 +3,11 @@
 /*
  * adonis-ally
  *
- * (c) Ayeni Olusegun <nsegun5@gmail.com>
+ * (c) Elie Grenon <drunkenponey@gmail.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
- */
+*/
 
 const got = require('got')
 
@@ -18,17 +18,17 @@ const utils = require('../../lib/utils')
 const _ = require('lodash')
 
 /**
- * Instagram driver to authenticating users via OAuth2Scheme.
+ * Discord driver to authenticating users via OAuth2Scheme.
  *
- * @class Instagram
+ * @class Discord
  * @constructor
  */
-class Instagram extends OAuth2Scheme {
+class Discord extends OAuth2Scheme {
   constructor (Config) {
-    const config = Config.get('services.ally.instagram')
+    const config = Config.get('services.ally.discord')
 
-    utils.validateDriverConfig('instagram', config)
-    utils.debug('instagram', config)
+    utils.validateDriverConfig('discord', config)
+    utils.debug('discord', config)
 
     super(config.clientId, config.clientSecret, config.headers)
 
@@ -39,7 +39,7 @@ class Instagram extends OAuth2Scheme {
     this._redirectUri = config.redirectUri
     this._redirectUriOptions = _.merge({ response_type: 'code' }, config.options)
 
-    this.scope = _.size(config.scope) ? config.scope : ['basic']
+    this.scope = _.size(config.scope) ? config.scope : ['identify', 'email']
   }
 
   /**
@@ -51,18 +51,6 @@ class Instagram extends OAuth2Scheme {
    */
   static get inject () {
     return ['Adonis/Src/Config']
-  }
-
-  /**
-   * Scope seperator for seperating multiple
-   * scopes.
-   *
-   * @attribute scopeSeparator
-   *
-   * @return {String}
-   */
-  get scopeSeparator () {
-    return ' '
   }
 
   /**
@@ -78,15 +66,27 @@ class Instagram extends OAuth2Scheme {
   }
 
   /**
+   * Scope seperator for seperating multiple
+   * scopes.
+   *
+   * @attribute scopeSeparator
+   *
+   * @return {String}
+   */
+  get scopeSeparator () {
+    return ' '
+  }
+
+  /**
    * Base url to be used for constructing
-   * Instagram oauth urls.
+   * google oauth urls.
    *
    * @attribute baseUrl
    *
    * @return {String}
    */
   get baseUrl () {
-    return 'https://api.instagram.com/'
+    return 'https://discordapp.com/api/oauth2'
   }
 
   /**
@@ -98,7 +98,7 @@ class Instagram extends OAuth2Scheme {
    * @return {String} [description]
    */
   get authorizeUrl () {
-    return 'oauth/authorize'
+    return 'authorize'
   }
 
   /**
@@ -110,7 +110,7 @@ class Instagram extends OAuth2Scheme {
    * @return {String}
    */
   get accessTokenUrl () {
-    return 'oauth/access_token'
+    return 'token'
   }
 
   /**
@@ -127,11 +127,12 @@ class Instagram extends OAuth2Scheme {
    * @private
    */
   async _getUserProfile (accessToken) {
-    const profileUrl = `${this.baseUrl}v1/users/self?access_token=${accessToken}`
+    const profileUrl = 'https://discordapp.com/api/users/@me'
 
     const response = await got(profileUrl, {
       headers: {
-        'Accept': 'application/json'
+        'Accept': 'application/json',
+        'Authorization': `Bearer ${accessToken}`
       },
       json: true
     })
@@ -151,21 +152,22 @@ class Instagram extends OAuth2Scheme {
    */
   _buildAllyUser (userProfile, accessTokenResponse) {
     const user = new AllyUser()
+    const expires = _.get(accessTokenResponse, 'result.expires_in')
+
     user.setOriginal(userProfile)
       .setFields(
-        userProfile.data.id,
-        userProfile.data.full_name,
-        null,
-        userProfile.data.username,
-        userProfile.data.profile_picture
+        userProfile.id,
+        userProfile.username,
+        userProfile.email,
+        userProfile.username,
+        `data:image/jpeg;base64,${userProfile.avatar}`
       )
       .setToken(
         accessTokenResponse.accessToken,
         accessTokenResponse.refreshToken,
         null,
-        null
+        expires ? Number(expires) : null
       )
-
     return user
   }
 
@@ -184,33 +186,29 @@ class Instagram extends OAuth2Scheme {
   }
 
   /**
-   * Parses the redirect errors returned by Instagram
+   * Parses the redirect errors returned by discord
    * and returns the error message.
-   *
-   * @method parseRedirectError
    *
    * @param  {Object} queryParams
    *
    * @return {String}
    */
   parseRedirectError (queryParams) {
-    return queryParams.error_description || queryParams.error || 'Oauth failed during redirect'
+    return queryParams.error || 'Oauth failed during redirect'
   }
 
   /**
    * Returns the user profile with it's access token, refresh token
-   * and token expiry.
+   * and token expiry
    *
    * @method getUser
-   *
    * @param {Object} queryParams
-   * @param {String} [originalState]
+   * @param {String} originalState
    *
    * @return {Object}
    */
   async getUser (queryParams, originalState) {
-    const code = queryParams.code
-    const state = queryParams.state
+    const { code, state } = queryParams
 
     /**
      * Throw an exception when query string does not have
@@ -237,14 +235,19 @@ class Instagram extends OAuth2Scheme {
   }
 
   /**
+   * Get user by access token
    *
-   * @param {string} accessToken
+   * @method getUserByToken
+   * @async
+   *
+   * @param {String} accessToken
+   *
+   * @return {void}
    */
   async getUserByToken (accessToken) {
     const userProfile = await this._getUserProfile(accessToken)
-
     return this._buildAllyUser(userProfile, { accessToken, refreshToken: null })
   }
 }
 
-module.exports = Instagram
+module.exports = Discord

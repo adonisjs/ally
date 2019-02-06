@@ -74,11 +74,11 @@ class Facebook extends OAuth2Scheme {
    * Scope seperator for seperating multiple
    * scopes.
    *
-   * @attribute scopeSeperator
+   * @attribute scopeSeparator
    *
    * @return {String}
    */
-  get scopeSeperator () {
+  get scopeSeparator () {
     return ','
   }
 

@@ -90,6 +90,21 @@ module.exports = {
       clientId: Env.get('FOURSQUARE_ID'),
       clientSecret: Env.get('FOURSQUARE_SECRET'),
       redirectUri: `${Env.get('APP_URL')}/authenticated/foursquare`
+    },
+
+    /*
+     |--------------------------------------------------------------------------
+     | Discord Configuration
+     |--------------------------------------------------------------------------
+     |
+     | You can access your application credentials from the Discord developers
+     | console. https://discordapp.com/developers/applications/
+     |
+     */
+    discord: {
+      clientId: Env.get('DISCORD_CLIENT_ID'),
+      clientSecret: Env.get('DISCORD_CLIENT_SECRET'),
+      redirectUri: `${Env.get('APP_URL')}/authenticated/discord`
     }
   }
 }

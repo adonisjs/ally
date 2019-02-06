@@ -27,11 +27,11 @@ class OAuth2 {
    * The seperator to be used for joining the
    * scope values.
    *
-   * @attribute scopeSeperator
+   * @attribute scopeSeparator
    *
    * @return {String}
    */
-  get scopeSeperator () {
+  get scopeSeparator () {
     return ','
   }
 
@@ -149,7 +149,7 @@ class OAuth2 {
       throw GE.InvalidArgumentException.missingParameter('getUrl', 'redirectUri', '1st')
     }
 
-    const scopeHash = _.size(scope) ? { scope: scope.join(this.scopeSeperator) } : null
+    const scopeHash = _.size(scope) ? { scope: scope.join(this.scopeSeparator) } : null
     const options = _.merge({ redirect_uri: redirectUri }, scopeHash, extras)
     debug('generating redirect uri using %j options', options)
     return this.client.getAuthorizeUrl(options)

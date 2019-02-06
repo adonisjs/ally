@@ -69,11 +69,11 @@ class Google extends OAuth2Scheme {
    * Scope seperator for seperating multiple
    * scopes.
    *
-   * @attribute scopeSeperator
+   * @attribute scopeSeparator
    *
    * @return {String}
    */
-  get scopeSeperator () {
+  get scopeSeparator () {
     return ' '
   }
 
@@ -204,6 +204,7 @@ class Google extends OAuth2Scheme {
    * and token expiry.
    *
    * @method getUser
+   * @param {Object} queryParams
    * @param {String} [originalState]
    *
    * @return {Object}
