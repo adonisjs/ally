@@ -77,11 +77,11 @@ class LinkedIn extends OAuth2Scheme {
    * Scope seperator for seperating multiple
    * scopes.
    *
-   * @attribute scopeSeparator
+   * @attribute scopeSeperator
    *
    * @return {String}
    */
-  get scopeSeparator () {
+  get scopeSeperator () {
     return ' '
   }
 
