@@ -59,7 +59,7 @@
   "dependencies": {
     "@adonisjs/generic-exceptions": "^2.0.1",
     "debug": "^4.0.1",
-    "got": "8.3.2",
+    "got": "9.6.0",
     "lodash": "^4.17.11",
     "oauth": "^0.9.15",
     "uuid": "^3.3.2"
