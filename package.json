@@ -34,7 +34,7 @@
     "@adonisjs/fold": "^4.0.9",
     "@adonisjs/mrm-preset": "^1.0.13",
     "@adonisjs/sink": "^1.0.17",
-    "commitizen": "^2.10.1",
+    "commitizen": "^4.0.1",
     "coveralls": "^3.0.2",
     "cz-conventional-changelog": "^2.1.0",
     "japa": "^2.0.3",
