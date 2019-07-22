@@ -36,7 +36,7 @@
     "@adonisjs/sink": "^1.0.17",
     "commitizen": "^4.0.1",
     "coveralls": "^3.0.2",
-    "cz-conventional-changelog": "^2.1.0",
+    "cz-conventional-changelog": "^3.0.2",
     "japa": "^2.0.3",
     "japa-cli": "^1.0.1",
     "mrm": "^1.2.1",
