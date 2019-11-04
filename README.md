@@ -150,7 +150,7 @@ Checkout [CHANGELOG.md](CHANGELOG.md) file for release history.
 
 AdonisJs – [@adonisframework](https://twitter.com/adonisframework) – virk@adonisjs.com
 
-Checkout [LICENSE.txt](LICENSE.txt) for license information
+Checkout [LICENSE.md](LICENSE.md) for license information
 
 Harminder Virk (Aman) - [https://github.com/thetutlage](https://github.com/thetutlage)
 
