@@ -20,6 +20,7 @@ const LinkedIn = drivers.linkedin
 const Instagram = drivers.instagram
 const Twitter = drivers.twitter
 const Foursquare = drivers.foursquare
+const Discord = drivers.discord
 
 test.group('Oauth Drivers | Google', function () {
   test('should throw an exception when config has not been defined', (assert) => {
@@ -807,5 +808,129 @@ test.group('Foursquare', function () {
     const user = await foursquare.getUser({ code: '12345' })
 
     assert.equal(user.getExpires(), 12345)
+  })
+})
+
+test.group('Oauth Drivers | Discord', () => {
+  test('should throw an exception when config has not been defined', (assert) => {
+    const discord = () => new Discord({ get: () => void 0 })
+    assert.throw(discord, 'E_MISSING_CONFIG: discord is not defined inside config/services.js file')
+  })
+
+  test('should throw an exception when clientid is missing', (assert) => {
+    const discord = () => new Discord({ get () { return { clientSecret: '1', redirectUri: '2' } } })
+    assert.throw(discord, 'E_MISSING_CONFIG: discord is not defined inside config/services.js file')
+  })
+
+  test('should throw an exception when clientSecret is missing', (assert) => {
+    const discord = () => new Discord({ get () { return { clientId: '1', redirectUri: '2' } } })
+    assert.throw(discord, 'E_MISSING_CONFIG: discord is not defined inside config/services.js file')
+  })
+
+  test('should throw an exception when redirectUri is missing', (assert) => {
+    const discord = () => new Discord({ get () { return { clientId: '1', clientSecret: '2' } } })
+    assert.throw(discord, 'E_MISSING_CONFIG: discord is not defined inside config/services.js file')
+  })
+
+  test('should generate the redirect_uri with correct signature', async (assert) => {
+    const discord = new Discord(config)
+    const redirectUrl = qs.escape(config.get().redirectUri)
+    const scope = qs.escape(['identify', 'email'].join(' '))
+    const providerUrl = `https://discordapp.com/api/oauth2/authorize?redirect_uri=${redirectUrl}&scope=${scope}&response_type=code&client_id=${config.get().clientId}`
+    const redirectToUrl = await discord.getRedirectUrl()
+    assert.equal(redirectToUrl, providerUrl)
+  })
+
+  test('should make use of the scopes defined in the config file', async (assert) => {
+    const customConfig = {
+      get () {
+        return {
+          clientId: 12,
+          clientSecret: 123,
+          redirectUri: 'http://localhost',
+          scope: ['email', 'identify', 'guilds']
+        }
+      }
+    }
+
+    const discord = new Discord(customConfig)
+    const redirectUrl = qs.escape(customConfig.get().redirectUri)
+    const scope = qs.escape(['email', 'identify', 'guilds'].join(' '))
+    const providerUrl = `https://discordapp.com/api/oauth2/authorize?redirect_uri=${redirectUrl}&scope=${scope}&response_type=code&client_id=${customConfig.get().clientId}`
+    const redirectToUrl = await discord.getRedirectUrl()
+    assert.equal(redirectToUrl, providerUrl)
+  })
+
+  test('should make use of the scope defined on the instance', async (assert) => {
+    const discord = new Discord(config)
+    const redirectUrl = qs.escape(config.get().redirectUri)
+    const scope = qs.escape(['foo'].join(' '))
+    const providerUrl = `https://discordapp.com/api/oauth2/authorize?redirect_uri=${redirectUrl}&scope=${scope}&response_type=code&client_id=${config.get().clientId}`
+
+    discord.scope = ['foo']
+    const redirectToUrl = await discord.getRedirectUrl()
+    assert.equal(redirectToUrl, providerUrl)
+  })
+
+  test('should set expires_in to null if not provided', async (assert) => {
+    const discord = new Discord(config)
+
+    // Mock getAccessToken
+    discord.getAccessToken = () => ({})
+
+    // Mock _getUserProfile
+    discord._getUserProfile = () => ({})
+
+    const user = await discord.getUser({ code: '12345' })
+
+    assert.equal(user.getExpires(), null)
+  })
+
+  test('should correctly parse a valid expires_in', async (assert) => {
+    const discord = new Discord(config)
+
+    // Mock getAccessToken
+    discord.getAccessToken = () => ({ result: { expires_in: '12345' } })
+
+    // Mock _getUserProfile
+    discord._getUserProfile = () => ({})
+
+    const user = await discord.getUser({ code: '12345' })
+
+    assert.equal(user.getExpires(), 12345)
+  })
+
+  test('pass state when exists', async (assert) => {
+    const discord = new Discord(config)
+    const redirectUrl = qs.escape(config.get().redirectUri)
+    const scope = qs.escape(['identify', 'email'].join(' '))
+    const state = '1234'
+
+    const providerUrl = `https://discordapp.com/api/oauth2/authorize?redirect_uri=${redirectUrl}&scope=${scope}&response_type=code&state=${state}&client_id=${config.get().clientId}`
+    const redirectToUrl = await discord.getRedirectUrl(state)
+    assert.equal(redirectToUrl, providerUrl)
+  })
+
+  test('return error when state exists and original state is missing', async (assert) => {
+    const discord = new Discord(config)
+    assert.plan(1)
+
+    try {
+      await discord.getUser({ code: 1, state: '1234' }, '123')
+    } catch ({ message }) {
+      assert.equal(message, 'E_OAUTH_STATE_MISMATCH: Oauth state mis-match')
+    }
+  })
+
+  test('work fine when state and original state are same', async (assert) => {
+    const discord = new Discord(config)
+    assert.plan(1)
+
+    discord.getAccessToken = () => ({ accessToken: null })
+    discord._getUserProfile = () => void 0
+    discord._buildAllyUser = () => 'fakeuser'
+
+    const user = await discord.getUser({ code: 1, state: '1234' }, '1234')
+    assert.equal(user, 'fakeuser')
   })
 })

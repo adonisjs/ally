@@ -3,7 +3,7 @@
 /*
  * adonis-ally
  *
- * (c) Harminder Virk <virk@adonisjs.com>
+ * (c) Elie Grenon <drunkenponey@gmail.com>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -18,17 +18,17 @@ const utils = require('../../lib/utils')
 const _ = require('lodash')
 
 /**
- * Google driver to authenticating users via OAuth2Scheme.
+ * Discord driver to authenticating users via OAuth2Scheme.
  *
- * @class Google
+ * @class Discord
  * @constructor
  */
-class Google extends OAuth2Scheme {
+class Discord extends OAuth2Scheme {
   constructor (Config) {
-    const config = Config.get('services.ally.google')
+    const config = Config.get('services.ally.discord')
 
-    utils.validateDriverConfig('google', config)
-    utils.debug('google', config)
+    utils.validateDriverConfig('discord', config)
+    utils.debug('discord', config)
 
     super(config.clientId, config.clientSecret, config.headers)
 
@@ -39,7 +39,7 @@ class Google extends OAuth2Scheme {
     this._redirectUri = config.redirectUri
     this._redirectUriOptions = _.merge({ response_type: 'code' }, config.options)
 
-    this.scope = _.size(config.scope) ? config.scope : ['openid', 'profile', 'email']
+    this.scope = _.size(config.scope) ? config.scope : ['identify', 'email']
   }
 
   /**
@@ -86,7 +86,7 @@ class Google extends OAuth2Scheme {
    * @return {String}
    */
   get baseUrl () {
-    return 'https://accounts.google.com/o/oauth2'
+    return 'https://discordapp.com/api/oauth2'
   }
 
   /**
@@ -98,7 +98,7 @@ class Google extends OAuth2Scheme {
    * @return {String} [description]
    */
   get authorizeUrl () {
-    return 'auth'
+    return 'authorize'
   }
 
   /**
@@ -127,7 +127,7 @@ class Google extends OAuth2Scheme {
    * @private
    */
   async _getUserProfile (accessToken) {
-    const profileUrl = 'https://www.googleapis.com/oauth2/v3/userinfo'
+    const profileUrl = 'https://discordapp.com/api/users/@me'
 
     const response = await got(profileUrl, {
       headers: {
@@ -156,11 +156,11 @@ class Google extends OAuth2Scheme {
 
     user.setOriginal(userProfile)
       .setFields(
-        userProfile.sub,
-        userProfile.name,
+        userProfile.id,
+        userProfile.username,
         userProfile.email,
-        userProfile.name,
-        userProfile.picture
+        userProfile.username,
+        `data:image/jpeg;base64,${userProfile.avatar}`
       )
       .setToken(
         accessTokenResponse.accessToken,
@@ -186,10 +186,8 @@ class Google extends OAuth2Scheme {
   }
 
   /**
-   * Parses the redirect errors returned by google
+   * Parses the redirect errors returned by discord
    * and returns the error message.
-   *
-   * @method parseRedirectError
    *
    * @param  {Object} queryParams
    *
@@ -201,17 +199,16 @@ class Google extends OAuth2Scheme {
 
   /**
    * Returns the user profile with it's access token, refresh token
-   * and token expiry.
+   * and token expiry
    *
    * @method getUser
    * @param {Object} queryParams
-   * @param {String} [originalState]
+   * @param {String} originalState
    *
    * @return {Object}
    */
   async getUser (queryParams, originalState) {
-    const code = queryParams.code
-    const state = queryParams.state
+    const { code, state } = queryParams
 
     /**
      * Throw an exception when query string does not have
@@ -238,14 +235,19 @@ class Google extends OAuth2Scheme {
   }
 
   /**
+   * Get user by access token
    *
-   * @param {string} accessToken
+   * @method getUserByToken
+   * @async
+   *
+   * @param {String} accessToken
+   *
+   * @return {void}
    */
   async getUserByToken (accessToken) {
     const userProfile = await this._getUserProfile(accessToken)
-
     return this._buildAllyUser(userProfile, { accessToken, refreshToken: null })
   }
 }
 
-module.exports = Google
+module.exports = Discord
