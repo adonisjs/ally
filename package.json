@@ -20,7 +20,9 @@
     "test:win": "node ./node_modules/japa-cli/index.js",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "commit": "git-cz",
-    "lint": "standard"
+    "lint": "standard",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "keywords": [
     "adonis",
@@ -62,7 +64,8 @@
     "got": "8.3.2",
     "lodash": "^4.17.11",
     "oauth": "^0.9.15",
-    "uuid": "^3.3.2"
+    "uuid": "^3.3.2",
+    "snyk": "^1.316.1"
   },
   "repository": {
     "type": "git",
@@ -76,5 +79,6 @@
     "exclude": [
       "test"
     ]
-  }
+  },
+  "snyk": true
 }
