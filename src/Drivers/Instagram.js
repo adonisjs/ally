@@ -24,7 +24,7 @@ const _ = require('lodash')
  * @constructor
  */
 class Instagram extends OAuth2Scheme {
-  constructor (Config) {
+  constructor(Config) {
     const config = Config.get('services.ally.instagram')
 
     utils.validateDriverConfig('instagram', config)
@@ -49,7 +49,7 @@ class Instagram extends OAuth2Scheme {
    *
    * @return {Array}
    */
-  static get inject () {
+  static get inject() {
     return ['Adonis/Src/Config']
   }
 
@@ -61,7 +61,7 @@ class Instagram extends OAuth2Scheme {
    *
    * @return {String}
    */
-  get scopeSeperator () {
+  get scopeSeperator() {
     return ' '
   }
 
@@ -73,7 +73,7 @@ class Instagram extends OAuth2Scheme {
    *
    * @return {Boolean}
    */
-  get supportStates () {
+  get supportStates() {
     return true
   }
 
@@ -85,7 +85,7 @@ class Instagram extends OAuth2Scheme {
    *
    * @return {String}
    */
-  get baseUrl () {
+  get baseUrl() {
     return 'https://api.instagram.com/'
   }
 
@@ -97,7 +97,7 @@ class Instagram extends OAuth2Scheme {
    *
    * @return {String} [description]
    */
-  get authorizeUrl () {
+  get authorizeUrl() {
     return 'oauth/authorize'
   }
 
@@ -109,7 +109,7 @@ class Instagram extends OAuth2Scheme {
    *
    * @return {String}
    */
-  get accessTokenUrl () {
+  get accessTokenUrl() {
     return 'oauth/access_token'
   }
 
@@ -126,7 +126,7 @@ class Instagram extends OAuth2Scheme {
    *
    * @private
    */
-  async _getUserProfile (accessToken) {
+  async _getUserProfile(accessToken) {
     const profileUrl = `${this.baseUrl}v1/users/self?access_token=${accessToken}`
 
     const response = await got(profileUrl, {
@@ -149,7 +149,7 @@ class Instagram extends OAuth2Scheme {
    *
    * @private
    */
-  _buildAllyUser (userProfile, accessTokenResponse) {
+  _buildAllyUser(userProfile, accessTokenResponse) {
     const user = new AllyUser()
     user.setOriginal(userProfile)
       .setFields(
@@ -178,7 +178,7 @@ class Instagram extends OAuth2Scheme {
    *
    * @return {String}
    */
-  async getRedirectUrl (state) {
+  async getRedirectUrl(state) {
     const options = state ? Object.assign(this._redirectUriOptions, { state }) : this._redirectUriOptions
     return this.getUrl(this._redirectUri, this.scope, options)
   }
@@ -193,7 +193,7 @@ class Instagram extends OAuth2Scheme {
    *
    * @return {String}
    */
-  parseRedirectError (queryParams) {
+  parseRedirectError(queryParams) {
     return queryParams.error_description || queryParams.error || 'Oauth failed during redirect'
   }
 
@@ -208,7 +208,7 @@ class Instagram extends OAuth2Scheme {
    *
    * @return {Object}
    */
-  async getUser (queryParams, originalState) {
+  async getUser(queryParams, originalState) {
     const code = queryParams.code
     const state = queryParams.state
 
@@ -224,7 +224,7 @@ class Instagram extends OAuth2Scheme {
     /**
      * Valid state with original state
      */
-    if (state && originalState !== state) {
+    if (state && originalState && originalState !== state) {
       throw CE.OAuthException.invalidState()
     }
 
@@ -240,7 +240,7 @@ class Instagram extends OAuth2Scheme {
    *
    * @param {string} accessToken
    */
-  async getUserByToken (accessToken) {
+  async getUserByToken(accessToken) {
     const userProfile = await this._getUserProfile(accessToken)
 
     return this._buildAllyUser(userProfile, { accessToken, refreshToken: null })
