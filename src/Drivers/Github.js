@@ -25,7 +25,7 @@ const _ = require('lodash')
  * @constructor
  */
 class Github extends OAuth2Scheme {
-  constructor(Config) {
+  constructor (Config) {
     const config = Config.get('services.ally.github')
 
     utils.validateDriverConfig('github', config)
@@ -53,7 +53,7 @@ class Github extends OAuth2Scheme {
    *
    * @return {Array}
    */
-  static get inject() {
+  static get inject () {
     return ['Adonis/Src/Config']
   }
 
@@ -65,7 +65,7 @@ class Github extends OAuth2Scheme {
    *
    * @return {Boolean}
    */
-  get supportStates() {
+  get supportStates () {
     return true
   }
 
@@ -77,7 +77,7 @@ class Github extends OAuth2Scheme {
    *
    * @return {String}
    */
-  get scopeSeperator() {
+  get scopeSeperator () {
     return ' '
   }
 
@@ -89,7 +89,7 @@ class Github extends OAuth2Scheme {
    *
    * @return {String}
    */
-  get baseUrl() {
+  get baseUrl () {
     return 'https://github.com/login/oauth'
   }
 
@@ -101,7 +101,7 @@ class Github extends OAuth2Scheme {
    *
    * @return {String} [description]
    */
-  get authorizeUrl() {
+  get authorizeUrl () {
     return 'authorize'
   }
 
@@ -113,7 +113,7 @@ class Github extends OAuth2Scheme {
    *
    * @return {String}
    */
-  get accessTokenUrl() {
+  get accessTokenUrl () {
     return 'access_token'
   }
 
@@ -130,7 +130,7 @@ class Github extends OAuth2Scheme {
    *
    * @private
    */
-  async _getUserProfile(accessToken) {
+  async _getUserProfile (accessToken) {
     const profileUrl = 'https://api.github.com/user'
 
     const response = await got(profileUrl, {
@@ -162,7 +162,7 @@ class Github extends OAuth2Scheme {
    *
    * @private
    */
-  _buildAllyUser(userProfile, accessTokenResponse) {
+  _buildAllyUser (userProfile, accessTokenResponse) {
     const user = new AllyUser()
     const expires = _.get(accessTokenResponse, 'result.expires_in')
 
@@ -196,7 +196,7 @@ class Github extends OAuth2Scheme {
    *
    * @private
    */
-  async _getUserEmail(accessToken) {
+  async _getUserEmail (accessToken) {
     const response = await got('https://api.github.com/user/emails', {
       headers: {
         'Accept': 'application/vnd.github.v3+json',
@@ -216,7 +216,7 @@ class Github extends OAuth2Scheme {
    *
    * @return {String}
    */
-  async getRedirectUrl(state) {
+  async getRedirectUrl (state) {
     const options = state ? Object.assign(this._redirectUriOptions, { state }) : this._redirectUriOptions
     return this.getUrl(this._redirectUri, this.scope, options)
   }
@@ -231,7 +231,7 @@ class Github extends OAuth2Scheme {
    *
    * @throws {OAuthException} If response has error property
    */
-  parseProviderResultError(response) {
+  parseProviderResultError (response) {
     const message = response.error_description || response.error
     return CE.OAuthException.tokenExchangeException(message, null, response)
   }
@@ -246,7 +246,7 @@ class Github extends OAuth2Scheme {
    *
    * @return {String}
    */
-  parseRedirectError(queryParams) {
+  parseRedirectError (queryParams) {
     return queryParams.error_description
       ? `${queryParams.error_description}. Learn more: ${queryParams.error_uri}`
       : 'Oauth failed during redirect'
@@ -264,7 +264,7 @@ class Github extends OAuth2Scheme {
    *
    * @return {Object}
    */
-  async getUser(queryParams, originalState) {
+  async getUser (queryParams, originalState) {
     const code = queryParams.code
     const state = queryParams.state
 
@@ -296,7 +296,7 @@ class Github extends OAuth2Scheme {
    *
    * @param {string} accessToken
    */
-  async getUserByToken(accessToken) {
+  async getUserByToken (accessToken) {
     const userProfile = await this._getUserProfile(accessToken)
 
     return this._buildAllyUser(userProfile, { accessToken, refreshToken: null })
