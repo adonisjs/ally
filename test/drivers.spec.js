@@ -122,17 +122,6 @@ test.group('Oauth Drivers | Google', function () {
     assert.equal(redirectToUrl, providerUrl)
   })
 
-  test('return error when state exists and original state is missing', async (assert) => {
-    const google = new Google(config)
-    assert.plan(1)
-
-    try {
-      await google.getUser({ code: 1, state: '1234' })
-    } catch (error) {
-      assert.equal(error.message, 'E_OAUTH_STATE_MISMATCH: Oauth state mis-match')
-    }
-  })
-
   test('return error when state exists and original state is different', async (assert) => {
     const google = new Google(config)
     assert.plan(1)
@@ -259,17 +248,6 @@ test.group('Oauth Drivers | Facebook', function () {
 
     const redirectToUrl = await facebook.getRedirectUrl(state)
     assert.equal(redirectToUrl, providerUrl)
-  })
-
-  test('return error when state exists and original state is missing', async (assert) => {
-    const facebook = new Facebook(config)
-    assert.plan(1)
-
-    try {
-      await facebook.getUser({ code: 1, state: '1234' })
-    } catch (error) {
-      assert.equal(error.message, 'E_OAUTH_STATE_MISMATCH: Oauth state mis-match')
-    }
   })
 
   test('return error when state exists and original state is different', async (assert) => {
@@ -400,17 +378,6 @@ test.group('Oauth Drivers | Github', function () {
     assert.equal(redirectToUrl, providerUrl)
   })
 
-  test('return error when state exists and original state is missing', async (assert) => {
-    const github = new Github(config)
-    assert.plan(1)
-
-    try {
-      await github.getUser({ code: 1, state: '1234' })
-    } catch (error) {
-      assert.equal(error.message, 'E_OAUTH_STATE_MISMATCH: Oauth state mis-match')
-    }
-  })
-
   test('return error when state exists and original state is different', async (assert) => {
     const github = new Github(config)
     assert.plan(1)
@@ -539,17 +506,6 @@ test.group('Oauth Drivers | LinkedIn', function () {
     assert.equal(redirectToUrl, providerUrl)
   })
 
-  test('return error when state exists and original state is missing', async (assert) => {
-    const linkedin = new LinkedIn(config)
-    assert.plan(1)
-
-    try {
-      await linkedin.getUser({ code: 1, state: '1234' })
-    } catch (error) {
-      assert.equal(error.message, 'E_OAUTH_STATE_MISMATCH: Oauth state mis-match')
-    }
-  })
-
   test('return error when state exists and original state is different', async (assert) => {
     const linkedin = new LinkedIn(config)
     assert.plan(1)
@@ -648,17 +604,6 @@ test.group('Oauth Drivers | Instagram', function () {
 
     const redirectToUrl = await instagram.getRedirectUrl(state)
     assert.equal(redirectToUrl, providerUrl)
-  })
-
-  test('return error when state exists and original state is missing', async (assert) => {
-    const instagram = new Instagram(config)
-    assert.plan(1)
-
-    try {
-      await instagram.getUser({ code: 1, state: '1234' })
-    } catch (error) {
-      assert.equal(error.message, 'E_OAUTH_STATE_MISMATCH: Oauth state mis-match')
-    }
   })
 
   test('return error when state exists and original state is different', async (assert) => {
@@ -909,17 +854,6 @@ test.group('Oauth Drivers | Discord', () => {
     const providerUrl = `https://discordapp.com/api/oauth2/authorize?redirect_uri=${redirectUrl}&scope=${scope}&response_type=code&state=${state}&client_id=${config.get().clientId}`
     const redirectToUrl = await discord.getRedirectUrl(state)
     assert.equal(redirectToUrl, providerUrl)
-  })
-
-  test('return error when state exists and original state is missing', async (assert) => {
-    const discord = new Discord(config)
-    assert.plan(1)
-
-    try {
-      await discord.getUser({ code: 1, state: '1234' }, '123')
-    } catch ({ message }) {
-      assert.equal(message, 'E_OAUTH_STATE_MISMATCH: Oauth state mis-match')
-    }
   })
 
   test('work fine when state and original state are same', async (assert) => {
