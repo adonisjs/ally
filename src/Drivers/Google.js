@@ -127,7 +127,7 @@ class Google extends OAuth2Scheme {
    * @private
    */
   async _getUserProfile (accessToken) {
-    const profileUrl = 'https://www.googleapis.com/oauth2/v3/userinfo'
+    const profileUrl = 'https://www.googleapis.com/oauth2/v3/userinfo?access_token=' + accessToken
 
     const response = await got(profileUrl, {
       headers: {
