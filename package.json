@@ -1,26 +1,21 @@
 {
   "name": "@adonisjs/ally",
   "version": "2.1.3",
-  "description": "Social authenticator for AdonisJs Framework",
-  "main": "index.js",
-  "files": [
-    "examples",
-    "lib",
-    "providers",
-    "src",
-    "instructions.js",
-    "instructions.md",
-    "templates"
-  ],
   "scripts": {
     "mrm": "mrm --preset=@adonisjs/mrm-preset",
     "pretest": "npm run lint",
-    "test:local": "FORCE_COLOR=true node bin/index.js --local",
     "test": "nyc node japaFile.js",
-    "test:win": "node ./node_modules/japa-cli/index.js",
+    "clean": "del build",
+    "compile": "npm run lint && npm run clean && tsc",
+    "build": "npm run compile",
+    "prepublishOnly": "npm run build",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
+    "lint": "eslint . --ext=.ts",
+    "format": "prettier --write .",
     "commit": "git-cz",
-    "lint": "standard"
+    "release": "np",
+    "version": "npm run build",
+    "sync-labels": "github-label-sync --labels ./node_modules/@adonisjs/mrm-preset/gh-labels.json adonisjs/adonis-ally"
   },
   "keywords": [
     "adonis",
@@ -28,53 +23,58 @@
     "social-auth",
     "oauth"
   ],
-  "author": "adonisjs,amanvirk",
+  "author": "adonisjs,virk",
   "license": "MIT",
   "devDependencies": {
-    "@adonisjs/fold": "^4.0.9",
-    "@adonisjs/mrm-preset": "^1.0.13",
-    "@adonisjs/sink": "^1.0.17",
-    "commitizen": "^4.0.1",
-    "coveralls": "^3.0.2",
-    "cz-conventional-changelog": "^2.1.0",
-    "japa": "^2.0.3",
-    "japa-cli": "^1.0.1",
-    "mrm": "^1.2.1",
-    "node-cookie": "^2.1.1",
-    "nyc": "^13.0.1",
-    "pkg-ok": "^2.2.0",
-    "semver": "^5.5.1",
-    "standard": "^12.0.1"
+    "@adonisjs/mrm-preset": "^2.4.0",
+    "@adonisjs/require-ts": "^1.1.1",
+    "@types/node": "^14.14.14",
+    "commitizen": "^4.2.2",
+    "coveralls": "^3.1.0",
+    "cz-conventional-changelog": "^3.3.0",
+    "del-cli": "^3.0.1",
+    "doctoc": "^2.0.0",
+    "eslint": "^7.16.0",
+    "eslint-config-prettier": "^7.1.0",
+    "eslint-plugin-adonis": "^1.0.15",
+    "eslint-plugin-prettier": "^3.3.0",
+    "github-label-sync": "^2.0.0",
+    "husky": "^4.3.6",
+    "japa": "^3.1.1",
+    "mrm": "^2.5.13",
+    "np": "^7.0.0",
+    "npm-audit-html": "^1.5.0",
+    "nyc": "^15.1.0",
+    "prettier": "^2.2.1",
+    "typescript": "^4.1.3"
   },
-  "standard": {
-    "global": [
-      "use"
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm audit --production --json | ./node_modules/.bin/npm-audit-html && git add npm-audit.html && doctoc README.md --title='## Table of contents' && git add README.md",
+      "commit-msg": "node ./node_modules/@adonisjs/mrm-preset/validateCommit/conventional/validate.js"
+    }
+  },
+  "nyc": {
+    "exclude": [
+      "test"
+    ],
+    "extension": [
+      ".ts"
     ]
   },
+  "main": "build/index.js",
+  "files": [
+    "build/src",
+    "build/index.d.ts",
+    "build/index.js"
+  ],
   "config": {
     "commitizen": {
       "path": "cz-conventional-changelog"
     }
   },
-  "dependencies": {
-    "@adonisjs/generic-exceptions": "^2.0.1",
-    "debug": "^4.0.1",
-    "got": "8.3.2",
-    "lodash": "^4.17.11",
-    "oauth": "^0.9.15",
-    "uuid": "^3.3.2"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/adonisjs/adonis-ally.git"
-  },
-  "bugs": {
-    "url": "https://github.com/adonisjs/adonis-ally/issues"
-  },
-  "homepage": "https://github.com/adonisjs/adonis-ally#readme",
-  "nyc": {
-    "exclude": [
-      "test"
-    ]
+  "np": {
+    "contents": ".",
+    "anyBranch": false
   }
 }
