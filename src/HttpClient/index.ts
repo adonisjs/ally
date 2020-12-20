@@ -28,10 +28,16 @@ export class HttpClient implements HttpClientContract {
 	/**
 	 * Returns the got options for the request
 	 */
-	private getGotOptions() {
+	private getGotOptions(requestMethod: 'GET' | 'POST') {
+		const hasBody = Object.keys(this.fields).length > 0
 		return {
-			...(this.gotRequestType === 'json' ? { json: this.fields } : { form: this.fields }),
+			...(hasBody
+				? this.gotRequestType === 'json'
+					? { json: this.fields }
+					: { form: this.fields }
+				: {}),
 			searchParams: this.params,
+			allowGetBody: requestMethod === 'GET' && hasBody,
 			headers: this.headers,
 		}
 	}
@@ -95,13 +101,13 @@ export class HttpClient implements HttpClientContract {
 	 * Make a post request
 	 */
 	public async post(): Promise<any> {
-		return this.getResponseBody(got.post(this.baseUrl, this.getGotOptions()))
+		return this.getResponseBody(got.post(this.baseUrl, this.getGotOptions('POST')))
 	}
 
 	/**
 	 * Make a get request
 	 */
 	public async get(): Promise<any> {
-		return this.getResponseBody(got.get(this.baseUrl, this.getGotOptions()))
+		return this.getResponseBody(got.get(this.baseUrl, this.getGotOptions('GET')))
 	}
 }

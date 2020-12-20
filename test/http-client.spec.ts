@@ -111,4 +111,16 @@ test.group('HttpClient', () => {
 		const response = await client.post()
 		assert.deepEqual(response, { username: 'virk' })
 	})
+
+	test('get response as buffer', async (assert) => {
+		nock('https://www.foo.com')
+			.get('/request')
+			.reply(function () {
+				return [200, 'Handled']
+			})
+
+		const client = new HttpClient('https://www.foo.com/request')
+		const response = await client.parseResponseAs('buffer').get()
+		assert.equal(response.toString('utf-8'), 'Handled')
+	})
 })

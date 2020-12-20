@@ -66,13 +66,6 @@ export class Oauth1Request implements Oauth1RequestContract {
 		this.header('Authorization', `OAuth ${oauthHeader}`)
 		const response = await this.httpClient.post()
 
-		/**
-		 * We expect the response to be a valid urlencoded string
-		 */
-		if (typeof response !== 'string') {
-			throw new Error(`Invalid oauth1 response. Expected urlencoded response string`)
-		}
-
 		return parse(response)
 	}
 

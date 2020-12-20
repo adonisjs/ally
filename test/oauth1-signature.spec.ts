@@ -24,7 +24,7 @@ test.group('Oauth1Signature', () => {
 		}).generate()
 
 		assert.deepEqual(oauthParams, {
-			oauth_signature: 'lH/r+/YRqYMvGW1Pf05pp2jaNfY=',
+			oauth_signature: '1yZxHeatgLgRvfgk3gXo8DbYHC0=',
 			oauth_consumer_key: 'a-sample-oauth-key',
 			oauth_nonce: '123456',
 			oauth_signature_method: 'HMAC-SHA1',
@@ -42,9 +42,9 @@ test.group('Oauth1Signature', () => {
 
 		assert.equal(
 			oauthHeader,
-			'oauth_consumer_key="a-sample-oauth-key",oauth_nonce="123456",oauth_signature="lH%2Fr%2B%2FYRqYMvGW1Pf05pp2jaNfY%3D",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1582326295",oauth_version="1.0"'
+			'oauth_consumer_key="a-sample-oauth-key",oauth_nonce="123456",oauth_signature="1yZxHeatgLgRvfgk3gXo8DbYHC0%3D",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1582326295",oauth_version="1.0"'
 		)
-		assert.equal(signature, 'lH/r+/YRqYMvGW1Pf05pp2jaNfY=')
+		assert.equal(signature, '1yZxHeatgLgRvfgk3gXo8DbYHC0=')
 	})
 
 	test('do not add non "oauth_" tokens to the oauthParams', (assert) => {
@@ -63,7 +63,7 @@ test.group('Oauth1Signature', () => {
 		}).generate()
 
 		assert.deepEqual(oauthParams, {
-			oauth_signature: 'E/uyE/m+t690+dQnrNyY71umQVE=',
+			oauth_signature: 'Pn2gu172CDNq2Isq56jOzWyUX9Y=',
 			oauth_consumer_key: 'a-sample-oauth-key',
 			oauth_nonce: '123456',
 			oauth_signature_method: 'HMAC-SHA1',
@@ -82,9 +82,9 @@ test.group('Oauth1Signature', () => {
 
 		assert.equal(
 			oauthHeader,
-			'oauth_consumer_key="a-sample-oauth-key",oauth_nonce="123456",oauth_signature="E%2FuyE%2Fm%2Bt690%2BdQnrNyY71umQVE%3D",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1582326295",oauth_version="1.0"'
+			'oauth_consumer_key="a-sample-oauth-key",oauth_nonce="123456",oauth_signature="Pn2gu172CDNq2Isq56jOzWyUX9Y%3D",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1582326295",oauth_version="1.0"'
 		)
-		assert.equal(signature, 'E/uyE/m+t690+dQnrNyY71umQVE=')
+		assert.equal(signature, 'Pn2gu172CDNq2Isq56jOzWyUX9Y=')
 	})
 
 	test('allow extra oauth_ values', (assert) => {
@@ -104,7 +104,7 @@ test.group('Oauth1Signature', () => {
 
 		assert.deepEqual(oauthParams, {
 			oauth_callback: 'http://localhost:3000',
-			oauth_signature: 'bgQ6mOOZ+UyEbqbR5zBIaakLdQ8=',
+			oauth_signature: 'O1NuGi8umAwm2EQnF7XwlWUBHnc=',
 			oauth_consumer_key: 'a-sample-oauth-key',
 			oauth_nonce: '123456',
 			oauth_signature_method: 'HMAC-SHA1',
@@ -123,8 +123,8 @@ test.group('Oauth1Signature', () => {
 
 		assert.equal(
 			oauthHeader,
-			'oauth_callback="http%3A%2F%2Flocalhost%3A3000",oauth_consumer_key="a-sample-oauth-key",oauth_nonce="123456",oauth_signature="bgQ6mOOZ%2BUyEbqbR5zBIaakLdQ8%3D",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1582326295",oauth_version="1.0"'
+			'oauth_callback="http%3A%2F%2Flocalhost%3A3000",oauth_consumer_key="a-sample-oauth-key",oauth_nonce="123456",oauth_signature="O1NuGi8umAwm2EQnF7XwlWUBHnc%3D",oauth_signature_method="HMAC-SHA1",oauth_timestamp="1582326295",oauth_version="1.0"'
 		)
-		assert.equal(signature, 'bgQ6mOOZ+UyEbqbR5zBIaakLdQ8=')
+		assert.equal(signature, 'O1NuGi8umAwm2EQnF7XwlWUBHnc=')
 	})
 })

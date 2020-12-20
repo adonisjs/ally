@@ -265,7 +265,7 @@ test.group('Oauth1Request | access token', () => {
 		const request = new Oauth1Request('https://www.twitter.com/access_token', {
 			consumerKey: 'a-dummy-consumer-key',
 			consumerSecret: 'a-dummy-consumer-secret',
-			oAuthToken: 'foo',
+			oauthToken: 'foo',
 		})
 
 		const token = await request.getAccessToken()
@@ -305,7 +305,7 @@ test.group('Oauth1Request | access token', () => {
 		try {
 			await request.getAccessToken()
 		} catch (error) {
-			assert.equal(error.message, '"oAuthToken" is required to generate the access token')
+			assert.equal(error.message, '"oauthToken" is required to generate the access token')
 		}
 	})
 })
