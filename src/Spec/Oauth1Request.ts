@@ -11,6 +11,7 @@
 
 import { parse } from 'querystring'
 import {
+	Oauth1AccessToken,
 	Oauth1RequestToken,
 	Oauth1RequestConfig,
 	Oauth1RequestContract,
@@ -134,9 +135,9 @@ export class Oauth1Request implements Oauth1RequestContract {
 	/**
 	 * Returns the oauthToken and the oauthSecret
 	 */
-	public async getAccessToken(): Promise<Oauth1RequestToken> {
-		if (!this.options.oAuthToken) {
-			throw new Error('"oAuthToken" is required to generate the access token')
+	public async getAccessToken(): Promise<Oauth1AccessToken> {
+		if (!this.options.oauthToken) {
+			throw new Error('"oauthToken" is required to generate the access token')
 		}
 
 		const {

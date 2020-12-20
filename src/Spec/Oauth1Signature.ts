@@ -39,7 +39,7 @@ export class Oauth1Signature {
 		 */
 		const params = {
 			...this.options.params,
-			...(this.options.oAuthToken ? { oauth_token: this.options.oAuthToken } : {}),
+			...(this.options.oauthToken ? { oauth_token: this.options.oauthToken } : {}),
 			oauth_consumer_key: this.options.consumerKey,
 			oauth_nonce: this.options.nonce,
 			oauth_signature_method: 'HMAC-SHA1',
@@ -84,8 +84,8 @@ export class Oauth1Signature {
 		 * https://oauth1.wp-api.org/docs/basics/Signing.html#signature-key
 		 */
 		let signatureKey = `${escape(this.options.consumerSecret)}&`
-		if (this.options.oAuthTokenSecret) {
-			signatureKey = `${signatureKey}${escape(this.options.oAuthTokenSecret)}`
+		if (this.options.oauthTokenSecret) {
+			signatureKey = `${signatureKey}${escape(this.options.oauthTokenSecret)}`
 		}
 
 		const signature = createHmac('SHA1', signatureKey).update(baseString, 'utf8').digest('base64')

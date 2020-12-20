@@ -10,3 +10,4 @@ coverage
 build
 dist
 shrinkwrap.yaml
+.env
