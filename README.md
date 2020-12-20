@@ -4,6 +4,21 @@
 
 [![coveralls-image]][coveralls-url] [![typescript-image]][typescript-url] [![npm-image]][npm-url] [![license-image]][license-url]
 
+## Research
+
+- Github needs just the scope and couple of extra params
+- Twitter doesn't even accept scopes
+- Google accepts a couple more options, but still doable with a generic API
+- Facebook takes scope too
+
+## Working
+
+- [x] Gitlab (allow defining a custom base url for self hosted apps)
+- [x] Github
+- [x] Google
+- [x] Linkedin
+- [ ] Twitter
+
 A short brief
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->

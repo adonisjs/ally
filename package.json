@@ -34,6 +34,7 @@
     "cz-conventional-changelog": "^3.3.0",
     "del-cli": "^3.0.1",
     "doctoc": "^2.0.0",
+    "dotenv": "^8.2.0",
     "eslint": "^7.16.0",
     "eslint-config-prettier": "^7.1.0",
     "eslint-plugin-adonis": "^1.0.15",
@@ -42,6 +43,7 @@
     "husky": "^4.3.6",
     "japa": "^3.1.1",
     "mrm": "^2.5.13",
+    "nock": "^13.0.5",
     "np": "^7.0.0",
     "npm-audit-html": "^1.5.0",
     "nyc": "^15.1.0",
@@ -76,5 +78,9 @@
   "np": {
     "contents": ".",
     "anyBranch": false
+  },
+  "dependencies": {
+    "@poppinss/utils": "^2.5.9",
+    "got": "^11.8.1"
   }
 }
