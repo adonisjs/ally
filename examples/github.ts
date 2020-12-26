@@ -9,17 +9,27 @@
 
 import Route from '@ioc:Adonis/Core/Route'
 
-Route.get('/github', async ({ ally }) => {
+Route.get('/github', async ({ response }) => {
+	return response.send('<a href="/github/redirect"> Login with Github </a>')
+})
+
+Route.get('/github/redirect', async ({ ally }) => {
 	return ally.use('github').redirect((config) => {
 		config.allowSignup(true)
 	})
 })
 
-Route.get('/github/callback', async ({ ally }) => {
+Route.get('/github/callback', async ({ ally, request }) => {
+	console.log(request.cookiesList())
+
 	try {
 		const driver = ally.use('github')
 		if (driver.accessDenied()) {
 			return 'Access was denied'
+		}
+
+		if (driver.stateMisMatch()) {
+			return 'Request expired. Retry again'
 		}
 
 		if (driver.hasError()) {

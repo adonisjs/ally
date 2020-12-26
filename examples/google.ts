@@ -9,7 +9,11 @@
 
 import Route from '@ioc:Adonis/Core/Route'
 
-Route.get('/google', async ({ ally }) => {
+Route.get('/google', async ({ response }) => {
+	return response.send('<a href="/google/redirect"> Login with Google </a>')
+})
+
+Route.get('/google/redirect', async ({ ally }) => {
 	return ally.use('google').redirect((config) => {
 		config
 			.prompt('consent')
@@ -22,6 +26,10 @@ Route.get('/google/callback', async ({ ally }) => {
 	const driver = ally.use('google')
 	if (driver.accessDenied()) {
 		return 'Access was denied'
+	}
+
+	if (driver.stateMisMatch()) {
+		return 'Request expired. Retry again'
 	}
 
 	if (driver.hasError()) {

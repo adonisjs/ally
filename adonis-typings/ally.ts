@@ -147,6 +147,22 @@ declare module '@ioc:Adonis/Addons/Ally' {
 	}
 
 	/**
+	 * Base config for an oauth driver
+	 */
+	export type OauthDriverConfig = {
+		clientId: string
+		clientSecret: string
+		callbackUrl: string
+
+		/**
+		 * Config only
+		 */
+		authorizeUrl?: string
+		accessTokenUrl?: string
+		userInfoUrl?: string
+	}
+
+	/**
 	 * The user fetched from the oauth provider
 	 */
 	export interface AllyUserContract<Token extends OauthToken = OauthToken> {
@@ -164,10 +180,12 @@ declare module '@ioc:Adonis/Addons/Ally' {
 	 * Every driver should implement this contract
 	 */
 	export interface SocialDriverContract {
+		stateless(): this
 		redirect(callback?: (request: OauthRedirectRequestContract) => void): void
 		getRedirectUrl(callback?: (request: OauthRedirectRequestContract) => void): string
 		hasCode(): boolean
 		accessDenied(): boolean
+		stateMisMatch(): boolean
 		hasError(): boolean
 		getError(): string | null
 		getAccessToken(): Promise<OauthToken>
@@ -233,21 +251,8 @@ declare module '@ioc:Adonis/Addons/Ally' {
 	 * Config accepted by the github driver. Some of the options can be
 	 * overwritten at runtime
 	 */
-	export type GithubDriverConfig = {
-		/**
-		 * Always required
-		 */
+	export type GithubDriverConfig = OauthDriverConfig & {
 		driver: 'github'
-		clientId: string
-		clientSecret: string
-		callbackUrl: string
-
-		/**
-		 * Config only
-		 */
-		authorizeUrl?: string
-		accessTokenUrl?: string
-		userInfoUrl?: string
 
 		/**
 		 * Can be configured at runtime
@@ -364,21 +369,8 @@ declare module '@ioc:Adonis/Addons/Ally' {
 	 * Config accepted by the google driver. Most of the options can be
 	 * overwritten at runtime
 	 */
-	export type GoogleDriverConfig = {
-		/**
-		 * Always required
-		 */
+	export type GoogleDriverConfig = OauthDriverConfig & {
 		driver: 'google'
-		clientId: string
-		clientSecret: string
-		callbackUrl: string
-
-		/**
-		 * Config only
-		 */
-		authorizeUrl?: string
-		accessTokenUrl?: string
-		userInfoUrl?: string
 
 		/**
 		 * Can be configured at runtime

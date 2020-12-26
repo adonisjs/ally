@@ -9,7 +9,6 @@
 
 /// <reference path="../../../adonis-typings/index.ts" />
 
-import { Exception } from '@poppinss/utils'
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import {
 	GoogleToken,
@@ -22,7 +21,9 @@ import {
 
 import { google } from '../../Config'
 import { HttpClient } from '../../HttpClient'
+import { StateManager } from '../../StateManager'
 import { GoogleRedirectRequest } from './Request'
+import { OauthException } from '../../Exceptions'
 import { Oauth2Request } from '../../Spec/Oauth2Request'
 
 /**
@@ -30,25 +31,53 @@ import { Oauth2Request } from '../../Spec/Oauth2Request'
  * user accounts
  */
 export class GoogleDriver implements GoogleDriverContract {
+	private isStateless: boolean = false
+	private stateManager = new StateManager('google_oauth_state', 'state', this.ctx)
+
 	constructor(private config: GoogleDriverConfig, private ctx: HttpContextContract) {}
+
+	/**
+	 * Instantiate the redirect request
+	 */
+	protected buildRedirectRequest(callback?: (request: GoogleRedirectRequest) => void) {
+		const redirectRequest = new GoogleRedirectRequest(this.config)
+		if (typeof callback === 'function') {
+			callback(redirectRequest)
+		}
+
+		return redirectRequest
+	}
+
+	/**
+	 * Mark authorization flow as stateless
+	 */
+	public stateless() {
+		this.isStateless = true
+		return this
+	}
 
 	/**
 	 * Redirects the user to google for authorizing the request
 	 */
 	public redirect(callback?: (request: GoogleRedirectRequestContract) => void): void {
-		this.ctx.response.redirect(this.getRedirectUrl(callback))
+		const redirectRequest = this.buildRedirectRequest(callback)
+
+		/**
+		 * Set state when not disabled
+		 */
+		if (!this.isStateless) {
+			const state = this.stateManager.setState()
+			redirectRequest.param('state', state)
+		}
+
+		this.ctx.response.redirect(redirectRequest.toString())
 	}
 
 	/**
 	 * Makes the redirect url for authorizing
 	 */
 	public getRedirectUrl(callback?: (request: GoogleRedirectRequestContract) => void): string {
-		const redirectRequest = new GoogleRedirectRequest(this.config)
-		if (typeof callback === 'function') {
-			callback(redirectRequest)
-		}
-
-		return redirectRequest.toString()
+		return this.buildRedirectRequest(callback).toString()
 	}
 
 	/**
@@ -63,6 +92,21 @@ export class GoogleDriver implements GoogleDriverContract {
 	 */
 	public accessDenied(): boolean {
 		return this.getError() === 'access_denied'
+	}
+
+	/**
+	 * Find if state is invalid. This will happen in one of the following cases
+	 *
+	 * - Cookies are not supported
+	 * - Cookie has been expired
+	 * - Cookie is unaccessible coz of URL mis-match
+	 */
+	public stateMisMatch(): boolean {
+		if (this.isStateless) {
+			return false
+		}
+
+		return this.stateManager.stateMisMatch()
 	}
 
 	/**
@@ -94,11 +138,14 @@ export class GoogleDriver implements GoogleDriverContract {
 	 */
 	public async getAccessToken(): Promise<GoogleToken> {
 		if (this.hasError()) {
-			throw new Exception(
-				'Cannot request access token. Redirect request is missing the authorization code',
-				500,
-				'E_MISSING_ALLY_AUTH_CODE'
-			)
+			throw OauthException.missingAuthorizationCode()
+		}
+
+		/**
+		 * Raise exception if state has mismatch
+		 */
+		if (this.stateMisMatch()) {
+			throw OauthException.stateMisMatch()
 		}
 
 		const accessToken = await new Oauth2Request(

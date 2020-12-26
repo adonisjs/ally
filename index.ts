@@ -12,5 +12,7 @@
  */
 export { HttpClient } from './src/HttpClient'
 export { UrlBuilder } from './src/UrlBuilder'
+export { StateManager } from './src/StateManager'
+export { OauthException } from './src/Exceptions'
 export { Oauth1Request } from './src/Spec/Oauth1Request'
 export { Oauth2Request } from './src/Spec/Oauth2Request'

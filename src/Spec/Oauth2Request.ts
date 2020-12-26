@@ -16,6 +16,7 @@ import {
 	Oauth2RequestContract,
 } from '@ioc:Adonis/Addons/Ally'
 import { HttpClient } from '../HttpClient'
+import { OauthException } from '../Exceptions'
 
 /**
  * Abstracts the API calls for the Oauth2 request
@@ -75,13 +76,11 @@ export class Oauth2Request implements Oauth2RequestContract {
 			...parsed
 		} = await this.makeRequest()
 
-		console.log(parsed)
-
 		/**
 		 * We expect the response to have "access_token"
 		 */
 		if (!accessToken) {
-			throw new Error(`Invalid oauth2 response. Missing "access_token"`)
+			throw OauthException.missingAccessToken()
 		}
 
 		return {

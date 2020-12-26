@@ -19,6 +19,7 @@ import {
 import { randomString } from '@poppinss/utils'
 
 import { HttpClient } from '../HttpClient'
+import { OauthException } from '../Exceptions'
 import { Oauth1Signature } from './Oauth1Signature'
 
 /**
@@ -115,7 +116,7 @@ export class Oauth1Request implements Oauth1RequestContract {
 		 * We expect the response to have "oauth_token" and "oauth_token_secret"
 		 */
 		if (!oauthToken || !oauthTokenSecret) {
-			throw new Error(`Invalid oauth1 response. Missing "oauth_token" and "oauth_token_secret"`)
+			throw OauthException.missingTokenAndSecret()
 		}
 
 		return {
@@ -143,7 +144,7 @@ export class Oauth1Request implements Oauth1RequestContract {
 		 * We expect the response to have "oauth_token" and "oauth_token_secret"
 		 */
 		if (!oauthToken || !oauthTokenSecret) {
-			throw new Error(`Invalid oauth1 response. Missing "oauth_token" and "oauth_token_secret"`)
+			throw OauthException.missingTokenAndSecret()
 		}
 
 		return {

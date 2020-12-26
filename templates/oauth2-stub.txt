@@ -7,39 +7,52 @@
  * file that was distributed with this source code.
  */
 
-/// <reference path="../../../adonis-typings/index.ts" />
-
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import {
-	GithubToken,
+	OauthToken,
 	AllyUserContract,
-	GithubDriverConfig,
-	GithubDriverContract,
+	OauthDriverConfig,
+	SocialDriverContract,
 	OauthUserRequestContract,
 } from '@ioc:Adonis/Addons/Ally'
 
-import { github } from '../../Config'
-import { HttpClient } from '../../HttpClient'
-import { StateManager } from '../../StateManager'
-import { GithubRedirectRequest } from './Request'
-import { OauthException } from '../../Exceptions'
-import { Oauth2Request } from '../../Spec/Oauth2Request'
+import { HttpClient, StateManager, UrlBuilder, Oauth2Request, OauthException } from '../index'
 
-/**
- * Github driver to interact with the Github APIs for connecting
- * user accounts
- */
-export class GithubDriver implements GithubDriverContract {
+export class {{filename}} implements SocialDriverContract {
+	/**
+	 * A boolean to know if request lifecycle has to be stateless
+	 * or not
+	 */
 	private isStateless: boolean = false
-	private stateManager = new StateManager('gh_oauth_state', 'state', this.ctx)
 
-	constructor(private config: GithubDriverConfig, private ctx: HttpContextContract) {}
+	/**
+	 * The param to be used for passing the state to the authorization server
+	 */
+	private stateParam = 'state'
+
+	/**
+	 * Manager to set and verify the state
+	 */
+	private stateManager = new StateManager('{{driver}}_oauth_state', this.stateParam, this.ctx)
+
+	/**
+	 * Authorization server URLs
+	 *
+	 * - authorizeUrl: User will be redirected here
+	 * - accessTokenUrl: Will exchange the oauth token with the access token
+	 * - userInfoUrl: Will get the user information
+	 */
+	private authorizeUrl = this.config.authorizeUrl || '<DEFINE_DEFAULT_URL_HERE>'
+	private accessTokenUrl = this.config.accessTokenUrl || '<DEFINE_DEFAULT_URL_HERE>'
+	private userInfoUrl = this.config.userInfoUrl || '<DEFINE_DEFAULT_URL_HERE>'
+
+	constructor(private config: OauthDriverConfig, private ctx: HttpContextContract) {}
 
 	/**
 	 * Instantiate the redirect request
 	 */
-	protected buildRedirectRequest(callback?: (request: GithubRedirectRequest) => void) {
-		const redirectRequest = new GithubRedirectRequest(this.config)
+	protected buildRedirectRequest(callback?: (request: UrlBuilder) => void) {
+		const redirectRequest = new UrlBuilder(this.authorizeUrl)
 		if (typeof callback === 'function') {
 			callback(redirectRequest)
 		}
@@ -56,9 +69,9 @@ export class GithubDriver implements GithubDriverContract {
 	}
 
 	/**
-	 * Redirects the user to github for authorizing the request
+	 * Redirects the user to the authorization server
 	 */
-	public redirect(callback?: (request: GithubRedirectRequest) => void): void {
+	public redirect(callback?: (request: UrlBuilder) => void): void {
 		const redirectRequest = this.buildRedirectRequest(callback)
 
 		/**
@@ -66,7 +79,7 @@ export class GithubDriver implements GithubDriverContract {
 		 */
 		if (!this.isStateless) {
 			const state = this.stateManager.setState()
-			redirectRequest.param('state', state)
+			redirectRequest.param(this.stateParam, state)
 		}
 
 		this.ctx.response.redirect(redirectRequest.toString())
@@ -75,7 +88,7 @@ export class GithubDriver implements GithubDriverContract {
 	/**
 	 * Makes the redirect url for authorizing
 	 */
-	public getRedirectUrl(callback?: (request: GithubRedirectRequest) => void): string {
+	public getRedirectUrl(callback?: (request: UrlBuilder) => void): string {
 		return this.buildRedirectRequest(callback).toString()
 	}
 
@@ -135,7 +148,7 @@ export class GithubDriver implements GithubDriverContract {
 	 * Returns the access token by exchanging the authorization code. The
 	 * method must be called right after the redirect
 	 */
-	public async getAccessToken(): Promise<GithubToken> {
+	public async getAccessToken(): Promise<OauthToken> {
 		if (this.hasError()) {
 			throw OauthException.missingAuthorizationCode()
 		}
@@ -147,15 +160,12 @@ export class GithubDriver implements GithubDriverContract {
 			throw OauthException.stateMisMatch()
 		}
 
-		const accessToken = await new Oauth2Request(
-			this.config.accessTokenUrl || github.ACCESS_TOKEN_URL,
-			{
-				clientId: this.config.clientId,
-				clientSecret: this.config.clientSecret,
-				redirectUri: this.config.callbackUrl,
-				code: this.ctx.request.input('code'),
-			}
-		).getAccessToken()
+		const accessToken = await new Oauth2Request(this.accessTokenUrl, {
+			clientId: this.config.clientId,
+			clientSecret: this.config.clientSecret,
+			redirectUri: this.config.callbackUrl,
+			code: this.ctx.request.input('code'),
+		}).getAccessToken()
 
 		/**
 		 * Map the oauth2 response to an object with known
@@ -172,13 +182,13 @@ export class GithubDriver implements GithubDriverContract {
 	 */
 	public async getUser(
 		callback?: (request: OauthUserRequestContract) => void
-	): Promise<AllyUserContract<GithubToken>> {
+	): Promise<AllyUserContract<OauthToken>> {
 		const accessToken = await this.getAccessToken()
 
 		const user = await this.getUserForToken(accessToken.value, callback)
 		user.token = accessToken
 
-		return (user as unknown) as Promise<AllyUserContract<GithubToken>>
+		return (user as unknown) as Promise<AllyUserContract<OauthToken>>
 	}
 
 	/**
@@ -192,7 +202,7 @@ export class GithubDriver implements GithubDriverContract {
 		 * Configure the user info request. One can configure it using
 		 * the callback
 		 */
-		const request = new HttpClient(this.config.userInfoUrl || github.USER_INFO_URL)
+		const request = new HttpClient(this.userInfoUrl)
 		request.header('Authorization', `token ${token}`)
 		request.header('Accept', 'application/json')
 		request.parseResponseAs('json')
@@ -201,43 +211,16 @@ export class GithubDriver implements GithubDriverContract {
 		}
 
 		/**
-		 * Github user
+		 * Get user info
 		 */
 		const body = await request.get()
-
-		/**
-		 * Get user emails
-		 */
-		const emailRequest = new HttpClient(github.USER_EMAIL_URL)
-		emailRequest.header('Authorization', `token ${token}`)
-		emailRequest.header('Accept', 'application/json')
-		emailRequest.parseResponseAs('json')
-		const emails = await emailRequest.get()
-
-		/**
-		 * Sort emails to keep the primary ones on the top
-		 */
-		body.emails = emails.sort((email: any) => (email.primary ? -1 : 1))
-
-		/**
-		 * Get the first verified email of the user
-		 */
-		let mainEmail = body.emails.find((email: any) => email.verified)
-
-		/**
-		 * If there are no verified emails, then get any first one
-		 */
-		if (!mainEmail) {
-			mainEmail = emails[0]
-		}
-
 		return {
 			id: body.id,
 			nickName: body.name,
 			name: body.name,
-			email: mainEmail.email,
+			email: body.email,
 			avatarUrl: body.avatar_url,
-			emailVerificationState: mainEmail.verified ? 'verified' : 'unverified',
+			emailVerificationState: body.is_verified ? 'verified' : 'unverified',
 			token: { value: token },
 			original: body,
 		}
@@ -252,7 +235,7 @@ export class GithubDriver implements GithubDriverContract {
 		___?: (request: OauthUserRequestContract) => void
 	): Promise<never> {
 		throw new Error(
-			'Cannot use "getUserForTokenAndSecret" method on google driver. Use "getUserForToken" method instead'
+			'Cannot use "getUserForTokenAndSecret" method on {{driver}} driver. Use "getUserForToken" method instead'
 		)
 	}
 }
