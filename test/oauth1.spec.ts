@@ -116,7 +116,7 @@ test.group('Oauth1Request | request token', () => {
 		} catch (error) {
 			assert.equal(
 				error.message,
-				'Invalid oauth1 response. Missing "oauth_token" and "oauth_token_secret"'
+				'E_OAUTH_MISSING_TOKEN: Invalid oauth1 response. Missing "oauth_token" and "oauth_token_secret"'
 			)
 		}
 	})
@@ -156,7 +156,7 @@ test.group('Oauth1Request | request token', () => {
 		} catch (error) {
 			assert.equal(
 				error.message,
-				'Invalid oauth1 response. Missing "oauth_token" and "oauth_token_secret"'
+				'E_OAUTH_MISSING_TOKEN: Invalid oauth1 response. Missing "oauth_token" and "oauth_token_secret"'
 			)
 		}
 	})
@@ -196,7 +196,7 @@ test.group('Oauth1Request | request token', () => {
 		} catch (error) {
 			assert.equal(
 				error.message,
-				'Invalid oauth1 response. Missing "oauth_token" and "oauth_token_secret"'
+				'E_OAUTH_MISSING_TOKEN: Invalid oauth1 response. Missing "oauth_token" and "oauth_token_secret"'
 			)
 		}
 	})
