@@ -43,7 +43,6 @@
     "commitizen": "^4.2.2",
     "cz-conventional-changelog": "^3.3.0",
     "del-cli": "^3.0.1",
-    "doctoc": "^2.0.0",
     "dotenv": "^8.2.0",
     "eslint": "^7.16.0",
     "eslint-config-prettier": "^7.1.0",
@@ -55,13 +54,11 @@
     "mrm": "^2.5.13",
     "nock": "^13.0.5",
     "np": "^7.0.0",
-    "npm-audit-html": "^1.5.0",
     "prettier": "^2.2.1",
     "typescript": "^4.1.3"
   },
   "husky": {
     "hooks": {
-      "pre-commit": "npm audit --production --json | ./node_modules/.bin/npm-audit-html && git add npm-audit.html && doctoc README.md --title='## Table of contents' && git add README.md",
       "commit-msg": "node ./node_modules/@adonisjs/mrm-preset/validateCommit/conventional/validate.js"
     }
   },
@@ -87,7 +84,7 @@
     "url": "https://github.com/adonisjs/adonis-ally/issues"
   },
   "homepage": "https://github.com/adonisjs/adonis-ally#readme",
-   "publishConfig": {
+  "publishConfig": {
     "tag": "alpha",
     "access": "public"
   }
