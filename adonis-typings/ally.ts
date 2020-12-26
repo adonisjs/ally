@@ -174,6 +174,15 @@ declare module '@ioc:Adonis/Addons/Ally' {
 		getUser(
 			callback?: (request: OauthUserRequestContract) => void
 		): Promise<AllyUserContract<OauthToken>>
+		getUserForToken(
+			token: string,
+			callback?: (request: OauthUserRequestContract) => void
+		): Promise<AllyUserContract<{ value: string }>>
+		getUserForTokenAndSecret(
+			token: string,
+			tokenSecret: string,
+			callback?: (request: OauthUserRequestContract) => void
+		): Promise<AllyUserContract<{ value: string; tokenSecret: string }>>
 	}
 
 	/**

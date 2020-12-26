@@ -132,13 +132,24 @@ export class GoogleDriver implements GoogleDriverContract {
 		callback?: (request: OauthUserRequestContract) => void
 	): Promise<AllyUserContract<GoogleToken>> {
 		const accessToken = await this.getAccessToken()
+		const user = await this.getUserForToken(accessToken.value, callback)
+		user.token = accessToken
+		return (user as unknown) as Promise<AllyUserContract<GoogleToken>>
+	}
 
+	/**
+	 * Fetch the user for a pre-existing access token
+	 */
+	public async getUserForToken(
+		token: string,
+		callback?: (request: OauthUserRequestContract) => void
+	): Promise<AllyUserContract<{ value: string }>> {
 		/**
 		 * Configure the user info request. One can configure it using
 		 * the callback
 		 */
 		const request = new HttpClient(this.config.userInfoUrl || google.USER_INFO_URL)
-		request.header('Authorization', `Bearer ${accessToken.value}`)
+		request.header('Authorization', `Bearer ${token}`)
 		request.header('Accept', 'application/json')
 		request.parseResponseAs('json')
 		if (typeof callback === 'function') {
@@ -156,8 +167,23 @@ export class GoogleDriver implements GoogleDriverContract {
 			email: body.email,
 			avatarUrl: body.picture,
 			emailVerificationState: body.email_verified ? 'verified' : 'unverified',
-			token: accessToken,
+			token: {
+				value: token,
+			},
 			original: body,
 		}
+	}
+
+	/**
+	 * Not allowed, the method is specific to oauth 1.0
+	 */
+	public async getUserForTokenAndSecret(
+		_: string,
+		__: string,
+		___?: (request: OauthUserRequestContract) => void
+	): Promise<never> {
+		throw new Error(
+			'Cannot use "getUserForTokenAndSecret" method on google driver. Use "getUserForToken" method instead'
+		)
 	}
 }
