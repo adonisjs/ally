@@ -3,7 +3,7 @@
   "ts": true,
   "license": "MIT",
   "services": [
-    "coveralls"
+    "circleci"
   ],
   "minNodeVersion": "12.18.2",
   "probotApps": [
