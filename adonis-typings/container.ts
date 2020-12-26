@@ -7,6 +7,9 @@
  * file that was distributed with this source code.
  */
 
-/// <reference path="./ally.ts" />
-/// <reference path="./container.ts" />
-/// <reference path="./context.ts" />
+declare module '@ioc:Adonis/Core/Application' {
+	import { AllyManagerContract } from '@ioc:Adonis/Addons/Ally'
+	export interface ContainerBindings {
+		'Adonis/Addons/Ally': AllyManagerContract
+	}
+}

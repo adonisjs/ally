@@ -9,26 +9,49 @@
 
 export const twitter = {
 	REQUEST_TOKEN_URL: 'https://api.twitter.com/oauth/request_token',
-	REDIRECT_URL: 'https://api.twitter.com/oauth/authenticate',
+	AUTHORIZE_URL: 'https://api.twitter.com/oauth/authenticate',
 	ACCESS_TOKEN_URL: 'https://api.twitter.com/oauth/access_token',
 }
 
 export const github = {
-	REDIRECT_URL: 'https://github.com/login/oauth/authorize',
+	AUTHORIZE_URL: 'https://github.com/login/oauth/authorize',
 	ACCESS_TOKEN_URL: 'https://github.com/login/oauth/access_token',
+	USER_INFO_URL: 'https://api.github.com/user',
+	USER_EMAIL_URL: 'https://api.github.com/user/emails',
 }
 
 export const google = {
-	REDIRECT_URL: 'https://accounts.google.com/o/oauth2/v2/auth',
+	AUTHORIZE_URL: 'https://accounts.google.com/o/oauth2/v2/auth',
 	ACCESS_TOKEN_URL: 'https://oauth2.googleapis.com/token',
+	USER_INFO_URL: 'https://www.googleapis.com/oauth2/v3/userinfo',
 }
 
 export const gitlab = {
-	REDIRECT_URL: 'https://gitlab.com/oauth/authorize',
+	AUTHORIZE_URL: 'https://gitlab.com/oauth/authorize',
 	ACCESS_TOKEN_URL: 'https://gitlab.com/oauth/token',
 }
 
 export const linkedin = {
-	REDIRECT_URL: 'https://www.linkedin.com/oauth/v2/authorization',
+	AUTHORIZE_URL: 'https://www.linkedin.com/oauth/v2/authorization',
 	ACCESS_TOKEN_URL: 'https://www.linkedin.com/oauth/v2/accessToken',
+}
+
+export const patreon = {
+	AUTHORIZE_URL: 'https://www.patreon.com/oauth2/authorize',
+	ACCESS_TOKEN_URL: 'https://www.patreon.com/api/oauth2/token',
+}
+
+export const discord = {
+	AUTHORIZE_URL: 'https://discord.com/api/oauth2/authorize',
+	ACCESS_TOKEN_URL: 'https://discord.com/api/oauth2/token',
+}
+
+export const microsoft = {
+	AUTHORIZE_URL: 'https://login.microsoftonline.com/{tenant}/oauth2/v2.0/authorize',
+	ACCESS_TOKEN_URL: 'https://login.microsoftonline.com/{tenant}/oauth2/v2.0/token',
+}
+
+export const bitbucket = {
+	AUTHORIZE_URL: 'https://bitbucket.org/site/oauth2/authorize',
+	ACCESS_TOKEN_URL: 'https://bitbucket.org/site/oauth2/access_token',
 }

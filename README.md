@@ -1,47 +1,74 @@
-<div align="center"><img src="https://res.cloudinary.com/adonisjs/image/upload/q_100/v1564392111/adonis-banner_o9lunk.png" width="600px"></div>
-# @adonisjs/ally
-> Tagline
-
-[![coveralls-image]][coveralls-url] [![typescript-image]][typescript-url] [![npm-image]][npm-url] [![license-image]][license-url]
-
-## Research
-
-- Github needs just the scope and couple of extra params
-- Twitter doesn't even accept scopes
-- Google accepts a couple more options, but still doable with a generic API
-- Facebook takes scope too
-
-## Working
-
-- [x] Gitlab (allow defining a custom base url for self hosted apps)
-- [x] Github
-- [x] Google
-- [x] Linkedin
-- [ ] Twitter
-
-A short brief
-
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 ## Table of contents
 
-- [Purpose](#purpose)
-- [Features](#features)
+- [Social Authentication](#social-authentication)
+- [
+    
+      Website
+    
+     | 
+    
+      Guides
+    
+     | 
+    
+      Contributing
+    
+  ](#website%0A----%0A------%0A----%0A------guides%0A----%0A------%0A----%0A------contributing)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-## Purpose
+<div align="center">
+  <img src="https://res.cloudinary.com/adonisjs/image/upload/q_100/v1558612869/adonis-readme_zscycu.jpg" width="600px">
+</div>
 
-## Features
+<br />
 
-[coveralls-image]: https://img.shields.io/coveralls/adonisjs/adonis-ally/master.svg?style=for-the-badge
-[coveralls-url]: https://coveralls.io/github/adonisjs/adonis-ally "coveralls"
+<div align="center">
+  <h3>Social Authentication</h3>
+  <p>Social authentication provider for AdonisJS. Supports <strong>Github</strong>, <strong>Google</strong>, <strong>Twitter</strong>, <strong>Facebook</strong>, <strong>Bitbucket</strong>, <strong>Discord</strong>, <strong>Patreon</strong>, <strong>Gitlab</strong>, <strong>LinkedIn</strong>, and <strong>Microsoft</strong>.</p>
+</div>
+
+<br />
+
+<div align="center">
+
+[![circleci-image]][circleci-url] [![typescript-image]][typescript-url] [![npm-image]][npm-url] [![license-image]][license-url] [![audit-report-image]][audit-report-url]
+
+</div>
+
+<div align="center">
+  <h3>
+    <a href="https://preview.adonisjs.com">
+      Website
+    </a>
+    <span> | </span>
+    <a href="https://preview.adonisjs.com/guides/auth/social-auth">
+      Guides
+    </a>
+    <span> | </span>
+    <a href="CONTRIBUTING.md">
+      Contributing
+    </a>
+  </h3>
+</div>
+
+<div align="center">
+  <sub>Built with ❤︎ by <a href="https://twitter.com/AmanVirk1">Harminder Virk</a>
+</div>
+
+[circleci-image]: https://img.shields.io/circleci/build/github/adonisjs/ally/master.svg?style=for-the-badge&logo=circleci
+[circleci-url]: https://circleci.com/gh/adonisjs/ally "circleci"
 
 [typescript-image]: https://img.shields.io/badge/Typescript-294E80.svg?style=for-the-badge&logo=typescript
 [typescript-url]:  "typescript"
 
-[npm-image]: https://img.shields.io/npm/v/@adonisjs/ally.svg?style=for-the-badge&logo=npm
-[npm-url]: https://npmjs.org/package/@adonisjs/ally "npm"
+[npm-image]: https://img.shields.io/npm/v/@adonisjs/ally/alpha.svg?style=for-the-badge&logo=npm
+[npm-url]: https://www.npmjs.com/package/@adonisjs/ally/v/alpha "npm"
 
 [license-image]: https://img.shields.io/npm/l/@adonisjs/ally?color=blueviolet&style=for-the-badge
 [license-url]: LICENSE.md "license"
+
+[audit-report-image]: https://img.shields.io/badge/-Audit%20Report-blueviolet?style=for-the-badge
+[audit-report-url]: https://htmlpreview.github.io/?https://github.com/adonisjs/ally/blob/develop/npm-audit.html "audit-report"

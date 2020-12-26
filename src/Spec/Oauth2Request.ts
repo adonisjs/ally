@@ -9,6 +9,7 @@
 
 /// <reference path="../../adonis-typings/index.ts" />
 
+import { DateTime } from 'luxon'
 import {
 	Oauth2AccessToken,
 	Oauth2RequestConfig,
@@ -74,6 +75,8 @@ export class Oauth2Request implements Oauth2RequestContract {
 			...parsed
 		} = await this.makeRequest()
 
+		console.log(parsed)
+
 		/**
 		 * We expect the response to have "access_token"
 		 */
@@ -85,6 +88,7 @@ export class Oauth2Request implements Oauth2RequestContract {
 			accessToken,
 			tokenType,
 			expiresIn,
+			...(expiresIn ? { expiresAt: DateTime.local().plus({ seconds: expiresIn }) } : {}),
 			refreshToken,
 			...parsed,
 		}
