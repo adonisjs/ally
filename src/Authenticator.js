@@ -95,6 +95,23 @@ class Authenticator {
   }
 
   /**
+   * Allow to dynamically append parameters to the URI of the driver.
+   * This function needs to be called every time the driver is instantiated.
+   *
+   * Example:
+   * ally.driver("facebook").withAdditionalParams(params).redirect()
+   * ally.driver("facebook").withAdditionalParams(params).getUser()
+   *
+   * @method withAdditionalParams
+   * @param additionalParams
+   * @returns {Authenticator}
+   */
+  withAdditionalParams(additionalParams) {
+    this._driverInstance.withAdditionalParams(additionalParams);
+    return this;
+  }
+
+  /**
    * Redirects request to the provider website url.
    *
    * @method redirect

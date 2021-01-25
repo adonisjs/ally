@@ -131,6 +131,24 @@ class OAuth2 {
   }
 
   /**
+   * Allow to dynamically append parameters to the URI of the driver.
+   * This function needs to be called every time the driver is instantiated.
+   *
+   * @method withAdditionalParams
+   *
+   * @param {URLSearchParams} additionalParams
+   *
+   * @return {void}
+   */
+  withAdditionalParams(additionalParams) {
+    if (this._redirectUri.indexOf("?") > -1) {
+      this._redirectUri += "&" + additionalParams.toString();
+    } else {
+      this._redirectUri += "?" + additionalParams.toString();
+    }
+  }
+
+  /**
    * Returns a formatted url to be used for redirecting
    * users.
    *
