@@ -44,7 +44,7 @@ class Facebook extends OAuth2Scheme {
      * Public fields to be mutated from outside
      */
     this.scope = _.size(config.scope) ? config.scope : ['email']
-    this.fields = _.size(config.fields) ? config.fields : ['name', 'email', 'gender', 'verified', 'link']
+    this.fields = _.size(config.fields) ? config.fields : ['name', 'email', 'gender', 'verified', 'link', 'picture']
   }
 
   /**
@@ -157,15 +157,13 @@ class Facebook extends OAuth2Scheme {
     const user = new AllyUser()
     const expires = _.get(accessTokenResponse, 'result.expires_in')
 
-    const avatarUrl = `${this.baseUrl}/${userProfile.id}/picture?type=normal`
-
     user.setOriginal(userProfile)
       .setFields(
         userProfile.id,
         userProfile.name,
         userProfile.email,
         userProfile.name,
-        avatarUrl
+        userProfile.picture ? userProfile.picture.data.url : null
       )
       .setToken(
         accessTokenResponse.accessToken,
