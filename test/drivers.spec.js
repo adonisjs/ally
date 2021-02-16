@@ -185,7 +185,7 @@ test.group('Oauth Drivers | Facebook', function () {
     const facebook = new Facebook(config)
     const redirectUrl = qs.escape(config.get().redirectUri)
     const scope = qs.escape(['email'].join(','))
-    const providerUrl = `https://graph.facebook.com/v2.1/oauth/authorize?redirect_uri=${redirectUrl}&scope=${scope}&response_type=code&client_id=${config.get().clientId}`
+    const providerUrl = `https://graph.facebook.com/v4.0/oauth/authorize?redirect_uri=${redirectUrl}&scope=${scope}&response_type=code&client_id=${config.get().clientId}`
     const redirectToUrl = await facebook.getRedirectUrl()
     assert.equal(redirectToUrl, providerUrl)
   })
@@ -204,7 +204,7 @@ test.group('Oauth Drivers | Facebook', function () {
     const facebook = new Facebook(customConfig)
     const redirectUrl = qs.escape(customConfig.get().redirectUri)
     const scope = qs.escape(['email', 'name'].join(','))
-    const providerUrl = `https://graph.facebook.com/v2.1/oauth/authorize?redirect_uri=${redirectUrl}&scope=${scope}&response_type=code&client_id=${customConfig.get().clientId}`
+    const providerUrl = `https://graph.facebook.com/v4.0/oauth/authorize?redirect_uri=${redirectUrl}&scope=${scope}&response_type=code&client_id=${customConfig.get().clientId}`
     const redirectToUrl = await facebook.getRedirectUrl()
     assert.equal(redirectToUrl, providerUrl)
   })
@@ -213,7 +213,7 @@ test.group('Oauth Drivers | Facebook', function () {
     const facebook = new Facebook(config)
     const redirectUrl = qs.escape(config.get().redirectUri)
     const scope = qs.escape(['foo'].join(','))
-    const providerUrl = `https://graph.facebook.com/v2.1/oauth/authorize?redirect_uri=${redirectUrl}&scope=${scope}&response_type=code&client_id=${config.get().clientId}`
+    const providerUrl = `https://graph.facebook.com/v4.0/oauth/authorize?redirect_uri=${redirectUrl}&scope=${scope}&response_type=code&client_id=${config.get().clientId}`
 
     facebook.scope = ['foo']
     const redirectToUrl = await facebook.getRedirectUrl()
@@ -254,7 +254,7 @@ test.group('Oauth Drivers | Facebook', function () {
     const scope = qs.escape(['email'].join(','))
     const state = '1234'
 
-    const providerUrl = `https://graph.facebook.com/v2.1/oauth/authorize?redirect_uri=${redirectUrl}&scope=${scope}&response_type=code&state=${state}&client_id=${config.get().clientId}`
+    const providerUrl = `https://graph.facebook.com/v4.0/oauth/authorize?redirect_uri=${redirectUrl}&scope=${scope}&response_type=code&state=${state}&client_id=${config.get().clientId}`
 
     const redirectToUrl = await facebook.getRedirectUrl(state)
     assert.equal(redirectToUrl, providerUrl)

@@ -91,7 +91,7 @@ class Facebook extends OAuth2Scheme {
    * @return {String}
    */
   get baseUrl () {
-    return 'https://graph.facebook.com/v2.1'
+    return 'https://graph.facebook.com/v4.0'
   }
 
   /**
