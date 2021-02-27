@@ -16,7 +16,7 @@ import {
 	Oauth1RequestConfig,
 	Oauth1RequestContract,
 } from '@ioc:Adonis/Addons/Ally'
-import { randomString } from '@poppinss/utils'
+import { string } from '@poppinss/utils/build/helpers'
 
 import { HttpClient } from '../HttpClient'
 import { OauthException } from '../Exceptions'
@@ -38,7 +38,7 @@ export class Oauth1Request implements Oauth1RequestContract {
 		return new Oauth1Signature(
 			Object.assign(
 				{
-					nonce: randomString(32),
+					nonce: string.generateRandom(32),
 					url: this.baseUrl,
 					method: 'POST',
 					unixTimestamp: Math.floor(new Date().getTime() / 1000),
