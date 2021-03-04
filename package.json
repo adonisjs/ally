@@ -72,7 +72,7 @@
     "anyBranch": false
   },
   "dependencies": {
-    "@poppinss/utils": "^2.5.9",
+    "@poppinss/utils": "^3.0.3",
     "got": "^11.8.1",
     "luxon": "^1.25.0"
   },
