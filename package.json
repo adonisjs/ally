@@ -73,7 +73,7 @@
   },
   "dependencies": {
     "@poppinss/utils": "^2.5.9",
-    "got": "^11.8.1",
+    "got": "^11.8.2",
     "luxon": "^1.25.0"
   },
   "repository": {
