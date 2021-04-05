@@ -14,15 +14,18 @@ Route.get('/google', async ({ response }) => {
 })
 
 Route.get('/google/redirect', async ({ ally }) => {
-	return ally.use('google').redirect((config) => {
-		config
+	return ally.use('google').redirect((request) => {
+		request
 			.prompt('consent')
+			.accessType('offline')
 			.scopes(['calendar.events', 'userinfo.email', 'userinfo.profile'])
 			.hostedDomain('adonisjs.com')
 	})
 })
 
-Route.get('/google/callback', async ({ ally }) => {
+Route.get('/google/callback', async ({ request, ally }) => {
+	console.log(request.cookiesList())
+
 	const driver = ally.use('google')
 	if (driver.accessDenied()) {
 		return 'Access was denied'
@@ -36,5 +39,6 @@ Route.get('/google/callback', async ({ ally }) => {
 		return 'There was an error'
 	}
 
-	return driver.getUser()
+	const user = await driver.getUser()
+	return user
 })

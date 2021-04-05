@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-import { randomString } from '@poppinss/utils'
+import { string } from '@poppinss/utils/build/helpers'
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 
 /**
@@ -21,24 +21,15 @@ export class StateManager {
 		private queryStringName: string,
 		private ctx: HttpContextContract
 	) {
-		this.resetState()
+		this.existingState = this.ctx.request.cookie(this.identifier)
+		this.ctx.response.clearCookie(this.identifier)
 	}
 
 	/**
-	 * Reset state
-	 */
-	private resetState() {
-		if (!this.existingState) {
-			this.existingState = this.ctx.request.cookie(this.identifier)
-			this.ctx.response.clearCookie(this.identifier)
-		}
-	}
-
-	/**
-	 * Reset state inside cookie
+	 * Set state inside cookie
 	 */
 	public setState(): string {
-		const state = randomString(32)
+		const state = string.generateRandom(32)
 		this.ctx.response.cookie(this.identifier, state, {
 			sameSite: false,
 			maxAge: '30min',

@@ -4,10 +4,10 @@ import { Application } from '@adonisjs/core/build/standalone'
 
 async function run() {
 	const app = new Application(join(__dirname, '../'), 'web')
-	app.setup()
-	app.registerProviders()
+	await app.setup()
+	await app.registerProviders()
 	await app.bootProviders()
-	app.requirePreloads()
+	await app.requirePreloads()
 
 	const server = app.container.use('Adonis/Core/Server')
 	server.optimize()

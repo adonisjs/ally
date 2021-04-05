@@ -58,7 +58,7 @@ export class GithubRedirectRequest implements GithubRedirectRequestContract {
 	 * Define scopes to accept. Otherwise one defined inside the config
 	 * will be used
 	 */
-	public scopes(scopes: GithubScopes[]): this {
+	public scopes(scopes: GithubScopes[] | string[]): this {
 		this.urlBuilder.param('scope', scopes.join(' '))
 		return this
 	}

@@ -102,7 +102,7 @@ export class GoogleRedirectRequest implements GoogleRedirectRequestContract {
 	 * Define scopes to accept. Otherwise one defined inside the config
 	 * will be used
 	 */
-	public scopes(scopes: GoogleScopes[]): this {
+	public scopes(scopes: GoogleScopes[] | string[]): this {
 		this.urlBuilder.param(
 			'scope',
 			scopes

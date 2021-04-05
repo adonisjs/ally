@@ -24,7 +24,7 @@ export default class AllyProvider {
 	 */
 	public register() {
 		this.application.container.bind('Adonis/Addons/Ally', (container) => {
-			const config = container.use('Adonis/Core/Config').get('ally', {})
+			const config = container.resolveBinding('Adonis/Core/Config').get('ally', {})
 			return new AllyManager(this.application, config)
 		})
 	}
@@ -33,7 +33,7 @@ export default class AllyProvider {
 	 * Stick an instance to the current HTTP request
 	 */
 	public boot() {
-		this.application.container.with(
+		this.application.container.withBindings(
 			['Adonis/Core/HttpContext', 'Adonis/Addons/Ally'],
 			(HttpContext, Ally) => {
 				HttpContext.getter(

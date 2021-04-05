@@ -14,8 +14,8 @@ Route.get('/github', async ({ response }) => {
 })
 
 Route.get('/github/redirect', async ({ ally }) => {
-	return ally.use('github').redirect((config) => {
-		config.allowSignup(true)
+	return ally.use('github').redirect((gh) => {
+		gh.allowSignup(true)
 	})
 })
 

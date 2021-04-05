@@ -46,7 +46,7 @@ declare module '@ioc:Adonis/Addons/Ally' {
 	} & { [key: string]: string | string[] }
 
 	/**
-	 * Shape of the oauth2 access token response
+	 * Shape of the oauth1 access token response
 	 */
 	export type Oauth1AccessToken = Oauth1RequestToken
 
@@ -257,7 +257,7 @@ declare module '@ioc:Adonis/Addons/Ally' {
 		/**
 		 * Can be configured at runtime
 		 */
-		scopes?: GithubScopes[]
+		scopes?: GithubScopes[] | string[]
 		login?: string
 		allowSignup?: boolean
 	}
@@ -269,7 +269,7 @@ declare module '@ioc:Adonis/Addons/Ally' {
 		/**
 		 * Scopes to ask permission for
 		 */
-		scopes(scopes: GithubScopes[]): this
+		scopes(scopes: GithubScopes[] | string[]): this
 
 		/**
 		 * Force a specific account for login
@@ -375,7 +375,7 @@ declare module '@ioc:Adonis/Addons/Ally' {
 		/**
 		 * Can be configured at runtime
 		 */
-		scopes?: GoogleScopes[]
+		scopes?: GoogleScopes[] | string[]
 		prompt?: 'none' | 'consent' | 'select_account'
 		accessType?: 'online' | 'offline'
 		hostedDomain?: string
@@ -395,7 +395,7 @@ declare module '@ioc:Adonis/Addons/Ally' {
 		/**
 		 * Scopes to ask permission for
 		 */
-		scopes(scopes: GoogleScopes[]): this
+		scopes(scopes: GoogleScopes[] | string[]): this
 
 		/**
 		 * Define the landing prompt
@@ -426,7 +426,7 @@ declare module '@ioc:Adonis/Addons/Ally' {
 	 */
 	export type GoogleToken = {
 		value: string
-		refreshToken: string
+		refreshToken?: string
 		expiresIn: number
 		expiresAt: DateTime
 		idToken: string

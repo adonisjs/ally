@@ -252,7 +252,7 @@ export class GithubDriver implements GithubDriverContract {
 		___?: (request: OauthUserRequestContract) => void
 	): Promise<never> {
 		throw new Error(
-			'Cannot use "getUserForTokenAndSecret" method on google driver. Use "getUserForToken" method instead'
+			'Cannot use "getUserForTokenAndSecret" method on github driver. Use "getUserForToken" method instead'
 		)
 	}
 }
