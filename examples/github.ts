@@ -8,22 +8,24 @@
  */
 
 import Route from '@ioc:Adonis/Core/Route'
+import Config from '@ioc:Adonis/Core/Config'
+import { GithubDriver } from '../src/Drivers/Github'
 
 Route.get('/github', async ({ response }) => {
 	return response.send('<a href="/github/redirect"> Login with Github </a>')
 })
 
-Route.get('/github/redirect', async ({ ally }) => {
-	return ally.use('github').redirect((gh) => {
-		gh.allowSignup(true)
+Route.get('/github/redirect', async (ctx) => {
+	return new GithubDriver(ctx, Config.get('ally.github')).redirect((request) => {
+		request.scopes(['admin:org', 'delete_repo', 'repo', 'user'])
 	})
 })
 
-Route.get('/github/callback', async ({ ally, request }) => {
-	console.log(request.cookiesList())
+Route.get('/github/callback', async (ctx) => {
+	console.log(ctx.request.cookiesList())
 
 	try {
-		const driver = ally.use('github')
+		const driver = new GithubDriver(ctx, Config.get('ally.github'))
 		if (driver.accessDenied()) {
 			return 'Access was denied'
 		}

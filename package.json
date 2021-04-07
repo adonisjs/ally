@@ -51,7 +51,7 @@
 		"github-label-sync": "^2.0.0",
 		"husky": "^6.0.0",
 		"japa": "^3.1.1",
-		"mrm": "^2.6.2",
+		"mrm": "^3.0.1",
 		"nock": "^13.0.11",
 		"np": "^7.4.0",
 		"prettier": "^2.2.1",
@@ -72,6 +72,7 @@
 		"anyBranch": false
 	},
 	"dependencies": {
+		"@poppinss/oauth-client": "^1.1.1",
 		"@poppinss/utils": "^3.0.5",
 		"got": "^11.8.2",
 		"luxon": "^1.26.0"

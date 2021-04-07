@@ -36,7 +36,7 @@ async function getRedirectUrl(): Promise<string> {
 	requestToken.oauthParam('oauth_callback', CALLBACK_URL)
 	const token = await requestToken.getRequestToken()
 
-	const redirectRequest = new UrlBuilder(twitter.REDIRECT_URL)
+	const redirectRequest = new UrlBuilder(twitter.AUTHORIZE_URL)
 	redirectRequest.param('oauth_token', token.oauthToken)
 	return redirectRequest.makeUrl()
 }

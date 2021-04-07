@@ -7,222 +7,169 @@
  * file that was distributed with this source code.
  */
 
-/// <reference path="../../../adonis-typings/index.ts" />
-
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import {
 	GithubToken,
-	AllyUserContract,
+	GithubScopes,
 	GithubDriverConfig,
+	ApiRequestContract,
 	GithubDriverContract,
-	OauthUserRequestContract,
+	RedirectRequestContract,
 } from '@ioc:Adonis/Addons/Ally'
-
-import { github } from '../../Config'
-import { HttpClient } from '../../HttpClient'
-import { StateManager } from '../../StateManager'
-import { GithubRedirectRequest } from './Request'
-import { OauthException } from '../../Exceptions'
-import { Oauth2Request } from '../../Spec/Oauth2Request'
+import { Oauth2Driver } from '../Oauth2'
 
 /**
- * Github driver to interact with the Github APIs for connecting
- * user accounts
+ * Github driver to login user via Github
  */
-export class GithubDriver implements GithubDriverContract {
-	private isStateless: boolean = false
-	private stateManager = new StateManager('gh_oauth_state', 'state', this.ctx)
-
-	constructor(private config: GithubDriverConfig, private ctx: HttpContextContract) {}
+export class GithubDriver
+	extends Oauth2Driver<GithubToken, GithubScopes>
+	implements GithubDriverContract {
+	protected accessTokenUrl = 'https://github.com/login/oauth/access_token'
+	protected authorizeUrl = 'https://github.com/login/oauth/authorize'
+	protected userInfoUrl = 'https://api.github.com/user'
+	protected userEmailUrl = 'https://api.github.com/user/emails'
 
 	/**
-	 * Instantiate the redirect request
+	 * The error code when someone hits cancel in the Github UI
 	 */
-	protected buildRedirectRequest(callback?: (request: GithubRedirectRequest) => void) {
-		const redirectRequest = new GithubRedirectRequest(this.config)
-		if (typeof callback === 'function') {
-			callback(redirectRequest)
-		}
+	protected accessDeniedCodes = ['access_denied']
 
-		return redirectRequest
+	/**
+	 * The param name for the authorization code
+	 */
+	protected codeParamName = 'code'
+
+	/**
+	 * The param name for the error
+	 */
+	protected errorParamName = 'error'
+
+	/**
+	 * Cookie name for storing the "gh_oauth_state"
+	 */
+	protected stateCookieName = 'gh_oauth_state'
+
+	/**
+	 * Parameter name to be used for sending and receiving the state
+	 * from Github
+	 */
+	protected stateParamName = 'state'
+
+	/**
+	 * Parameter name for defining the scopes
+	 */
+	protected scopeParamName = 'scope'
+
+	/**
+	 * Scopes separator
+	 */
+	protected scopesSeparator = ' '
+
+	constructor(ctx: HttpContextContract, public config: GithubDriverConfig) {
+		super(ctx, config)
+		/**
+		 * Extremely important to call the following method to clear the
+		 * state set by the redirect request
+		 */
+		this.loadState()
 	}
 
 	/**
-	 * Mark authorization flow as stateless
+	 * Configuring the redirect request with defaults
 	 */
-	public stateless() {
-		this.isStateless = true
-		return this
-	}
-
-	/**
-	 * Redirects the user to github for authorizing the request
-	 */
-	public redirect(callback?: (request: GithubRedirectRequest) => void): void {
-		const redirectRequest = this.buildRedirectRequest(callback)
+	protected configureRedirectRequest(request: RedirectRequestContract<GithubScopes>) {
+		/**
+		 * Define user defined scopes or the default one's
+		 */
+		request.scopes(this.config.scopes || ['user'])
 
 		/**
-		 * Set state when not disabled
+		 * Set "allow_signup" option when defined
+		 */
+		if (this.config.allowSignup !== undefined) {
+			request.param('allow_signup', this.config.allowSignup)
+		}
+
+		/**
+		 * Set "login" option when defined
+		 */
+		if (this.config.login) {
+			request.param('login', this.config.login)
+		}
+	}
+
+	/**
+	 * Configuring the access token API request to send extra fields
+	 */
+	protected configureAccessTokenRequest(request: ApiRequestContract) {
+		/**
+		 * Send state to github when request is not stateles
 		 */
 		if (!this.isStateless) {
-			const state = this.stateManager.setState()
-			redirectRequest.param('state', state)
-		}
-
-		this.ctx.response.redirect(redirectRequest.toString())
-	}
-
-	/**
-	 * Makes the redirect url for authorizing
-	 */
-	public getRedirectUrl(callback?: (request: GithubRedirectRequest) => void): string {
-		return this.buildRedirectRequest(callback).toString()
-	}
-
-	/**
-	 * Find if the redirect request has the authorization code
-	 */
-	public hasCode(): boolean {
-		return !!this.ctx.request.input('code')
-	}
-
-	/**
-	 * Find if the access was denied
-	 */
-	public accessDenied(): boolean {
-		return this.getError() === 'access_denied'
-	}
-
-	/**
-	 * Find if state is invalid. This will happen in one of the following cases
-	 *
-	 * - Cookies are not supported
-	 * - Cookie has been expired
-	 * - Cookie is unaccessible coz of URL mis-match
-	 */
-	public stateMisMatch(): boolean {
-		if (this.isStateless) {
-			return false
-		}
-
-		return this.stateManager.stateMisMatch()
-	}
-
-	/**
-	 * Find if the redirect request has errors
-	 */
-	public hasError(): boolean {
-		return !!this.getError()
-	}
-
-	/**
-	 * Get the redirect error
-	 */
-	public getError(): string | null {
-		const error = this.ctx.request.input('error')
-		if (error) {
-			return error
-		}
-
-		if (!this.ctx.request.input('code')) {
-			return 'unknown_error'
-		}
-
-		return null
-	}
-
-	/**
-	 * Returns the access token by exchanging the authorization code. The
-	 * method must be called right after the redirect
-	 */
-	public async getAccessToken(): Promise<GithubToken> {
-		if (this.hasError()) {
-			throw OauthException.missingAuthorizationCode()
+			request.field('state', this.stateCookieValue)
 		}
 
 		/**
-		 * Raise exception if state has mismatch
+		 * Clearing the default defined "grant_type". Github doesn't accept this.
+		 * https://github.com/poppinss/oauth-client#following-is-the-list-of-fieldsparams-set-by-the-clients-implicitly
 		 */
-		if (this.stateMisMatch()) {
-			throw OauthException.stateMisMatch()
-		}
-
-		const accessToken = await new Oauth2Request(
-			this.config.accessTokenUrl || github.ACCESS_TOKEN_URL,
-			{
-				clientId: this.config.clientId,
-				clientSecret: this.config.clientSecret,
-				redirectUri: this.config.callbackUrl,
-				code: this.ctx.request.input('code'),
-			}
-		).getAccessToken()
-
-		/**
-		 * Map the oauth2 response to an object with known
-		 * properties
-		 */
-		return {
-			value: accessToken.accessToken,
-			grantedScopes: accessToken.scope.split(' '),
-		}
+		request.clearField('grant_type')
 	}
 
 	/**
-	 * Fetch the user along with the access token
+	 * Returns the HTTP request with the authorization header set
 	 */
-	public async getUser(
-		callback?: (request: OauthUserRequestContract) => void
-	): Promise<AllyUserContract<GithubToken>> {
-		const accessToken = await this.getAccessToken()
-
-		const user = await this.getUserForToken(accessToken.value, callback)
-		user.token = accessToken
-
-		return (user as unknown) as Promise<AllyUserContract<GithubToken>>
-	}
-
-	/**
-	 * Fetch the user for a pre-existing access token
-	 */
-	public async getUserForToken(
-		token: string,
-		callback?: (request: OauthUserRequestContract) => void
-	): Promise<AllyUserContract<{ value: string }>> {
-		/**
-		 * Configure the user info request. One can configure it using
-		 * the callback
-		 */
-		const request = new HttpClient(this.config.userInfoUrl || github.USER_INFO_URL)
+	protected getAuthenticatedRequest(url: string, token: string) {
+		const request = this.httpClient(url)
 		request.header('Authorization', `token ${token}`)
 		request.header('Accept', 'application/json')
-		request.parseResponseAs('json')
+		request.parseAs('json')
+		return request
+	}
+
+	/**
+	 * Fetches the user info from the Github API
+	 * https://docs.github.com/en/rest/reference/users#get-the-authenticated-user
+	 */
+	protected async getUserInfo(token: string, callback?: (request: ApiRequestContract) => void) {
+		const request = this.getAuthenticatedRequest(this.userInfoUrl, token)
 		if (typeof callback === 'function') {
 			callback(request)
 		}
 
-		/**
-		 * Github user
-		 */
 		const body = await request.get()
+		return {
+			id: body.id,
+			nickName: body.name,
+			email: body.email, // May not always be there
+			emailVerificationState: 'verified' as 'verified' | 'unverified', // Assuming the public email is always verified
+			name: body.name,
+			avatarUrl: body.avatar_url,
+			original: body,
+		}
+	}
 
-		/**
-		 * Get user emails
-		 */
-		const emailRequest = new HttpClient(github.USER_EMAIL_URL)
-		emailRequest.header('Authorization', `token ${token}`)
-		emailRequest.header('Accept', 'application/json')
-		emailRequest.parseResponseAs('json')
-		const emails = await emailRequest.get()
+	/**
+	 * Fetches the user email from the Github API.
+	 * https://docs.github.com/en/rest/reference/users#list-email-addresses-for-the-authenticated-user
+	 */
+	protected async getUserEmail(token: string, callback?: (request: ApiRequestContract) => void) {
+		const request = this.getAuthenticatedRequest(this.userEmailUrl, token)
+		if (typeof callback === 'function') {
+			callback(request)
+		}
+
+		let emails = await request.get()
 
 		/**
 		 * Sort emails to keep the primary ones on the top
 		 */
-		body.emails = emails.sort((email: any) => (email.primary ? -1 : 1))
+		emails = emails.sort((email: any) => (email.primary ? -1 : 1))
 
 		/**
 		 * Get the first verified email of the user
 		 */
-		let mainEmail = body.emails.find((email: any) => email.verified)
+		let mainEmail = emails.find((email: any) => email.verified)
 
 		/**
 		 * If there are no verified emails, then get any first one
@@ -231,28 +178,53 @@ export class GithubDriver implements GithubDriverContract {
 			mainEmail = emails[0]
 		}
 
+		return mainEmail
+	}
+
+	/**
+	 * Returns details for the authorized user
+	 */
+	public async getUser(callback?: (request: ApiRequestContract) => void) {
+		const token = await this.getAccessToken(callback)
+		const user = await this.getUserInfo(token.token, callback)
+
+		/**
+		 * Fetch email separately
+		 */
+		if (!user.email) {
+			this.ctx.logger.trace('Fetching github user email separately')
+
+			const { email, verified } = await this.getUserEmail(token.token, callback)
+			user.email = email
+			user.emailVerificationState = verified ? ('verified' as const) : ('unverified' as const)
+		}
+
 		return {
-			id: body.id,
-			nickName: body.name,
-			name: body.name,
-			email: mainEmail.email,
-			avatarUrl: body.avatar_url,
-			emailVerificationState: mainEmail.verified ? 'verified' : 'unverified',
-			token: { value: token },
-			original: body,
+			...user,
+			token: token,
 		}
 	}
 
 	/**
-	 * Not allowed, the method is specific to oauth 1.0
+	 * Finds the user by the access token
 	 */
-	public async getUserForTokenAndSecret(
-		_: string,
-		__: string,
-		___?: (request: OauthUserRequestContract) => void
-	): Promise<never> {
-		throw new Error(
-			'Cannot use "getUserForTokenAndSecret" method on github driver. Use "getUserForToken" method instead'
-		)
+	public async getUserByToken(token: string, callback?: (request: ApiRequestContract) => void) {
+		const user = await this.getUserInfo(token, callback)
+
+		/**
+		 * Fetch email separately
+		 */
+		if (!user.email) {
+			this.ctx.logger.trace('Fetching github user email separately')
+
+			const { email, verified } = await this.getUserEmail(token, callback)
+			user.email = email
+			user.emailVerificationState = verified ? ('verified' as const) : ('unverified' as const)
+		}
+
+		return {
+			...user,
+			token: { token, type: 'bearer' as const },
+		}
 	}
 }

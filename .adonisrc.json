@@ -1,7 +1,7 @@
 {
 	"typescript": true,
-	"providers": ["@adonisjs/core", "./providers/AllyProvider"],
-	"preloads": ["./examples/google", "./examples/github"],
+	"providers": ["@adonisjs/core"],
+	"preloads": ["./examples/github"],
 	"directories": {
 		"config": "./examples/config"
 	}
