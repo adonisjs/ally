@@ -7,8 +7,8 @@
 		"build/adonis-typings",
 		"build/providers",
 		"build/src",
-		"build/index.d.ts",
-		"build/index.js"
+		"build/standalone.d.ts",
+		"build/standalone.js"
 	],
 	"scripts": {
 		"mrm": "mrm --preset=@adonisjs/mrm-preset",

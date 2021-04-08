@@ -8,37 +8,35 @@
  */
 
 import Route from '@ioc:Adonis/Core/Route'
-import Config from '@ioc:Adonis/Core/Config'
-import { GithubDriver } from '../src/Drivers/Github'
 
 Route.get('/github', async ({ response }) => {
 	return response.send('<a href="/github/redirect"> Login with Github </a>')
 })
 
-Route.get('/github/redirect', async (ctx) => {
-	return new GithubDriver(ctx, Config.get('ally.github')).redirect((request) => {
-		request.scopes(['admin:org', 'delete_repo', 'repo', 'user'])
+Route.get('/github/redirect', async ({ ally }) => {
+	return ally.use('github').redirect((request) => {
+		request.scopes(['repo', 'repo:invite', 'user:email'])
 	})
 })
 
-Route.get('/github/callback', async (ctx) => {
-	console.log(ctx.request.cookiesList())
+Route.get('/github/callback', async ({ ally, request }) => {
+	console.log(request.cookiesList())
 
 	try {
-		const driver = new GithubDriver(ctx, Config.get('ally.github'))
-		if (driver.accessDenied()) {
+		const gh = ally.use('github')
+		if (gh.accessDenied()) {
 			return 'Access was denied'
 		}
 
-		if (driver.stateMisMatch()) {
+		if (gh.stateMisMatch()) {
 			return 'Request expired. Retry again'
 		}
 
-		if (driver.hasError()) {
-			return 'There was an error'
+		if (gh.hasError()) {
+			return gh.getError()
 		}
 
-		const user = await driver.getUser()
+		const user = await gh.getUser()
 		return user
 	} catch (error) {
 		console.log({ error: error.response })

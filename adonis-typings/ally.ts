@@ -8,6 +8,8 @@
  */
 
 declare module '@ioc:Adonis/Addons/Ally' {
+	import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+	import { ApplicationContract } from '@ioc:Adonis/Core/Application'
 	import {
 		Oauth2AccessToken,
 		Oauth1RequestToken,
@@ -202,6 +204,8 @@ declare module '@ioc:Adonis/Addons/Ally' {
 		login?: string
 		scopes?: LiteralStringUnion<GithubScopes>[]
 		allowSignup?: boolean
+		userInfoUrl?: string
+		userEmailUrl?: string
 	}
 
 	export interface GithubDriverContract extends AllyDriverContract<GithubToken, GithubScopes> {}
@@ -227,4 +231,69 @@ declare module '@ioc:Adonis/Addons/Ally' {
 	export type AllyConfig = {
 		[Provider in keyof SocialProviders]: SocialProviders[Provider]['config']
 	}
+
+	/**
+	 * Shape of the callback to extend the ally drivers
+	 */
+	export type ExtendDriverCallback = (
+		ally: AllyManagerContract,
+		mapping: string,
+		config: any,
+		ctx: HttpContextContract
+	) => AllyDriverContract<Oauth2AccessToken | Oauth1AccessToken, string>
+
+	/**
+	 * Ally instance is passed to every HTTP request and has access to the
+	 * current request
+	 */
+	export interface AllyContract {
+		/**
+		 * Get driver instance of a named mapping
+		 */
+		use<Provider extends keyof SocialProviders>(
+			provider: Provider
+		): SocialProviders[Provider]['implementation']
+
+		/**
+		 * Get driver instance of an unnamed mapping
+		 */
+		use(provider: string): AllyDriverContract<Oauth2AccessToken | Oauth1AccessToken, string>
+	}
+
+	/**
+	 * Ally Manager manages the lifecycle of Ally drivers
+	 */
+	export interface AllyManagerContract {
+		application: ApplicationContract
+
+		/**
+		 * Make instance of a named mapping
+		 */
+		makeMapping<Provider extends keyof SocialProviders>(
+			ctx: HttpContextContract,
+			mapping: keyof SocialProviders
+		): SocialProviders[Provider]['implementation']
+
+		/**
+		 * Make instance of an unnamed mapping
+		 */
+		makeMapping(
+			ctx: HttpContextContract,
+			mapping: string
+		): AllyDriverContract<Oauth2AccessToken | Oauth1AccessToken, string>
+
+		/**
+		 * Returns an instance of ally, which can be later used to
+		 * get instances of social providers for a given request
+		 */
+		getAllyForRequest(ctx: HttpContextContract): AllyContract
+
+		/**
+		 * Extend ally by adding new drivers
+		 */
+		extend(driverName: string, callback: ExtendDriverCallback): void
+	}
+
+	const Ally: AllyManagerContract
+	export default Ally
 }

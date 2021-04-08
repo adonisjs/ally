@@ -10,9 +10,7 @@
 /**
  * Exports required to create a custom driver
  */
-export { HttpClient } from './src/HttpClient'
-export { UrlBuilder } from './src/UrlBuilder'
-export { StateManager } from './src/StateManager'
+export { HttpClient as ApiRequest } from '@poppinss/oauth-client'
 export { OauthException } from './src/Exceptions'
-export { Oauth1Request } from './src/Spec/Oauth1Request'
-export { Oauth2Request } from './src/Spec/Oauth2Request'
+export { Oauth2Driver } from './src/Drivers/Oauth2'
+export { RedirectRequest } from './src/RedirectRequest'

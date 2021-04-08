@@ -132,7 +132,7 @@ export class GithubDriver
 	 * https://docs.github.com/en/rest/reference/users#get-the-authenticated-user
 	 */
 	protected async getUserInfo(token: string, callback?: (request: ApiRequestContract) => void) {
-		const request = this.getAuthenticatedRequest(this.userInfoUrl, token)
+		const request = this.getAuthenticatedRequest(this.config.userInfoUrl || this.userInfoUrl, token)
 		if (typeof callback === 'function') {
 			callback(request)
 		}
@@ -154,7 +154,11 @@ export class GithubDriver
 	 * https://docs.github.com/en/rest/reference/users#list-email-addresses-for-the-authenticated-user
 	 */
 	protected async getUserEmail(token: string, callback?: (request: ApiRequestContract) => void) {
-		const request = this.getAuthenticatedRequest(this.userEmailUrl, token)
+		const request = this.getAuthenticatedRequest(
+			this.config.userEmailUrl || this.userEmailUrl,
+			token
+		)
+
 		if (typeof callback === 'function') {
 			callback(request)
 		}
