@@ -9,13 +9,13 @@
 
 import Route from '@ioc:Adonis/Core/Route'
 
-Route.get('/github', async ({ response }) => {
+Route.get('github', async ({ response }) => {
 	return response.send('<a href="/github/redirect"> Login with Github </a>')
 })
 
 Route.get('/github/redirect', async ({ ally }) => {
 	return ally.use('github').redirect((request) => {
-		request.scopes(['repo', 'repo:invite', 'user:email'])
+		request.scopes(['user', 'repo'])
 	})
 })
 
@@ -34,7 +34,7 @@ Route.get('/github/callback', async ({ ally }) => {
 			return gh.getError()
 		}
 
-		const user = await gh.getUser()
+		const user = await gh.user()
 		return user
 	} catch (error) {
 		console.log({ error: error.response })

@@ -16,7 +16,7 @@ import {
 	GithubDriverContract,
 	RedirectRequestContract,
 } from '@ioc:Adonis/Addons/Ally'
-import { Oauth2Driver } from '../Oauth2'
+import { Oauth2Driver } from '../../AbstractDrivers/Oauth2'
 
 /**
  * Github driver to login user via Github
@@ -28,11 +28,6 @@ export class GithubDriver
 	protected authorizeUrl = 'https://github.com/login/oauth/authorize'
 	protected userInfoUrl = 'https://api.github.com/user'
 	protected userEmailUrl = 'https://api.github.com/user/emails'
-
-	/**
-	 * The error code when someone hits cancel in the Github UI
-	 */
-	protected accessDeniedCodes = ['access_denied']
 
 	/**
 	 * The param name for the authorization code
@@ -186,10 +181,22 @@ export class GithubDriver
 	}
 
 	/**
+	 * Find if the current error code is for access denied
+	 */
+	public accessDenied(): boolean {
+		const error = this.getError()
+		if (!error) {
+			return false
+		}
+
+		return error === 'access_denied'
+	}
+
+	/**
 	 * Returns details for the authorized user
 	 */
-	public async getUser(callback?: (request: ApiRequestContract) => void) {
-		const token = await this.getAccessToken(callback)
+	public async user(callback?: (request: ApiRequestContract) => void) {
+		const token = await this.accessToken(callback)
 		const user = await this.getUserInfo(token.token, callback)
 
 		/**
@@ -212,7 +219,7 @@ export class GithubDriver
 	/**
 	 * Finds the user by the access token
 	 */
-	public async getUserByToken(token: string, callback?: (request: ApiRequestContract) => void) {
+	public async userFromToken(token: string, callback?: (request: ApiRequestContract) => void) {
 		const user = await this.getUserInfo(token, callback)
 
 		/**

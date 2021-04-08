@@ -16,6 +16,7 @@ import {
 	GithubDriverConfig,
 	AllyManagerContract,
 	ExtendDriverCallback,
+	TwitterDriverConfig,
 } from '@ioc:Adonis/Addons/Ally'
 
 import { Ally } from '../Ally'
@@ -60,6 +61,14 @@ export class AllyManager implements AllyManagerContract {
 	}
 
 	/**
+	 * Make the twitter driver
+	 */
+	protected makeTwitter(config: TwitterDriverConfig, ctx: HttpContextContract) {
+		const { TwitterDriver } = require('../Drivers/Twitter')
+		return new TwitterDriver(ctx, config)
+	}
+
+	/**
 	 * Makes an instance of the extended driver
 	 */
 	protected makeExtendedDriver(mapping: string, config: any, ctx: HttpContextContract) {
@@ -79,6 +88,8 @@ export class AllyManager implements AllyManagerContract {
 		switch (config.driver) {
 			case 'github':
 				return this.makeGithub(config, ctx)
+			case 'twitter':
+				return this.makeTwitter(config, ctx)
 			default:
 				return this.makeExtendedDriver(mapping, config, ctx)
 		}

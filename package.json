@@ -55,7 +55,7 @@
 		"nock": "^13.0.11",
 		"np": "^7.4.0",
 		"prettier": "^2.2.1",
-		"typescript": "^4.2.3"
+		"typescript": "^4.2.4"
 	},
 	"husky": {
 		"hooks": {
@@ -72,7 +72,7 @@
 		"anyBranch": false
 	},
 	"dependencies": {
-		"@poppinss/oauth-client": "^1.1.1",
+		"@poppinss/oauth-client": "^2.0.2",
 		"@poppinss/utils": "^3.0.5",
 		"got": "^11.8.2",
 		"luxon": "^1.26.0"

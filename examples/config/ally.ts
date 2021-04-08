@@ -14,6 +14,12 @@ const allyConfig: AllyConfig = {
 		clientSecret: Env.get('GITHUB_CLIENT_SECRET'),
 		callbackUrl: `http://localhost:${Env.get('PORT')}/github/callback`,
 	},
+	twitter: {
+		driver: 'twitter',
+		clientId: Env.get('TWITTER_API_KEY'),
+		clientSecret: Env.get('TWITTER_APP_SECRET'),
+		callbackUrl: `http://localhost:${Env.get('PORT')}/twitter/callback`,
+	},
 }
 
 export default allyConfig

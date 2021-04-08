@@ -92,7 +92,7 @@ declare module '@ioc:Adonis/Addons/Ally' {
 		 * Get redirect url. You must manage the state yourself when redirecting
 		 * manually
 		 */
-		getRedirectUrl(callback?: (request: RedirectRequestContract<Scopes>) => void): Promise<string>
+		redirectUrl(callback?: (request: RedirectRequestContract<Scopes>) => void): Promise<string>
 
 		/**
 		 * Find if the current request has authorization code or oauth token
@@ -128,20 +128,29 @@ declare module '@ioc:Adonis/Addons/Ally' {
 		/**
 		 * Get access token
 		 */
-		getAccessToken(callback?: (request: ApiRequestContract) => void): Promise<Token>
+		accessToken(callback?: (request: ApiRequestContract) => void): Promise<Token>
 
 		/**
 		 * Returns details for the authorized user
 		 */
-		getUser(callback?: (request: ApiRequestContract) => void): Promise<AllyUserContract<Token>>
+		user(callback?: (request: ApiRequestContract) => void): Promise<AllyUserContract<Token>>
 
 		/**
-		 * Finds the user by access token
+		 * Finds the user by access token. Applicable with "Oauth2" only
 		 */
-		getUserByToken(
+		userFromToken(
 			token: string,
 			callback?: (request: ApiRequestContract) => void
 		): Promise<AllyUserContract<{ token: string; type: 'bearer' }>>
+
+		/**
+		 * Finds the user by access token. Applicable with "Oauth1" only
+		 */
+		userFromTokenAndSecret(
+			token: string,
+			secret: string,
+			callback?: (request: ApiRequestContract) => void
+		): Promise<AllyUserContract<{ token: string; secret: string }>>
 	}
 
 	/**
@@ -213,9 +222,29 @@ declare module '@ioc:Adonis/Addons/Ally' {
 
 	/**
 	 * ----------------------------------------
-	 * Google driver
+	 * Twitter driver
 	 * ----------------------------------------
 	 */
+
+	/**
+	 * Shape of the twitter token
+	 */
+	export type TwitterToken = {
+		token: string
+		secret: string
+		userId: string
+		screenName: string
+	}
+
+	/**
+	 * Extra options available for twitter
+	 */
+	export type TwitterDriverConfig = Oauth1ClientConfig & {
+		driver: 'twitter'
+		userInfoUrl?: string
+	}
+
+	export interface TwitterDriverContract extends AllyDriverContract<TwitterToken, string> {}
 
 	/**
 	 * END OF DRIVERS

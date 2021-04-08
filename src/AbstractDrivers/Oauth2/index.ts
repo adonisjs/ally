@@ -9,6 +9,7 @@
 
 /// <reference path="../../../adonis-typings/index.ts" />
 
+import { Exception } from '@poppinss/utils'
 import { Oauth2Client } from '@poppinss/oauth-client'
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 
@@ -34,14 +35,6 @@ export abstract class Oauth2Driver<Token extends Oauth2AccessToken, Scopes exten
 	 * Is the authorization process stateless?
 	 */
 	protected isStateless: boolean = false
-
-	/**
-	 * An array of codes that represents access denied state. Leave it
-	 * to empty array when there aren't any specific codes
-	 *
-	 * You must check the auth provider docs to find it
-	 */
-	protected abstract accessDeniedCodes: string[] = []
 
 	/**
 	 * The cookie name for storing the CSRF token. Must be unique for your
@@ -99,17 +92,22 @@ export abstract class Oauth2Driver<Token extends Oauth2AccessToken, Scopes exten
 	/**
 	 * Returns details for the authorized user
 	 */
-	public abstract getUser(
+	public abstract user(
 		callback?: (request: ApiRequestContract) => void
 	): Promise<AllyUserContract<Token>>
 
 	/**
 	 * Finds the user by access token
 	 */
-	public abstract getUserByToken(
+	public abstract userFromToken(
 		token: string,
 		callback?: (request: ApiRequestContract) => void
 	): Promise<AllyUserContract<{ token: string; type: 'bearer' }>>
+
+	/**
+	 * Find if the current error code is for access denied
+	 */
+	public abstract accessDenied(): boolean
 
 	/**
 	 * Oauth client version
@@ -181,10 +179,10 @@ export abstract class Oauth2Driver<Token extends Oauth2AccessToken, Scopes exten
 	/**
 	 * Returns the redirect URL for the request.
 	 */
-	public async getRedirectUrl(
+	public async redirectUrl(
 		callback?: (request: RedirectRequestContract<Scopes>) => void
 	): Promise<string> {
-		const url = super.getRedirectUrl(callback)
+		const url = this.getRedirectUrl(callback)
 		return url
 	}
 
@@ -194,7 +192,7 @@ export abstract class Oauth2Driver<Token extends Oauth2AccessToken, Scopes exten
 	public async redirect(
 		callback?: (request: RedirectRequestContract<Scopes>) => void
 	): Promise<void> {
-		const url = await this.getRedirectUrl((request) => {
+		const url = await this.redirectUrl((request) => {
 			const state = this.persistState()
 			state && request.param(this.stateParamName, state)
 
@@ -204,18 +202,6 @@ export abstract class Oauth2Driver<Token extends Oauth2AccessToken, Scopes exten
 		})
 
 		this.ctx.response.redirect(url)
-	}
-
-	/**
-	 * Find if the current error code is for access denied
-	 */
-	public accessDenied(): boolean {
-		const error = this.getError()
-		if (!error) {
-			return false
-		}
-
-		return this.accessDeniedCodes.includes(error)
 	}
 
 	/**
@@ -269,7 +255,7 @@ export abstract class Oauth2Driver<Token extends Oauth2AccessToken, Scopes exten
 	/**
 	 * Get access token
 	 */
-	public async getAccessToken(callback?: (request: ApiRequestContract) => void): Promise<Token> {
+	public async accessToken(callback?: (request: ApiRequestContract) => void): Promise<Token> {
 		/**
 		 * We expect the user to handle errors before calling this method
 		 */
@@ -288,12 +274,21 @@ export abstract class Oauth2Driver<Token extends Oauth2AccessToken, Scopes exten
 		/**
 		 * Get access token by providing the authorization code
 		 */
-		return super.getAccessToken((request) => {
+		return this.getAccessToken((request) => {
 			request.field(this.codeParamName, this.getCode())
 
 			if (typeof callback === 'function') {
 				callback(request)
 			}
 		})
+	}
+
+	/**
+	 * Not applicable with Oauth2
+	 */
+	public async userFromTokenAndSecret(): Promise<never> {
+		throw new Exception(
+			'"userFromTokenAndSecret" is not applicable with Oauth2. Use "userFromToken" instead'
+		)
 	}
 }
