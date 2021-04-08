@@ -201,6 +201,7 @@ declare module '@ioc:Adonis/Addons/Ally' {
 	 * Extra options available for Github
 	 */
 	export type GithubDriverConfig = Oauth2ClientConfig & {
+		driver: 'github'
 		login?: string
 		scopes?: LiteralStringUnion<GithubScopes>[]
 		allowSignup?: boolean

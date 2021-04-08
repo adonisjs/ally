@@ -19,9 +19,7 @@ Route.get('/github/redirect', async ({ ally }) => {
 	})
 })
 
-Route.get('/github/callback', async ({ ally, request }) => {
-	console.log(request.cookiesList())
-
+Route.get('/github/callback', async ({ ally }) => {
 	try {
 		const gh = ally.use('github')
 		if (gh.accessDenied()) {
