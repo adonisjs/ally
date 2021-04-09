@@ -9,36 +9,33 @@
 
 import Route from '@ioc:Adonis/Core/Route'
 
-Route.get('/google', async ({ response }) => {
+Route.get('google', async ({ response }) => {
 	return response.send('<a href="/google/redirect"> Login with Google </a>')
 })
 
 Route.get('/google/redirect', async ({ ally }) => {
-	return ally.use('google').redirect((request) => {
-		request
-			.prompt('consent')
-			.accessType('offline')
-			.scopes(['calendar.events', 'userinfo.email', 'userinfo.profile'])
-			.hostedDomain('adonisjs.com')
-	})
+	return ally.use('google').redirect()
 })
 
-Route.get('/google/callback', async ({ request, ally }) => {
-	console.log(request.cookiesList())
+Route.get('/google/callback', async ({ ally }) => {
+	try {
+		const google = ally.use('google')
+		if (google.accessDenied()) {
+			return 'Access was denied'
+		}
 
-	const driver = ally.use('google')
-	if (driver.accessDenied()) {
-		return 'Access was denied'
+		if (google.stateMisMatch()) {
+			return 'Request expired. Retry again'
+		}
+
+		if (google.hasError()) {
+			return google.getError()
+		}
+
+		const user = await google.user()
+		return user
+	} catch (error) {
+		console.log({ error: error.response })
+		throw error
 	}
-
-	if (driver.stateMisMatch()) {
-		return 'Request expired. Retry again'
-	}
-
-	if (driver.hasError()) {
-		return 'There was an error'
-	}
-
-	const user = await driver.getUser()
-	return user
 })

@@ -31,7 +31,7 @@ declare module '@ioc:Adonis/Addons/Ally' {
 	 * Issue: https://github.com/Microsoft/TypeScript/issues/29729
 	 * Solution: https://github.com/sindresorhus/type-fest/blob/main/source/literal-union.d.ts
 	 */
-	type LiteralStringUnion<LiteralType> = LiteralType | (string & { _?: never })
+	export type LiteralStringUnion<LiteralType> = LiteralType | (string & { _?: never })
 
 	/**
 	 * Extension of oauth-client redirect request with support
@@ -39,6 +39,12 @@ declare module '@ioc:Adonis/Addons/Ally' {
 	 */
 	export interface RedirectRequestContract<Scopes extends string = string>
 		extends ClientRequestContract {
+		/**
+		 * Define a callback to transform scopes before they are defined
+		 * as a param
+		 */
+		transformScopes(callback: (scopes: LiteralStringUnion<Scopes>[]) => string[]): this
+
 		/**
 		 * Define the scopes for authorization
 		 */
@@ -218,7 +224,9 @@ declare module '@ioc:Adonis/Addons/Ally' {
 		userEmailUrl?: string
 	}
 
-	export interface GithubDriverContract extends AllyDriverContract<GithubToken, GithubScopes> {}
+	export interface GithubDriverContract extends AllyDriverContract<GithubToken, GithubScopes> {
+		version: 'oauth2'
+	}
 
 	/**
 	 * ----------------------------------------
@@ -244,7 +252,86 @@ declare module '@ioc:Adonis/Addons/Ally' {
 		userInfoUrl?: string
 	}
 
-	export interface TwitterDriverContract extends AllyDriverContract<TwitterToken, string> {}
+	export interface TwitterDriverContract extends AllyDriverContract<TwitterToken, string> {
+		version: 'oauth1'
+	}
+
+	/**
+	 * ----------------------------------------
+	 * Google driver
+	 * ----------------------------------------
+	 */
+
+	/**
+	 * Most popular google scopes. You can find rest of them on the following link
+	 * https://developers.google.com/identity/protocols/oauth2/scopes
+	 */
+	export type GoogleScopes =
+		| 'userinfo.email'
+		| 'userinfo.profile'
+		| 'openid'
+		| 'contacts'
+		| 'contacts.other.readonly'
+		| 'contacts.readonly'
+		| 'directory.readonly'
+		| 'user.addresses.read'
+		| 'user.birthday.read'
+		| 'user.emails.read'
+		| 'user.gender.read'
+		| 'user.organization.read'
+		| 'user.phonenumbers.read'
+		| 'analytics'
+		| 'analytics.readonly'
+		| 'documents'
+		| 'documents.readonly'
+		| 'forms'
+		| 'forms.currentonly'
+		| 'groups'
+		| 'spreadsheets'
+		| 'calendar'
+		| 'calendar.events'
+		| 'calendar.events.readonly'
+		| 'calendar.readonly'
+		| 'calendar.settings.readonly'
+		| 'drive'
+		| 'drive.appdata'
+		| 'drive.file'
+		| 'drive.metadata'
+		| 'drive.metadata.readonly'
+		| 'drive.photos.readonly'
+		| 'drive.readonly'
+		| 'drive.scripts'
+
+	/**
+	 * Shape of the Google access token
+	 */
+	export type GoogleToken = Oauth2AccessToken & {
+		idToken: string
+		grantedScopes: string[]
+	}
+
+	/**
+	 * Config accepted by the google driver. Most of the options can be
+	 * overwritten at runtime
+	 * https://developers.google.com/identity/protocols/oauth2/openid-connect#re-consent
+	 */
+	export type GoogleDriverConfig = Oauth2ClientConfig & {
+		driver: 'google'
+		userInfoUrl?: string
+
+		/**
+		 * Can be configured at runtime
+		 */
+		scopes?: LiteralStringUnion<GoogleScopes>[]
+		prompt?: 'none' | 'consent' | 'select_account'
+		accessType?: 'online' | 'offline'
+		hostedDomain?: string
+		display?: 'page' | 'popup' | 'touch' | 'wrap'
+	}
+
+	export interface GoogleDriverContract extends AllyDriverContract<GoogleToken, GoogleScopes> {
+		version: 'oauth2'
+	}
 
 	/**
 	 * END OF DRIVERS

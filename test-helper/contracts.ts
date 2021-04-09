@@ -8,5 +8,9 @@ declare module '@ioc:Adonis/Addons/Ally' {
 			config: TwitterDriverConfig
 			implementation: TwitterDriverContract
 		}
+		google: {
+			config: GoogleDriverConfig
+			implementation: GoogleDriverContract
+		}
 	}
 }

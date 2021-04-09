@@ -8,22 +8,33 @@
  */
 
 import { UrlBuilder } from '@poppinss/oauth-client'
-import { RedirectRequestContract } from '@ioc:Adonis/Addons/Ally'
+import { RedirectRequestContract, LiteralStringUnion } from '@ioc:Adonis/Addons/Ally'
 
 /**
  * Redirect request with first class support for defining scopes.
  */
-export class RedirectRequest<Scope extends string>
+export class RedirectRequest<Scopes extends string>
 	extends UrlBuilder
-	implements RedirectRequestContract<Scope> {
+	implements RedirectRequestContract<Scopes> {
+	private scopesTransformer: undefined | ((scopes: LiteralStringUnion<Scopes>[]) => string[])
+
 	constructor(baseUrl: string, private scopeParamName: string, private scopeSeparator: string) {
 		super(baseUrl)
+	}
+
+	public transformScopes(callback: (scopes: LiteralStringUnion<Scopes>[]) => string[]): this {
+		this.scopesTransformer = callback
+		return this
 	}
 
 	/**
 	 * Define an array of scopes.
 	 */
-	public scopes(scopes: Scope[]): this {
+	public scopes(scopes: LiteralStringUnion<Scopes>[]): this {
+		if (typeof this.scopesTransformer === 'function') {
+			scopes = this.scopesTransformer(scopes)
+		}
+
 		this.param(this.scopeParamName, scopes.join(this.scopeSeparator))
 		return this
 	}
@@ -39,7 +50,11 @@ export class RedirectRequest<Scope extends string>
 	/**
 	 * Merge to existing scopes
 	 */
-	public mergeScopes(scopes: Scope[]): this {
+	public mergeScopes(scopes: LiteralStringUnion<Scopes>[]): this {
+		if (typeof this.scopesTransformer === 'function') {
+			scopes = this.scopesTransformer(scopes)
+		}
+
 		const mergedScopes = (this.params[this.scopeParamName] || []).concat(scopes)
 		this.scopes(mergedScopes)
 

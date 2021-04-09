@@ -17,6 +17,7 @@ import {
 	AllyManagerContract,
 	ExtendDriverCallback,
 	TwitterDriverConfig,
+	GoogleDriverConfig,
 } from '@ioc:Adonis/Addons/Ally'
 
 import { Ally } from '../Ally'
@@ -41,12 +42,12 @@ export class AllyManager implements AllyManagerContract {
 
 		if (!config) {
 			throw new Exception(
-				`Missing social provider "${name}". Make sure it is defined inside the "config/ally" file`
+				`Missing config for social provider "${name}". Make sure it is defined inside the "config/ally" file`
 			)
 		}
 
 		if (!config.driver) {
-			throw new Exception(`Missing driver property on social provider "${name}"`)
+			throw new Exception(`Missing driver property on "${name}" provider config`)
 		}
 
 		return config
@@ -66,6 +67,14 @@ export class AllyManager implements AllyManagerContract {
 	protected makeTwitter(config: TwitterDriverConfig, ctx: HttpContextContract) {
 		const { TwitterDriver } = require('../Drivers/Twitter')
 		return new TwitterDriver(ctx, config)
+	}
+
+	/**
+	 * Make the google driver
+	 */
+	protected makeGoogle(config: GoogleDriverConfig, ctx: HttpContextContract) {
+		const { GoogleDriver } = require('../Drivers/Google')
+		return new GoogleDriver(ctx, config)
 	}
 
 	/**
@@ -90,6 +99,8 @@ export class AllyManager implements AllyManagerContract {
 				return this.makeGithub(config, ctx)
 			case 'twitter':
 				return this.makeTwitter(config, ctx)
+			case 'google':
+				return this.makeGoogle(config, ctx)
 			default:
 				return this.makeExtendedDriver(mapping, config, ctx)
 		}

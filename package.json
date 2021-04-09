@@ -10,6 +10,7 @@
 		"build/standalone.d.ts",
 		"build/standalone.js"
 	],
+	"types": "./build/adonis-typings/index.d.ts",
 	"scripts": {
 		"mrm": "mrm --preset=@adonisjs/mrm-preset",
 		"pretest": "npm run lint",
@@ -73,9 +74,7 @@
 	},
 	"dependencies": {
 		"@poppinss/oauth-client": "^2.0.2",
-		"@poppinss/utils": "^3.0.5",
-		"got": "^11.8.2",
-		"luxon": "^1.26.0"
+		"@poppinss/utils": "^3.0.5"
 	},
 	"repository": {
 		"type": "git",
