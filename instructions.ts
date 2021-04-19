@@ -9,7 +9,6 @@
 
 import { join } from 'path'
 import * as sinkStatic from '@adonisjs/sink'
-import { Application } from '@adonisjs/application'
 import { ApplicationContract } from '@ioc:Adonis/Core/Application'
 
 type InstructionsState = {
@@ -189,5 +188,3 @@ export default async function instructions(
 	 */
 	defineEnvVars(projectRoot, sink, state)
 }
-
-instructions(__dirname, new Application(__dirname, 'web', {}), sinkStatic)
