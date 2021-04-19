@@ -135,7 +135,7 @@ function defineEnvVars(projectRoot: string, sink: typeof sinkStatic, state: Inst
 	})
 
 	env.commit()
-	sink.logger.action('create').succeeded('.env')
+	sink.logger.action('update').succeeded('.env,.env.example')
 }
 
 /**
