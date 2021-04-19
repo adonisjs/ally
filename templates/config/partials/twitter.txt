@@ -1,0 +1,11 @@
+	/*
+	|--------------------------------------------------------------------------
+	| Twitter driver
+	|--------------------------------------------------------------------------
+	*/
+	twitter: {
+		driver: 'twitter',
+		clientId: Env.get('{{ envVars.twitter.clientId }}'),
+		clientSecret: Env.get('{{ envVars.twitter.clientSecret }}'),
+		callbackUrl: 'http://localhost:3333/twitter',
+	},

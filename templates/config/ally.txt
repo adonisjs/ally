@@ -1,0 +1,32 @@
+/**
+ * Config source: https://git.io/JfefW
+ *
+ * Feel free to let us know via PR, if you find something broken in this config
+ * file.
+ */
+
+import Env from '@ioc:Adonis/Core/Env'
+import { AllyConfig } from '@ioc:Adonis/Addons/Ally'
+
+/*
+|--------------------------------------------------------------------------
+| Ally Config
+|--------------------------------------------------------------------------
+|
+| The `AllyConfig` relies on the `SocialProviders` interface which is
+| defined inside `contracts/ally.ts` file.
+|
+*/
+const allyConfig: AllyConfig = {
+{{#providers.github}}
+{{> github_provider}}
+{{/providers.github}}
+{{#providers.twitter}}
+{{> twitter_provider}}
+{{/providers.twitter}}
+{{#providers.google}}
+{{> google_provider}}
+{{/providers.google}}
+}
+
+export default allyConfig

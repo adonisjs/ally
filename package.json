@@ -2,22 +2,25 @@
 	"name": "@adonisjs/ally",
 	"version": "3.0.0",
 	"description": "Social authentication provider for AdonisJS",
+	"types": "./build/adonis-typings/index.d.ts",
 	"main": "build/providers/AllyProvider.js",
 	"files": [
 		"build/adonis-typings",
 		"build/providers",
+		"build/templates",
 		"build/src",
+		"build/instructions.js",
 		"build/standalone.d.ts",
 		"build/standalone.js"
 	],
-	"types": "./build/adonis-typings/index.d.ts",
 	"scripts": {
 		"mrm": "mrm --preset=@adonisjs/mrm-preset",
 		"pretest": "npm run lint",
 		"test": "node japaFile.js",
 		"clean": "del build",
+		"copyfiles": "copyfiles \"templates/**/*.txt\" build",
 		"compile": "npm run lint && npm run clean && tsc",
-		"build": "npm run compile",
+		"build": "npm run compile && npm run copyfiles",
 		"prepublishOnly": "npm run build",
 		"lint": "eslint . --ext=.ts",
 		"format": "prettier --write .",
@@ -42,6 +45,7 @@
 		"@poppinss/dev-utils": "^1.1.1",
 		"@types/node": "^14.14.41",
 		"commitizen": "^4.2.3",
+		"copyfiles": "^2.4.1",
 		"cz-conventional-changelog": "^3.3.0",
 		"del-cli": "^3.0.1",
 		"dotenv": "^8.2.0",
@@ -76,6 +80,9 @@
 		"@poppinss/oauth-client": "^2.0.2",
 		"@poppinss/utils": "^3.0.5"
 	},
+	"peerDependencies": {
+		"@adonisjs/core": "^5.1.0"
+	},
 	"repository": {
 		"type": "git",
 		"url": "git+https://github.com/adonisjs/adonis-ally.git"
@@ -87,5 +94,12 @@
 	"publishConfig": {
 		"tag": "next",
 		"access": "public"
+	},
+	"adonisjs": {
+		"instructions": "./build/instructions.js",
+		"types": "@adonisjs/ally",
+		"providers": [
+			"@adonisjs/ally"
+		]
 	}
 }
