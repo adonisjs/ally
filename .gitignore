@@ -11,3 +11,4 @@ build
 dist
 shrinkwrap.yaml
 .env
+package-lock.json
