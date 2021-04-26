@@ -93,7 +93,7 @@
 	},
 	"homepage": "https://github.com/adonisjs/adonis-ally#readme",
 	"publishConfig": {
-		"tag": "next",
+		"tag": "latest",
 		"access": "public"
 	},
 	"adonisjs": {
