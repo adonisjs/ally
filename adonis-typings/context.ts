@@ -8,8 +8,8 @@
  */
 
 declare module '@ioc:Adonis/Core/HttpContext' {
-	import { AllyContract } from '@ioc:Adonis/Addons/Ally'
-	export interface HttpContextContract {
-		ally: AllyContract
-	}
+  import { AllyContract } from '@ioc:Adonis/Addons/Ally'
+  export interface HttpContextContract {
+    ally: AllyContract
+  }
 }

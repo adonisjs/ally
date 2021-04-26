@@ -12,12 +12,12 @@ import * as sinkStatic from '@adonisjs/sink'
 import { ApplicationContract } from '@ioc:Adonis/Core/Application'
 
 type InstructionsState = {
-	providers: {
-		github: boolean
-		google: boolean
-		twitter: boolean
-	}
-	envVars: typeof ENV_VARS
+  providers: {
+    github: boolean
+    google: boolean
+    twitter: boolean
+  }
+  envVars: typeof ENV_VARS
 }
 
 /**
@@ -29,36 +29,36 @@ const CONFIG_PARTIALS_BASE = './config/partials'
  * Prompt choices for the provider selection
  */
 const PROVIDER_PROMPT_CHOICES = [
-	{
-		name: 'github' as const,
-		message: 'Github',
-	},
-	{
-		name: 'google' as const,
-		message: 'Google',
-	},
-	{
-		name: 'twitter' as const,
-		message: 'Twitter',
-	},
+  {
+    name: 'github' as const,
+    message: 'Github',
+  },
+  {
+    name: 'google' as const,
+    message: 'Google',
+  },
+  {
+    name: 'twitter' as const,
+    message: 'Twitter',
+  },
 ]
 
 /**
  * Environment variables for available providers
  */
 const ENV_VARS = {
-	github: {
-		clientId: 'GITHUB_CLIENT_ID',
-		clientSecret: 'GITHUB_CLIENT_SECRET',
-	},
-	google: {
-		clientId: 'GOOGLE_CLIENT_ID',
-		clientSecret: 'GOOGLE_CLIENT_SECRET',
-	},
-	twitter: {
-		clientId: 'TWITTER_CLIENT_ID',
-		clientSecret: 'TWITTER_CLIENT_SECRET',
-	},
+  github: {
+    clientId: 'GITHUB_CLIENT_ID',
+    clientSecret: 'GITHUB_CLIENT_SECRET',
+  },
+  google: {
+    clientId: 'GOOGLE_CLIENT_ID',
+    clientSecret: 'GOOGLE_CLIENT_SECRET',
+  },
+  twitter: {
+    clientId: 'TWITTER_CLIENT_ID',
+    clientSecret: 'TWITTER_CLIENT_SECRET',
+  },
 }
 
 /**
@@ -66,125 +66,125 @@ const ENV_VARS = {
  * directory
  */
 function getStub(...relativePaths: string[]) {
-	return join(__dirname, 'templates', ...relativePaths)
+  return join(__dirname, 'templates', ...relativePaths)
 }
 
 /**
  * Creates the contract file
  */
 function makeContract(
-	projectRoot: string,
-	app: ApplicationContract,
-	sink: typeof sinkStatic,
-	state: InstructionsState
+  projectRoot: string,
+  app: ApplicationContract,
+  sink: typeof sinkStatic,
+  state: InstructionsState
 ) {
-	const contractsDirectory = app.directoriesMap.get('contracts') || 'contracts'
-	const contractPath = join(contractsDirectory, 'ally.ts')
+  const contractsDirectory = app.directoriesMap.get('contracts') || 'contracts'
+  const contractPath = join(contractsDirectory, 'ally.ts')
 
-	const template = new sink.files.MustacheFile(
-		projectRoot,
-		contractPath,
-		getStub('contracts/ally.txt')
-	)
-	template.overwrite = true
+  const template = new sink.files.MustacheFile(
+    projectRoot,
+    contractPath,
+    getStub('contracts/ally.txt')
+  )
+  template.overwrite = true
 
-	template.apply(state).commit()
-	sink.logger.action('create').succeeded(contractPath)
+  template.apply(state).commit()
+  sink.logger.action('create').succeeded(contractPath)
 }
 
 /**
  * Makes the auth config file
  */
 function makeConfig(
-	projectRoot: string,
-	app: ApplicationContract,
-	sink: typeof sinkStatic,
-	state: InstructionsState
+  projectRoot: string,
+  app: ApplicationContract,
+  sink: typeof sinkStatic,
+  state: InstructionsState
 ) {
-	const configDirectory = app.directoriesMap.get('config') || 'config'
-	const configPath = join(configDirectory, 'ally.ts')
+  const configDirectory = app.directoriesMap.get('config') || 'config'
+  const configPath = join(configDirectory, 'ally.ts')
 
-	const template = new sink.files.MustacheFile(projectRoot, configPath, getStub('config/ally.txt'))
-	template.overwrite = true
+  const template = new sink.files.MustacheFile(projectRoot, configPath, getStub('config/ally.txt'))
+  template.overwrite = true
 
-	/**
-	 * Compute partials from selected providers
-	 */
-	const partials: any = {}
-	Object.keys(state.providers).forEach((provider) => {
-		if (state.providers[provider] === true) {
-			partials[`${provider}_provider`] = getStub(CONFIG_PARTIALS_BASE, `${provider}.txt`)
-		}
-	})
+  /**
+   * Compute partials from selected providers
+   */
+  const partials: any = {}
+  Object.keys(state.providers).forEach((provider) => {
+    if (state.providers[provider] === true) {
+      partials[`${provider}_provider`] = getStub(CONFIG_PARTIALS_BASE, `${provider}.txt`)
+    }
+  })
 
-	template.apply(state).partials(partials).commit()
-	sink.logger.action('create').succeeded(configPath)
+  template.apply(state).partials(partials).commit()
+  sink.logger.action('create').succeeded(configPath)
 }
 
 /**
  * Define environment variables based upon user selection
  */
 function defineEnvVars(projectRoot: string, sink: typeof sinkStatic, state: InstructionsState) {
-	const env = new sink.files.EnvFile(projectRoot)
+  const env = new sink.files.EnvFile(projectRoot)
 
-	Object.keys(state.providers).forEach((provider) => {
-		if (state.providers[provider] === true) {
-			env.set(state.envVars[provider].clientId, '')
-			env.set(state.envVars[provider].clientSecret, '')
-		}
-	})
+  Object.keys(state.providers).forEach((provider) => {
+    if (state.providers[provider] === true) {
+      env.set(state.envVars[provider].clientId, '')
+      env.set(state.envVars[provider].clientSecret, '')
+    }
+  })
 
-	env.commit()
-	sink.logger.action('update').succeeded('.env,.env.example')
+  env.commit()
+  sink.logger.action('update').succeeded('.env,.env.example')
 }
 
 /**
  * Prompts user to select the provider
  */
 async function getProvider(sink: typeof sinkStatic) {
-	return sink
-		.getPrompt()
-		.multiple('Select social providers you are planning to use', PROVIDER_PROMPT_CHOICES, {
-			validate(choice) {
-				return choice && choice.length ? true : 'Select atleast one provider'
-			},
-		})
+  return sink
+    .getPrompt()
+    .multiple('Select social providers you are planning to use', PROVIDER_PROMPT_CHOICES, {
+      validate(choice) {
+        return choice && choice.length ? true : 'Select atleast one provider'
+      },
+    })
 }
 
 /**
  * Instructions to be executed when setting up the package.
  */
 export default async function instructions(
-	projectRoot: string,
-	app: ApplicationContract,
-	sink: typeof sinkStatic
+  projectRoot: string,
+  app: ApplicationContract,
+  sink: typeof sinkStatic
 ) {
-	const state: InstructionsState = {
-		providers: {
-			github: false,
-			google: false,
-			twitter: false,
-		},
-		envVars: ENV_VARS,
-	}
+  const state: InstructionsState = {
+    providers: {
+      github: false,
+      google: false,
+      twitter: false,
+    },
+    envVars: ENV_VARS,
+  }
 
-	const selectedProviders = await getProvider(sink)
-	state.providers.github = selectedProviders.includes('github')
-	state.providers.google = selectedProviders.includes('google')
-	state.providers.twitter = selectedProviders.includes('twitter')
+  const selectedProviders = await getProvider(sink)
+  state.providers.github = selectedProviders.includes('github')
+  state.providers.google = selectedProviders.includes('google')
+  state.providers.twitter = selectedProviders.includes('twitter')
 
-	/**
-	 * Make contract file
-	 */
-	makeContract(projectRoot, app, sink, state)
+  /**
+   * Make contract file
+   */
+  makeContract(projectRoot, app, sink, state)
 
-	/**
-	 * Make config file
-	 */
-	makeConfig(projectRoot, app, sink, state)
+  /**
+   * Make config file
+   */
+  makeConfig(projectRoot, app, sink, state)
 
-	/**
-	 * Define env vars
-	 */
-	defineEnvVars(projectRoot, sink, state)
+  /**
+   * Define env vars
+   */
+  defineEnvVars(projectRoot, sink, state)
 }

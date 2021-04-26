@@ -1,7 +1,7 @@
 {
-	"extends": "./node_modules/@adonisjs/mrm-preset/_tsconfig",
-	"compilerOptions": {
-		"types": ["@types/node", "@adonisjs/core"],
-		"skipLibCheck": true
-	}
+  "extends": "./node_modules/@adonisjs/mrm-preset/_tsconfig",
+  "compilerOptions": {
+    "types": ["@types/node", "@adonisjs/core"],
+    "skipLibCheck": true
+  }
 }

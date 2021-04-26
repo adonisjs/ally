@@ -1,10 +1,10 @@
 export const appKey = 'averylongrandomsecretkey'
 export const http = {
-	trustProxy: () => true,
-	cookie: {},
+  trustProxy: () => true,
+  cookie: {},
 }
 
 export const logger = {
-	enabled: true,
-	level: 'trace',
+  enabled: true,
+  level: 'trace',
 }

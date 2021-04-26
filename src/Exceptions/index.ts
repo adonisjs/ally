@@ -10,18 +10,18 @@
 import { Exception } from '@poppinss/utils'
 
 export class OauthException extends Exception {
-	public static missingAuthorizationCode(paramName: string) {
-		return new this(
-			`Cannot request access token. Redirect request is missing the "${paramName}" param`,
-			500,
-			'E_OAUTH_MISSING_CODE'
-		)
-	}
+  public static missingAuthorizationCode(paramName: string) {
+    return new this(
+      `Cannot request access token. Redirect request is missing the "${paramName}" param`,
+      500,
+      'E_OAUTH_MISSING_CODE'
+    )
+  }
 
-	/**
-	 * Unable to verify state after redirect
-	 */
-	public static stateMisMatch() {
-		return new this('Unable to verify re-redirect state', 400, 'E_OAUTH_STATE_MISMATCH')
-	}
+  /**
+   * Unable to verify state after redirect
+   */
+  public static stateMisMatch() {
+    return new this('Unable to verify re-redirect state', 400, 'E_OAUTH_STATE_MISMATCH')
+  }
 }

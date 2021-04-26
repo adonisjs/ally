@@ -8,8 +8,8 @@
  */
 
 declare module '@ioc:Adonis/Core/Application' {
-	import { AllyManagerContract } from '@ioc:Adonis/Addons/Ally'
-	export interface ContainerBindings {
-		'Adonis/Addons/Ally': AllyManagerContract
-	}
+  import { AllyManagerContract } from '@ioc:Adonis/Addons/Ally'
+  export interface ContainerBindings {
+    'Adonis/Addons/Ally': AllyManagerContract
+  }
 }

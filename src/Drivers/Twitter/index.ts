@@ -9,11 +9,11 @@
 
 import { Oauth1Driver } from '../../AbstractDrivers/Oauth1'
 import {
-	TwitterToken,
-	AllyUserContract,
-	ApiRequestContract,
-	TwitterDriverConfig,
-	TwitterDriverContract,
+  TwitterToken,
+  AllyUserContract,
+  ApiRequestContract,
+  TwitterDriverConfig,
+  TwitterDriverContract,
 } from '@ioc:Adonis/Addons/Ally'
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 
@@ -21,130 +21,130 @@ import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
  * Twitter driver to login user via twitter
  */
 export class TwitterDriver
-	extends Oauth1Driver<TwitterToken, string>
-	implements TwitterDriverContract {
-	protected requestTokenUrl = 'https://api.twitter.com/oauth/request_token'
-	protected authorizeUrl = 'https://api.twitter.com/oauth/authenticate'
-	protected accessTokenUrl = 'https://api.twitter.com/oauth/access_token'
-	protected userInfoUrl = 'https://api.twitter.com/1.1/account/verify_credentials.json'
+  extends Oauth1Driver<TwitterToken, string>
+  implements TwitterDriverContract {
+  protected requestTokenUrl = 'https://api.twitter.com/oauth/request_token'
+  protected authorizeUrl = 'https://api.twitter.com/oauth/authenticate'
+  protected accessTokenUrl = 'https://api.twitter.com/oauth/access_token'
+  protected userInfoUrl = 'https://api.twitter.com/1.1/account/verify_credentials.json'
 
-	/**
-	 * The query string param name for the error.
-	 */
-	protected errorParamName = 'error'
+  /**
+   * The query string param name for the error.
+   */
+  protected errorParamName = 'error'
 
-	/**
-	 * The query string param name for the "oauth_verifier". Used
-	 * for both the post redirect value access and during the
-	 * time of generating the access token
-	 */
-	protected oauthTokenVerifierName = 'oauth_verifier'
+  /**
+   * The query string param name for the "oauth_verifier". Used
+   * for both the post redirect value access and during the
+   * time of generating the access token
+   */
+  protected oauthTokenVerifierName = 'oauth_verifier'
 
-	/**
-	 * Cookie name for storing the oauth_token. The cookie
-	 * name for storing oauth_token_secret is derived
-	 * from this property
-	 */
-	protected oauthTokenCookieName = 'twitter_oauth_token'
+  /**
+   * Cookie name for storing the oauth_token. The cookie
+   * name for storing oauth_token_secret is derived
+   * from this property
+   */
+  protected oauthTokenCookieName = 'twitter_oauth_token'
 
-	/**
-	 * Param name for defined the "oauth_token" pre redirect
-	 * and also used post redirect for reading the "oauth_token"
-	 * value
-	 */
-	protected oauthTokenParamName = 'oauth_token'
+  /**
+   * Param name for defined the "oauth_token" pre redirect
+   * and also used post redirect for reading the "oauth_token"
+   * value
+   */
+  protected oauthTokenParamName = 'oauth_token'
 
-	/**
-	 * Twitter doesn't support scopes
-	 */
-	protected scopeParamName = ''
-	protected scopesSeparator = ' '
+  /**
+   * Twitter doesn't support scopes
+   */
+  protected scopeParamName = ''
+  protected scopesSeparator = ' '
 
-	constructor(protected ctx: HttpContextContract, public config: TwitterDriverConfig) {
-		super(ctx, config)
+  constructor(protected ctx: HttpContextContract, public config: TwitterDriverConfig) {
+    super(ctx, config)
 
-		/**
-		 * Extremely important to call the following method to clear the
-		 * state set by the redirect request
-		 */
-		this.loadState()
-	}
+    /**
+     * Extremely important to call the following method to clear the
+     * state set by the redirect request
+     */
+    this.loadState()
+  }
 
-	/**
-	 * Returns user info
-	 */
-	protected async getUserInfo(
-		token: string,
-		secret: string,
-		callback?: (request: ApiRequestContract) => void
-	) {
-		const requestToken = { token, secret }
-		const userInfoUrl = this.config.userInfoUrl || this.userInfoUrl
+  /**
+   * Returns user info
+   */
+  protected async getUserInfo(
+    token: string,
+    secret: string,
+    callback?: (request: ApiRequestContract) => void
+  ) {
+    const requestToken = { token, secret }
+    const userInfoUrl = this.config.userInfoUrl || this.userInfoUrl
 
-		const user = await this.makeSignedRequest(userInfoUrl, 'get', requestToken, (request) => {
-			/**
-			 * Include email
-			 */
-			request.param('include_email', true)
+    const user = await this.makeSignedRequest(userInfoUrl, 'get', requestToken, (request) => {
+      /**
+       * Include email
+       */
+      request.param('include_email', true)
 
-			/**
-			 * Parse response as JSON
-			 */
-			request['parseAs']('json')
+      /**
+       * Parse response as JSON
+       */
+      request['parseAs']('json')
 
-			/**
-			 * Invoke user callback
-			 */
-			if (typeof callback === 'function') {
-				callback(request)
-			}
-		})
+      /**
+       * Invoke user callback
+       */
+      if (typeof callback === 'function') {
+        callback(request)
+      }
+    })
 
-		return {
-			id: user.id_str,
-			nickName: user.screen_name,
-			name: user.name || user.screen_name,
-			email: user.email,
-			emailVerificationState: 'unsupported' as const,
-			avatarUrl: user.profile_image_url_https.replace('_normal.jpg', '_400x400.jpg'),
-			original: user,
-		}
-	}
+    return {
+      id: user.id_str,
+      nickName: user.screen_name,
+      name: user.name || user.screen_name,
+      email: user.email,
+      emailVerificationState: 'unsupported' as const,
+      avatarUrl: user.profile_image_url_https.replace('_normal.jpg', '_400x400.jpg'),
+      original: user,
+    }
+  }
 
-	/**
-	 * Returns details for the authorized user
-	 */
-	public async user(callback?: (request: ApiRequestContract) => void) {
-		const token = await this.accessToken()
-		const userInfo = await this.getUserInfo(token.token, token.secret, callback)
+  /**
+   * Returns details for the authorized user
+   */
+  public async user(callback?: (request: ApiRequestContract) => void) {
+    const token = await this.accessToken()
+    const userInfo = await this.getUserInfo(token.token, token.secret, callback)
 
-		return {
-			...userInfo,
-			token,
-		}
-	}
+    return {
+      ...userInfo,
+      token,
+    }
+  }
 
-	/**
-	 * Finds the user info from the "oauth_token" and "oauth_token_secret"
-	 * access from the access token.
-	 */
-	public async userFromTokenAndSecret(
-		token: string,
-		secret: string,
-		callback?: (request: ApiRequestContract) => void
-	): Promise<AllyUserContract<{ token: string; secret: string }>> {
-		const userInfo = await this.getUserInfo(token, secret, callback)
+  /**
+   * Finds the user info from the "oauth_token" and "oauth_token_secret"
+   * access from the access token.
+   */
+  public async userFromTokenAndSecret(
+    token: string,
+    secret: string,
+    callback?: (request: ApiRequestContract) => void
+  ): Promise<AllyUserContract<{ token: string; secret: string }>> {
+    const userInfo = await this.getUserInfo(token, secret, callback)
 
-		return {
-			...userInfo,
-			token: { token, secret },
-		}
-	}
+    return {
+      ...userInfo,
+      token: { token, secret },
+    }
+  }
 
-	/**
-	 * Find if the current error code is for access denied
-	 */
-	public accessDenied(): boolean {
-		return this.ctx.request.input('denied')
-	}
+  /**
+   * Find if the current error code is for access denied
+   */
+  public accessDenied(): boolean {
+    return this.ctx.request.input('denied')
+  }
 }

@@ -11,11 +11,11 @@
 
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import {
-	AllyContract,
-	Oauth1AccessToken,
-	Oauth2AccessToken,
-	AllyDriverContract,
-	AllyManagerContract,
+  AllyContract,
+  Oauth1AccessToken,
+  Oauth2AccessToken,
+  AllyDriverContract,
+  AllyManagerContract,
 } from '@ioc:Adonis/Addons/Ally'
 
 /**
@@ -23,25 +23,25 @@ import {
  * method we need.
  */
 export class Ally implements AllyContract {
-	/**
-	 * All drivers are cached during a given HTTP request
-	 */
-	private mappingsCache: Map<
-		string,
-		AllyDriverContract<Oauth1AccessToken | Oauth2AccessToken, string>
-	> = new Map()
+  /**
+   * All drivers are cached during a given HTTP request
+   */
+  private mappingsCache: Map<
+    string,
+    AllyDriverContract<Oauth1AccessToken | Oauth2AccessToken, string>
+  > = new Map()
 
-	constructor(private manager: AllyManagerContract, private ctx: HttpContextContract) {}
+  constructor(private manager: AllyManagerContract, private ctx: HttpContextContract) {}
 
-	/**
-	 * Returns an instance of an ally driver. Driver instances are singleton during
-	 * a given HTTP request
-	 */
-	public use(provider: string) {
-		if (!this.mappingsCache.has(provider)) {
-			this.mappingsCache.set(provider, this.manager.makeMapping(this.ctx, provider))
-		}
+  /**
+   * Returns an instance of an ally driver. Driver instances are singleton during
+   * a given HTTP request
+   */
+  public use(provider: string) {
+    if (!this.mappingsCache.has(provider)) {
+      this.mappingsCache.set(provider, this.manager.makeMapping(this.ctx, provider))
+    }
 
-		return this.mappingsCache.get(provider)!
-	}
+    return this.mappingsCache.get(provider)!
+  }
 }
