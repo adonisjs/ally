@@ -40,19 +40,19 @@
 	"license": "MIT",
 	"devDependencies": {
 		"@adonisjs/assembler": "^5.1.0",
-		"@adonisjs/core": "^5.1.5",
+		"@adonisjs/core": "^5.1.6",
 		"@adonisjs/mrm-preset": "^3.0.0",
-		"@adonisjs/require-ts": "^2.0.3",
-		"@poppinss/dev-utils": "^1.1.1",
-		"@types/node": "^14.14.41",
+		"@adonisjs/require-ts": "^2.0.4",
+		"@poppinss/dev-utils": "^1.1.2",
+		"@types/node": "^15.0.2",
 		"commitizen": "^4.2.3",
 		"copyfiles": "^2.4.1",
 		"cz-conventional-changelog": "^3.3.0",
 		"del-cli": "^3.0.1",
-		"dotenv": "^8.2.0",
+		"dotenv": "^8.5.1",
 		"eslint": "^7.25.0",
 		"eslint-config-prettier": "^8.3.0",
-		"eslint-plugin-adonis": "^1.3.0",
+		"eslint-plugin-adonis": "^1.3.1",
 		"eslint-plugin-prettier": "^3.4.0",
 		"github-label-sync": "^2.0.0",
 		"husky": "^6.0.0",
@@ -78,8 +78,8 @@
 		"anyBranch": false
 	},
 	"dependencies": {
-		"@poppinss/oauth-client": "^2.0.2",
-		"@poppinss/utils": "^3.1.0"
+		"@poppinss/oauth-client": "^2.0.3",
+		"@poppinss/utils": "^3.1.1"
 	},
 	"peerDependencies": {
 		"@adonisjs/core": "^5.1.0"
