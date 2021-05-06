@@ -129,8 +129,8 @@ function defineEnvVars(projectRoot: string, sink: typeof sinkStatic, state: Inst
 
   Object.keys(state.providers).forEach((provider) => {
     if (state.providers[provider] === true) {
-      env.set(state.envVars[provider].clientId, '')
-      env.set(state.envVars[provider].clientSecret, '')
+      env.set(state.envVars[provider].clientId, 'clientId')
+      env.set(state.envVars[provider].clientSecret, 'clientSecret')
     }
   })
 
