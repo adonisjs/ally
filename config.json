@@ -2,7 +2,7 @@
   "core": true,
   "license": "MIT",
   "services": [
-    "circleci"
+    "github-actions"
   ],
   "minNodeVersion": "14.15.4",
   "probotApps": [

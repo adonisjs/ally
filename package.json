@@ -28,7 +28,7 @@
 		"commit": "git-cz",
 		"release": "np",
 		"version": "npm run build",
-		"sync-labels": "github-label-sync --labels ./node_modules/@adonisjs/mrm-preset/gh-labels.json adonisjs/ally"
+		"sync-labels": "github-label-sync --labels ./node_modules/@adonisjs/mrm-preset/gh-labels.json adonisjs/adonis-ally"
 	},
 	"keywords": [
 		"adonis",

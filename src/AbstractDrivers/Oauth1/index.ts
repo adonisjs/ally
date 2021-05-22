@@ -30,7 +30,8 @@ import { RedirectRequest } from '../../RedirectRequest'
  */
 export abstract class Oauth1Driver<Token extends Oauth1AccessToken, Scopes extends string>
   extends Oauth1Client<Token>
-  implements AllyDriverContract<Token, Scopes> {
+  implements AllyDriverContract<Token, Scopes>
+{
   /**
    * The cookie name for storing the "oauth_token". Must be unique for your
    * driver. One option is to prefix the driver name. For example:
