@@ -19,6 +19,7 @@ import {
   DiscordDriverConfig,
   TwitterDriverConfig,
   GoogleDriverConfig,
+  LinkedInDriverConfig,
 } from '@ioc:Adonis/Addons/Ally'
 
 import { Ally } from '../Ally'
@@ -87,6 +88,14 @@ export class AllyManager implements AllyManagerContract {
   }
 
   /**
+   * Make the linkedin driver
+   */
+  protected makeLinkedIn(config: LinkedInDriverConfig, ctx: HttpContextContract) {
+    const { LinkedInDriver } = require('../Drivers/LinkedIn')
+    return new LinkedInDriver(ctx, config)
+  }
+
+  /**
    * Makes an instance of the extended driver
    */
   protected makeExtendedDriver(mapping: string, config: any, ctx: HttpContextContract) {
@@ -112,6 +121,8 @@ export class AllyManager implements AllyManagerContract {
         return this.makeTwitter(config, ctx)
       case 'google':
         return this.makeGoogle(config, ctx)
+      case 'linkedin':
+        return this.makeLinkedIn(config, ctx)
       default:
         return this.makeExtendedDriver(mapping, config, ctx)
     }

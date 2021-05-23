@@ -398,6 +398,57 @@ declare module '@ioc:Adonis/Addons/Ally' {
   }
 
   /**
+   * ----------------------------------------
+   * LinkedIn driver
+   * ----------------------------------------
+   */
+
+  /**
+   * A list of LinkedIn scopes. You can find the scopes available
+   * to your app from the LinkedIn dasbhoard.
+   * https://www.linkedin.com/developers/apps/<appId>/auth
+   */
+  export type LinkedInScopes =
+    | 'r_emailaddress'
+    | 'r_liteprofile'
+    | 'w_member_social'
+    | 'r_fullprofile'
+    | 'r_basicprofile_app'
+    | 'r_primarycontact'
+    | 'rw_organization_admin'
+
+  /**
+   * Shape of the Linked access token
+   */
+  export type LinkedInToken = {
+    token: string
+    type: string
+    expiresIn: number
+    expiresAt: Exclude<Oauth2AccessToken['expiresAt'], undefined>
+  }
+
+  /**
+   * Config accepted by the linkedin driver. Most of the options can be
+   * overwritten at runtime
+   * https://docs.microsoft.com/en-us/linkedin/shared/authentication/authorization-code-flow?context=linkedin%2Fcontext&tabs=HTTPS#step-2-request-an-authorization-code
+   */
+  export type LinkedInDriverConfig = Oauth2ClientConfig & {
+    driver: 'linkedin'
+    userInfoUrl?: string
+    userEmailUrl?: string
+
+    /**
+     * Can be configured at runtime
+     */
+    scopes?: LiteralStringUnion<LinkedInScopes>[]
+  }
+
+  export interface LinkedInDriverContract
+    extends AllyDriverContract<LinkedInToken, LinkedInScopes> {
+    version: 'oauth2'
+  }
+
+  /**
    * END OF DRIVERS
    */
 

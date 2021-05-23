@@ -19,6 +19,7 @@
 		"pretest": "npm run lint",
 		"test": "node japaFile.js",
 		"clean": "del build",
+		"start": "node -r @adonisjs/assembler/build/register examples/app.ts",
 		"copyfiles": "copyfiles \"templates/**/*.txt\" \"instructions.md\" build",
 		"compile": "npm run lint && npm run clean && tsc",
 		"build": "npm run compile && npm run copyfiles",

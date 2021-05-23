@@ -5,7 +5,8 @@
     "./examples/discord",
     "./examples/github",
     "./examples/twitter",
-    "./examples/google"
+    "./examples/google",
+    "./examples/linkedin"
   ],
   "directories": {
     "config": "./examples/config"

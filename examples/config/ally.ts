@@ -20,6 +20,12 @@ const allyConfig: AllyConfig = {
     clientSecret: Env.get('GITHUB_CLIENT_SECRET'),
     callbackUrl: `http://localhost:${Env.get('PORT')}/github/callback`,
   },
+  linkedin: {
+    driver: 'linkedin',
+    clientId: Env.get('LINKEDIN_CLIENT_ID'),
+    clientSecret: Env.get('LINKEDIN_CLIENT_SECRET'),
+    callbackUrl: `http://localhost:${Env.get('PORT')}/linkedin/callback`,
+  },
   twitter: {
     driver: 'twitter',
     clientId: Env.get('TWITTER_API_KEY'),
