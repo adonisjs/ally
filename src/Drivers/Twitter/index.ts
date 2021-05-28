@@ -22,8 +22,7 @@ import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
  */
 export class TwitterDriver
   extends Oauth1Driver<TwitterToken, string>
-  implements TwitterDriverContract
-{
+  implements TwitterDriverContract {
   protected requestTokenUrl = 'https://api.twitter.com/oauth/request_token'
   protected authorizeUrl = 'https://api.twitter.com/oauth/authenticate'
   protected accessTokenUrl = 'https://api.twitter.com/oauth/access_token'

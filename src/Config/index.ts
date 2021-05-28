@@ -44,6 +44,7 @@ export const patreon = {
 export const discord = {
   AUTHORIZE_URL: 'https://discord.com/api/oauth2/authorize',
   ACCESS_TOKEN_URL: 'https://discord.com/api/oauth2/token',
+  USER_INFO_URL: 'https://discord.com/api/users/@me',
 }
 
 export const microsoft = {

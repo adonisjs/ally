@@ -30,8 +30,7 @@ import { RedirectRequest } from '../../RedirectRequest'
  */
 export abstract class Oauth2Driver<Token extends Oauth2AccessToken, Scopes extends string>
   extends Oauth2Client<Token>
-  implements AllyDriverContract<Token, Scopes>
-{
+  implements AllyDriverContract<Token, Scopes> {
   /**
    * Is the authorization process stateless?
    */

@@ -3,6 +3,13 @@ The package has been configured successfully. The configuration is stored inside
 ## Validating environment variables
 Ally config relies on environment variables for the client id and secret. We recommend you to validate environment variables inside the `env.ts` file.
 
+### Variables for Discord provider
+
+```ts
+DISCORD_CLIENT_ID: Env.schema.string(),
+DISCORD_CLIENT_SECRET: Env.schema.string(),
+```
+
 ### Variables for Google provider
 
 ```ts

@@ -161,6 +161,71 @@ declare module '@ioc:Adonis/Addons/Ally' {
 
   /**
    * ----------------------------------------
+   * Discord driver
+   * ----------------------------------------
+   */
+
+  /**
+   * Available discord scopes
+   * https://discord.com/developers/docs/topics/oauth2#shared-resources-oauth2-scopes
+   */
+  export type DiscordScopes =
+    | 'activities.read'
+    | 'activities.write'
+    | 'applications.builds.read'
+    | 'applications.builds.upload'
+    | 'applications.commands'
+    | 'applications.commands.update'
+    | 'applications.entitlements'
+    | 'applications.store.update'
+    | 'bot'
+    | 'connections'
+    | 'email'
+    | 'gdm.join'
+    | 'guilds'
+    | 'guilds.join'
+    | 'identify'
+    | 'messages.read'
+    | 'relationships.read'
+    | 'rpc'
+    | 'rpc.activities.write'
+    | 'rpc.notifications.read'
+    | 'rpc.voice.read'
+    | 'rpc.voice.write'
+    | 'webhook.incoming'
+
+  /**
+   * Shape of the Discord access token
+   */
+  export type DiscordToken = {
+    token: string
+    type: string
+    scope: string
+    expiresIn: number
+    expiresAt: any
+    refreshToken: string
+  }
+
+  /**
+   * Extra options available for Discord
+   */
+  export type DiscordDriverConfig = Oauth2ClientConfig & {
+    driver: 'discord'
+    userInfoUrl?: string
+    scopes?: LiteralStringUnion<DiscordScopes>[]
+    prompt?: 'consent' | 'none'
+    grantType?: 'authorization_code' | 'refresh_token'
+    guildId?: string
+    disableGuildSelect?: string
+    permissions?: String
+  }
+
+  export interface DiscordDriverContract extends AllyDriverContract<DiscordToken, DiscordScopes> {
+    version: 'oauth2'
+  }
+
+  /**
+   * ----------------------------------------
    * Github driver
    * ----------------------------------------
    */

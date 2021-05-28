@@ -2,6 +2,12 @@ import Env from '@ioc:Adonis/Core/Env'
 import { AllyConfig } from '@ioc:Adonis/Addons/Ally'
 
 const allyConfig: AllyConfig = {
+  discord: {
+    driver: 'discord',
+    clientId: Env.get('DISCORD_CLIENT_ID'),
+    clientSecret: Env.get('DISCORDE_CLIENT_SECRET'),
+    callbackUrl: `http://localhost:${Env.get('PORT')}/discord/callback`,
+  },
   google: {
     driver: 'google',
     clientId: Env.get('GOOGLE_CLIENT_ID'),

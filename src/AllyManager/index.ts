@@ -16,6 +16,7 @@ import {
   GithubDriverConfig,
   AllyManagerContract,
   ExtendDriverCallback,
+  DiscordDriverConfig,
   TwitterDriverConfig,
   GoogleDriverConfig,
 } from '@ioc:Adonis/Addons/Ally'
@@ -51,6 +52,14 @@ export class AllyManager implements AllyManagerContract {
     }
 
     return config
+  }
+
+  /**
+   * Make the discord driver
+   */
+  protected makeDiscord(config: DiscordDriverConfig, ctx: HttpContextContract) {
+    const { DiscordDriver } = require('../Drivers/Discord')
+    return new DiscordDriver(ctx, config)
   }
 
   /**
@@ -95,6 +104,8 @@ export class AllyManager implements AllyManagerContract {
   protected makeMappingInstance(mapping: string, ctx: HttpContextContract) {
     const config = this.getMappingConfig(mapping)
     switch (config.driver) {
+      case 'discord':
+        return this.makeDiscord(config, ctx)
       case 'github':
         return this.makeGithub(config, ctx)
       case 'twitter':

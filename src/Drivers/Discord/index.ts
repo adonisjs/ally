@@ -9,62 +9,24 @@
 
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import {
-  GoogleToken,
-  GoogleScopes,
-  GoogleDriverConfig,
   ApiRequestContract,
-  GoogleDriverContract,
+  DiscordDriverContract,
   RedirectRequestContract,
+  DiscordDriverConfig,
+  DiscordScopes,
+  DiscordToken,
 } from '@ioc:Adonis/Addons/Ally'
 import { Oauth2Driver } from '../../AbstractDrivers/Oauth2'
 
-const SCOPE_PREFIXES = {
-  'https://www.googleapis.com/auth': [
-    'userinfo.email',
-    'userinfo.profile',
-    'contacts',
-    'contacts.other.readonly',
-    'contacts.readonly',
-    'directory.readonly',
-    'user.addresses.read',
-    'user.birthday.read',
-    'user.emails.read',
-    'user.gender.read',
-    'user.organization.read',
-    'user.phonenumbers.read',
-    'analytics',
-    'analytics.readonly',
-    'documents',
-    'documents.readonly',
-    'forms',
-    'forms.currentonly',
-    'groups',
-    'spreadsheets',
-    'calendar',
-    'calendar.events',
-    'calendar.events.readonly',
-    'calendar.readonly',
-    'calendar.settings.readonly',
-    'drive',
-    'drive.appdata',
-    'drive.file',
-    'drive.metadata',
-    'drive.metadata.readonly',
-    'drive.photos.readonly',
-    'drive.readonly',
-    'drive.scripts',
-  ],
-}
-
 /**
- * Google driver to login user via Google
+ * Discord driver to login user via Discord
  */
-export class GoogleDriver
-  extends Oauth2Driver<GoogleToken, GoogleScopes>
-  implements GoogleDriverContract {
-  protected accessTokenUrl = 'https://oauth2.googleapis.com/token'
-  protected authorizeUrl = 'https://accounts.google.com/o/oauth2/v2/auth'
-  protected userInfoUrl = 'https://www.googleapis.com/oauth2/v3/userinfo'
+export class DiscordDriver
+  extends Oauth2Driver<DiscordToken, DiscordScopes>
+  implements DiscordDriverContract {
+  protected accessTokenUrl = 'https://discord.com/api/oauth2/token'
+  protected authorizeUrl = 'https://discord.com/api/oauth2/authorize'
+  protected userInfoUrl = 'https://discord.com/api/users/@me'
 
   /**
    * The param name for the authorization code
@@ -77,13 +39,13 @@ export class GoogleDriver
   protected errorParamName = 'error'
 
   /**
-   * Cookie name for storing the "google_oauth_state"
+   * Cookie name for storing the "discord_oauth_state"
    */
-  protected stateCookieName = 'google_oauth_state'
+  protected stateCookieName = 'discord_oauth_state'
 
   /**
    * Parameter name to be used for sending and receiving the state
-   * from google
+   * from Discord
    */
   protected stateParamName = 'state'
 
@@ -97,7 +59,7 @@ export class GoogleDriver
    */
   protected scopesSeparator = ' '
 
-  constructor(ctx: HttpContextContract, public config: GoogleDriverConfig) {
+  constructor(ctx: HttpContextContract, public config: DiscordDriverConfig) {
     super(ctx, config)
     /**
      * Extremely important to call the following method to clear the
@@ -109,33 +71,43 @@ export class GoogleDriver
   /**
    * Configuring the redirect request with defaults
    */
-  protected configureRedirectRequest(request: RedirectRequestContract<GoogleScopes>) {
-    request.transformScopes((scopes) => this.buildScopes(scopes))
-
+  protected configureRedirectRequest(request: RedirectRequestContract<DiscordScopes>) {
     /**
      * Define user defined scopes or the default one's
      */
-    request.scopes(this.config.scopes || ['openid', 'userinfo.email', 'userinfo.profile'])
+    request.scopes(this.config.scopes || ['identify'])
 
-    /**
-     * Set "response_type" param
-     */
     request.param('response_type', 'code')
 
     /**
      * Define params based upon user config
      */
-    if (this.config.accessType) {
-      request.param('access_type', this.config.accessType)
+    if (this.config.grantType) {
+      request.param('grant_type', this.config.grantType)
     }
     if (this.config.prompt) {
       request.param('prompt', this.config.prompt)
     }
-    if (this.config.display) {
-      request.param('display', this.config.display)
+    if (this.config.guildId) {
+      request.param('guild_id', this.config.guildId)
     }
-    if (this.config.hostedDomain) {
-      request.param('hd', this.config.hostedDomain)
+    if (this.config.disableGuildSelect) {
+      request.param('disable_guild_select', this.config.disableGuildSelect)
+    }
+    if (this.config.permissions) {
+      request.param('permissions', this.config.permissions)
+    }
+  }
+
+  /**
+   * Configuring the access token API request to send extra fields
+   */
+  protected configureAccessTokenRequest(request: ApiRequestContract) {
+    /**
+     * Send state to Discord when request is not stateles
+     */
+    if (!this.isStateless) {
+      request.field('state', this.stateCookieValue)
     }
   }
 
@@ -151,7 +123,8 @@ export class GoogleDriver
   }
 
   /**
-   * Fetches the user info from the Google API
+   * Fetches the user info from the Discord API
+   * https://discord.com/developers/docs/resources/user#get-current-user
    */
   protected async getUserInfo(token: string, callback?: (request: ApiRequestContract) => void) {
     const request = this.getAuthenticatedRequest(this.config.userInfoUrl || this.userInfoUrl, token)
@@ -160,14 +133,17 @@ export class GoogleDriver
     }
 
     const body = await request.get()
-
     return {
-      id: body.sub,
-      nickName: body.name,
-      name: body.name,
-      email: body.email,
-      avatarUrl: body.picture,
-      emailVerificationState: body.email_verified ? ('verified' as const) : ('unverified' as const),
+      id: body.id,
+      name: `${body.username}#${body.discriminator}`,
+      nickName: body.username,
+      avatarUrl: body.avatar
+        ? `https://cdn.discordapp.com/avatars/${body.id}/${body.avatar}.${
+            body.avatar.startsWith('a_') ? 'gif' : 'png'
+          }`
+        : `https://cdn.discordapp.com/embed/avatars/${body.discriminator % 5}.png`,
+      email: body.email, // May not always be there (requires email scope)
+      emailVerificationState: body.verified ? ('verified' as const) : ('unverified' as const),
       original: body,
     }
   }
@@ -193,7 +169,7 @@ export class GoogleDriver
 
     return {
       ...user,
-      token: token,
+      token,
     }
   }
 
@@ -207,15 +183,5 @@ export class GoogleDriver
       ...user,
       token: { token, type: 'bearer' as const },
     }
-  }
-
-  /**
-   * Prefixes google scopes with the url
-   */
-  public buildScopes(scopes: string[]) {
-    return scopes.map((name) => {
-      const prefix = Object.keys(SCOPE_PREFIXES).find((one) => SCOPE_PREFIXES[one].includes(name))
-      return prefix ? `${prefix}/${name}` : name
-    })
   }
 }
