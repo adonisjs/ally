@@ -202,7 +202,7 @@ declare module '@ioc:Adonis/Addons/Ally' {
     type: string
     scope: string
     expiresIn: number
-    expiresAt: luxon.DateTime
+    expiresAt: Exclude<Oauth2AccessToken['expiresAt'], undefined>
     refreshToken: string
   }
 
