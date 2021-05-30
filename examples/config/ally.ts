@@ -5,7 +5,7 @@ const allyConfig: AllyConfig = {
   discord: {
     driver: 'discord',
     clientId: Env.get('DISCORD_CLIENT_ID'),
-    clientSecret: Env.get('DISCORDE_CLIENT_SECRET'),
+    clientSecret: Env.get('DISCORD_CLIENT_SECRET'),
     callbackUrl: `http://localhost:${Env.get('PORT')}/discord/callback`,
   },
   google: {

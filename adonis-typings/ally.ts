@@ -202,7 +202,7 @@ declare module '@ioc:Adonis/Addons/Ally' {
     type: string
     scope: string
     expiresIn: number
-    expiresAt: any
+    expiresAt: luxon.DateTime
     refreshToken: string
   }
 
@@ -214,10 +214,9 @@ declare module '@ioc:Adonis/Addons/Ally' {
     userInfoUrl?: string
     scopes?: LiteralStringUnion<DiscordScopes>[]
     prompt?: 'consent' | 'none'
-    grantType?: 'authorization_code' | 'refresh_token'
-    guildId?: string
-    disableGuildSelect?: string
-    permissions?: String
+    guildId?: `${bigint}` // a snowflake
+    disableGuildSelect?: boolean
+    permissions?: number
   }
 
   export interface DiscordDriverContract extends AllyDriverContract<DiscordToken, DiscordScopes> {

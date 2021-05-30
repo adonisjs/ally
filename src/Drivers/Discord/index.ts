@@ -78,23 +78,21 @@ export class DiscordDriver
     request.scopes(this.config.scopes || ['identify'])
 
     request.param('response_type', 'code')
+    request.param('grant_type', 'authorization_code')
 
     /**
      * Define params based upon user config
      */
-    if (this.config.grantType) {
-      request.param('grant_type', this.config.grantType)
-    }
     if (this.config.prompt) {
       request.param('prompt', this.config.prompt)
     }
     if (this.config.guildId) {
       request.param('guild_id', this.config.guildId)
     }
-    if (this.config.disableGuildSelect) {
+    if (this.config.disableGuildSelect !== undefined) {
       request.param('disable_guild_select', this.config.disableGuildSelect)
     }
-    if (this.config.permissions) {
+    if (this.config.permissions !== undefined) {
       request.param('permissions', this.config.permissions)
     }
   }
@@ -143,7 +141,12 @@ export class DiscordDriver
           }`
         : `https://cdn.discordapp.com/embed/avatars/${body.discriminator % 5}.png`,
       email: body.email, // May not always be there (requires email scope)
-      emailVerificationState: body.verified ? ('verified' as const) : ('unverified' as const),
+      emailVerificationState:
+        'verified' in body
+          ? body.verified
+            ? ('verified' as const)
+            : ('unverified' as const)
+          : ('unsupported' as const),
       original: body,
     }
   }
