@@ -18,6 +18,9 @@ import { AllyConfig } from '@ioc:Adonis/Addons/Ally'
 |
 */
 const allyConfig: AllyConfig = {
+{{#providers.discord}}
+{{> discord_provider}}
+{{/providers.discord}}
 {{#providers.github}}
 {{> github_provider}}
 {{/providers.github}}

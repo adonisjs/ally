@@ -13,6 +13,7 @@ import { ApplicationContract } from '@ioc:Adonis/Core/Application'
 
 type InstructionsState = {
   providers: {
+    discord: boolean
     github: boolean
     google: boolean
     twitter: boolean
@@ -29,6 +30,10 @@ const CONFIG_PARTIALS_BASE = './config/partials'
  * Prompt choices for the provider selection
  */
 const PROVIDER_PROMPT_CHOICES = [
+  {
+    name: 'discord' as const,
+    message: 'Discord',
+  },
   {
     name: 'github' as const,
     message: 'Github',
@@ -47,6 +52,10 @@ const PROVIDER_PROMPT_CHOICES = [
  * Environment variables for available providers
  */
 const ENV_VARS = {
+  discord: {
+    clientId: 'DISCORD_CLIENT_ID',
+    clientSecret: 'DISCORD_CLIENT_SECRET',
+  },
   github: {
     clientId: 'GITHUB_CLIENT_ID',
     clientSecret: 'GITHUB_CLIENT_SECRET',
@@ -146,7 +155,7 @@ async function getProvider(sink: typeof sinkStatic) {
     .getPrompt()
     .multiple('Select social providers you are planning to use', PROVIDER_PROMPT_CHOICES, {
       validate(choice) {
-        return choice && choice.length ? true : 'Select atleast one provider'
+        return choice && choice.length ? true : 'Select at least one provider'
       },
     })
 }
@@ -161,6 +170,7 @@ export default async function instructions(
 ) {
   const state: InstructionsState = {
     providers: {
+      discord: false,
       github: false,
       google: false,
       twitter: false,
@@ -169,6 +179,7 @@ export default async function instructions(
   }
 
   const selectedProviders = await getProvider(sink)
+  state.providers.discord = selectedProviders.includes('discord')
   state.providers.github = selectedProviders.includes('github')
   state.providers.google = selectedProviders.includes('google')
   state.providers.twitter = selectedProviders.includes('twitter')

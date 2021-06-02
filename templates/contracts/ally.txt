@@ -7,6 +7,12 @@
 
 declare module '@ioc:Adonis/Addons/Ally' {
 	interface SocialProviders {
+		{{#providers.discord}}
+		discord: {
+			config: DiscordDriverConfig
+			implementation: DiscordDriverContract
+		}
+		{{/providers.discord}}
 		{{#providers.github}}
 		github: {
 			config: GithubDriverConfig
