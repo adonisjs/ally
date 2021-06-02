@@ -23,7 +23,8 @@ import { Oauth2Driver } from '../../AbstractDrivers/Oauth2'
  */
 export class GithubDriver
   extends Oauth2Driver<GithubToken, GithubScopes>
-  implements GithubDriverContract {
+  implements GithubDriverContract
+{
   protected accessTokenUrl = 'https://github.com/login/oauth/access_token'
   protected authorizeUrl = 'https://github.com/login/oauth/authorize'
   protected userInfoUrl = 'https://api.github.com/user'

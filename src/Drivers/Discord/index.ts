@@ -23,7 +23,8 @@ import { Oauth2Driver } from '../../AbstractDrivers/Oauth2'
  */
 export class DiscordDriver
   extends Oauth2Driver<DiscordToken, DiscordScopes>
-  implements DiscordDriverContract {
+  implements DiscordDriverContract
+{
   protected accessTokenUrl = 'https://discord.com/api/oauth2/token'
   protected authorizeUrl = 'https://discord.com/api/oauth2/authorize'
   protected userInfoUrl = 'https://discord.com/api/users/@me'

@@ -61,7 +61,8 @@ const SCOPE_PREFIXES = {
  */
 export class GoogleDriver
   extends Oauth2Driver<GoogleToken, GoogleScopes>
-  implements GoogleDriverContract {
+  implements GoogleDriverContract
+{
   protected accessTokenUrl = 'https://oauth2.googleapis.com/token'
   protected authorizeUrl = 'https://accounts.google.com/o/oauth2/v2/auth'
   protected userInfoUrl = 'https://www.googleapis.com/oauth2/v3/userinfo'

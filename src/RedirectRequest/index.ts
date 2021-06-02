@@ -15,7 +15,8 @@ import { RedirectRequestContract, LiteralStringUnion } from '@ioc:Adonis/Addons/
  */
 export class RedirectRequest<Scopes extends string>
   extends UrlBuilder
-  implements RedirectRequestContract<Scopes> {
+  implements RedirectRequestContract<Scopes>
+{
   private scopesTransformer: undefined | ((scopes: LiteralStringUnion<Scopes>[]) => string[])
 
   constructor(baseUrl: string, private scopeParamName: string, private scopeSeparator: string) {
