@@ -18,18 +18,21 @@ import { AllyConfig } from '@ioc:Adonis/Addons/Ally'
 |
 */
 const allyConfig: AllyConfig = {
-{{#providers.discord}}
-{{> discord_provider}}
-{{/providers.discord}}
 {{#providers.github}}
 {{> github_provider}}
 {{/providers.github}}
-{{#providers.twitter}}
-{{> twitter_provider}}
-{{/providers.twitter}}
 {{#providers.google}}
 {{> google_provider}}
 {{/providers.google}}
+{{#providers.twitter}}
+{{> twitter_provider}}
+{{/providers.twitter}}
+{{#providers.discord}}
+{{> discord_provider}}
+{{/providers.discord}}
+{{#providers.linkedin}}
+{{> linkedin_provider}}
+{{/providers.linkedin}}
 }
 
 export default allyConfig

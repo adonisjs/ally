@@ -1,0 +1,11 @@
+  /*
+  |--------------------------------------------------------------------------
+  | LinkedIn driver
+  |--------------------------------------------------------------------------
+  */
+  linkedin: {
+    driver: 'linkedin',
+    clientId: Env.get('{{ envVars.linkedin.clientId }}'),
+    clientSecret: Env.get('{{ envVars.linkedin.clientSecret }}'),
+    callbackUrl: 'http://localhost:3333/linkedin',
+  },

@@ -13,10 +13,11 @@ import { ApplicationContract } from '@ioc:Adonis/Core/Application'
 
 type InstructionsState = {
   providers: {
-    discord: boolean
     github: boolean
     google: boolean
     twitter: boolean
+    discord: boolean
+    linkedin: boolean
   }
   envVars: typeof ENV_VARS
 }
@@ -31,10 +32,6 @@ const CONFIG_PARTIALS_BASE = './config/partials'
  */
 const PROVIDER_PROMPT_CHOICES = [
   {
-    name: 'discord' as const,
-    message: 'Discord',
-  },
-  {
     name: 'github' as const,
     message: 'Github',
   },
@@ -46,16 +43,20 @@ const PROVIDER_PROMPT_CHOICES = [
     name: 'twitter' as const,
     message: 'Twitter',
   },
+  {
+    name: 'discord' as const,
+    message: 'Discord',
+  },
+  {
+    name: 'linkedin' as const,
+    message: 'LinkedIn',
+  },
 ]
 
 /**
  * Environment variables for available providers
  */
 const ENV_VARS = {
-  discord: {
-    clientId: 'DISCORD_CLIENT_ID',
-    clientSecret: 'DISCORD_CLIENT_SECRET',
-  },
   github: {
     clientId: 'GITHUB_CLIENT_ID',
     clientSecret: 'GITHUB_CLIENT_SECRET',
@@ -67,6 +68,14 @@ const ENV_VARS = {
   twitter: {
     clientId: 'TWITTER_CLIENT_ID',
     clientSecret: 'TWITTER_CLIENT_SECRET',
+  },
+  discord: {
+    clientId: 'DISCORD_CLIENT_ID',
+    clientSecret: 'DISCORD_CLIENT_SECRET',
+  },
+  linkedin: {
+    clientId: 'LINKEDIN_CLIENT_ID',
+    clientSecret: 'LINKEDIN_CLIENT_SECRET',
   },
 }
 
@@ -170,10 +179,11 @@ export default async function instructions(
 ) {
   const state: InstructionsState = {
     providers: {
-      discord: false,
       github: false,
       google: false,
       twitter: false,
+      discord: false,
+      linkedin: false
     },
     envVars: ENV_VARS,
   }
@@ -183,6 +193,7 @@ export default async function instructions(
   state.providers.github = selectedProviders.includes('github')
   state.providers.google = selectedProviders.includes('google')
   state.providers.twitter = selectedProviders.includes('twitter')
+  state.providers.linkedin = selectedProviders.includes('linkedin')
 
   /**
    * Make contract file
