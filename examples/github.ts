@@ -15,7 +15,7 @@ Route.get('github', async ({ response }) => {
 
 Route.get('/github/redirect', async ({ ally }) => {
   return ally.use('github').redirect((request) => {
-    request.scopes(['user', 'repo'])
+    request.scopes(['read:user'])
   })
 })
 

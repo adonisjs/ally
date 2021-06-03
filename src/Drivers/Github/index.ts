@@ -11,6 +11,7 @@ import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import {
   GithubToken,
   GithubScopes,
+  AllyUserContract,
   GithubDriverConfig,
   ApiRequestContract,
   GithubDriverContract,
@@ -138,7 +139,9 @@ export class GithubDriver
       id: body.id,
       nickName: body.name,
       email: body.email, // May not always be there
-      emailVerificationState: 'verified' as 'verified' | 'unverified', // Assuming the public email is always verified
+      emailVerificationState: (body.email
+        ? 'verified'
+        : 'unsupported') as AllyUserContract<any>['emailVerificationState'],
       name: body.name,
       avatarUrl: body.avatar_url,
       original: body,
@@ -159,26 +162,33 @@ export class GithubDriver
       callback(request)
     }
 
-    let emails = await request.get()
+    try {
+      let emails = await request.get()
 
-    /**
-     * Sort emails to keep the primary ones on the top
-     */
-    emails = emails.sort((email: any) => (email.primary ? -1 : 1))
+      /**
+       * Sort emails to keep the primary ones on the top
+       */
+      emails = emails.sort((email: any) => (email.primary ? -1 : 1))
 
-    /**
-     * Get the first verified email of the user
-     */
-    let mainEmail = emails.find((email: any) => email.verified)
+      /**
+       * Get the first verified email of the user
+       */
+      let mainEmail = emails.find((email: any) => email.verified)
 
-    /**
-     * If there are no verified emails, then get any first one
-     */
-    if (!mainEmail) {
-      mainEmail = emails[0]
+      /**
+       * If there are no verified emails, then get any first one
+       */
+      if (!mainEmail) {
+        mainEmail = emails[0]
+      }
+
+      return mainEmail
+    } catch (error) {
+      if (error && error.response && error.response.statusCode === 404) {
+        return
+      }
+      throw error
     }
-
-    return mainEmail
   }
 
   /**
@@ -206,9 +216,13 @@ export class GithubDriver
     if (!user.email) {
       this.ctx.logger.trace('Fetching github user email separately')
 
-      const { email, verified } = await this.getUserEmail(token.token, callback)
-      user.email = email
-      user.emailVerificationState = verified ? ('verified' as const) : ('unverified' as const)
+      const emailResponse = await this.getUserEmail(token.token, callback)
+      if (emailResponse) {
+        user.email = emailResponse.email
+        user.emailVerificationState = emailResponse.verified
+          ? ('verified' as const)
+          : ('unverified' as const)
+      }
     }
 
     return {
@@ -229,9 +243,13 @@ export class GithubDriver
     if (!user.email) {
       this.ctx.logger.trace('Fetching github user email separately')
 
-      const { email, verified } = await this.getUserEmail(token, callback)
-      user.email = email
-      user.emailVerificationState = verified ? ('verified' as const) : ('unverified' as const)
+      const emailResponse = await this.getUserEmail(token, callback)
+      if (emailResponse) {
+        user.email = emailResponse.email
+        user.emailVerificationState = emailResponse.verified
+          ? ('verified' as const)
+          : ('unverified' as const)
+      }
     }
 
     return {
