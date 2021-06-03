@@ -8,5 +8,6 @@
   "probotApps": [
     "stale",
     "lock"
-  ]
+  ],
+  "runGhActionsOnWindows": false
 }
