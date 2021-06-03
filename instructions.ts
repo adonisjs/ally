@@ -183,7 +183,7 @@ export default async function instructions(
       google: false,
       twitter: false,
       discord: false,
-      linkedin: false
+      linkedin: false,
     },
     envVars: ENV_VARS,
   }
