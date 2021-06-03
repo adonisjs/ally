@@ -9,12 +9,12 @@
 
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import {
-  ApiRequestContract,
-  DiscordDriverContract,
-  RedirectRequestContract,
-  DiscordDriverConfig,
   DiscordScopes,
   DiscordToken,
+  ApiRequestContract,
+  DiscordDriverConfig,
+  DiscordDriverContract,
+  RedirectRequestContract,
 } from '@ioc:Adonis/Addons/Ally'
 import { Oauth2Driver } from '../../AbstractDrivers/Oauth2'
 
@@ -62,6 +62,7 @@ export class DiscordDriver
 
   constructor(ctx: HttpContextContract, public config: DiscordDriverConfig) {
     super(ctx, config)
+
     /**
      * Extremely important to call the following method to clear the
      * state set by the redirect request
@@ -76,7 +77,7 @@ export class DiscordDriver
     /**
      * Define user defined scopes or the default one's
      */
-    request.scopes(this.config.scopes || ['identify'])
+    request.scopes(this.config.scopes || ['email'])
 
     request.param('response_type', 'code')
     request.param('grant_type', 'authorization_code')
