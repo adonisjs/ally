@@ -151,6 +151,6 @@ export class AllyManager implements AllyManagerContract {
       throw new Exception('"Ally.extend" expects callback to be a function')
     }
 
-    this.extendedDrivers[driverName] = callback
+    this.extendedDrivers.set(driverName, callback)
   }
 }

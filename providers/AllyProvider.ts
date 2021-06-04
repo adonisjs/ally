@@ -23,7 +23,7 @@ export default class AllyProvider {
    * Register the binding
    */
   public register() {
-    this.application.container.bind('Adonis/Addons/Ally', (container) => {
+    this.application.container.singleton('Adonis/Addons/Ally', (container) => {
       const config = container.resolveBinding('Adonis/Core/Config').get('ally', {})
       return new AllyManager(this.application, config)
     })
@@ -38,7 +38,7 @@ export default class AllyProvider {
       (HttpContext, Ally) => {
         HttpContext.getter(
           'ally',
-          function auth() {
+          function ally() {
             return Ally.getAllyForRequest(this)
           },
           true
