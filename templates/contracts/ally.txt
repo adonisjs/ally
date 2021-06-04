@@ -37,5 +37,11 @@ declare module '@ioc:Adonis/Addons/Ally' {
       implementation: LinkedInDriverContract
     }
     {{/providers.linkedin}}
+    {{#providers.facebook}}
+    facebook: {
+      config: FacebookDriverConfig
+      implementation: FacebookDriverContract
+    }
+    {{/providers.facebook}}
 	}
 }

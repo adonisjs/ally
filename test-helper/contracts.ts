@@ -20,5 +20,9 @@ declare module '@ioc:Adonis/Addons/Ally' {
       config: GoogleDriverConfig
       implementation: GoogleDriverContract
     }
+    facebook: {
+      config: FacebookDriverConfig
+      implementation: FacebookDriverContract
+    }
   }
 }

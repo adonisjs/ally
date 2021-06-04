@@ -33,6 +33,9 @@ const allyConfig: AllyConfig = {
 {{#providers.linkedin}}
 {{> linkedin_provider}}
 {{/providers.linkedin}}
+{{#providers.facebook}}
+{{> facebook_provider}}
+{{/providers.facebook}}
 }
 
 export default allyConfig
