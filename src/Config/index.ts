@@ -56,3 +56,8 @@ export const bitbucket = {
   AUTHORIZE_URL: 'https://bitbucket.org/site/oauth2/authorize',
   ACCESS_TOKEN_URL: 'https://bitbucket.org/site/oauth2/access_token',
 }
+
+export const facebook = {
+  AUTHORIZE_URL: 'https://www.facebook.com/v10.0/dialog/oauth',
+  ACCESS_TOKEN_URL: 'https://graph.facebook.com/v10.0/dialog/oauth/access_token',
+}

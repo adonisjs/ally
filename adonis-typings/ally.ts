@@ -449,6 +449,107 @@ declare module '@ioc:Adonis/Addons/Ally' {
   }
 
   /**
+   * ----------------------------------------
+   * Facebook driver
+   * ----------------------------------------
+   */
+
+  /**
+   * Most popular facebook scopes. You can find rest of them on the following link
+   * https://developers.facebook.com/docs/permissions/reference/
+   */
+  export type FacebookScopes =
+    | 'ads_management'
+    | 'ads_read'
+    | 'attribution_read'
+    | 'business_management'
+    | 'catalog_management'
+    | 'email'
+    | 'groups_access_member_info'
+    | 'leads_retrieval'
+    | 'pages_events'
+    | 'pages_manage_ads'
+    | 'pages_manage_cta'
+    | 'pages_manage_instant_articles'
+    | 'pages_manage_engagement'
+    | 'pages_manage_metadata'
+    | 'pages_manage_posts'
+    | 'pages_messaging'
+    | 'pages_read_engagement'
+    | 'pages_read_user_content'
+    | 'pages_show_list'
+    | 'pages_user_gender'
+    | 'pages_user_locale'
+    | 'pages_user_timezone'
+    | 'public_profile'
+    | 'publish_to_groups'
+    | 'publish_video'
+    | 'read_insights'
+    | 'user_age_range'
+    | 'user_birthday'
+    | 'user_friends'
+    | 'user_gender'
+    | 'user_hometown'
+    | 'user_likes'
+    | 'user_link'
+    | 'user_location'
+    | 'user_photos'
+    | 'user_posts'
+    | 'user_videos'
+
+  /**
+   * Most used user profile fields. For more to go https://developers.facebook.com/docs/graph-api/reference/user
+   */
+  export type FacebookProfileFields =
+    | 'id'
+    | 'first_name'
+    | 'last_name'
+    | 'middle_name'
+    | 'name'
+    | 'name_format'
+    | 'picture'
+    | 'short_name'
+    | 'verified'
+    | 'birthday'
+    | 'email'
+    | 'gender'
+    | 'link'
+
+  /**
+   * Shape of the Facebook access token
+   */
+  export type FacebookToken = {
+    token: string
+    type: string
+    expiresIn: number
+    expiresAt: Exclude<Oauth2AccessToken['expiresAt'], undefined>
+  }
+
+  /**
+   * Config accepted by the facebook driver. Most of the options can be
+   * overwritten at runtime
+   * https://developers.facebook.com/docs/facebook-login/manually-build-a-login-flow
+   */
+  export type FacebookDriverConfig = Oauth2ClientConfig & {
+    driver: 'facebook'
+    userInfoUrl?: string
+    graphVersion?: string
+
+    /**
+     * Can be configured at runtime
+     */
+    scopes?: LiteralStringUnion<FacebookScopes>[]
+    userFields?: LiteralStringUnion<FacebookProfileFields>[]
+    popup?: boolean
+    reRequest?: boolean
+  }
+
+  export interface FacebookDriverContract
+    extends AllyDriverContract<FacebookToken, FacebookScopes> {
+    version: 'oauth2'
+  }
+
+  /**
    * END OF DRIVERS
    */
 
