@@ -68,9 +68,9 @@ declare module '@ioc:Adonis/Addons/Ally' {
     id: string
     nickName: string
     name: string
-    email: string
+    email: string | null
     emailVerificationState: 'verified' | 'unverified' | 'unsupported'
-    avatarUrl: string
+    avatarUrl: string | null
     token: Token
     original: any
   }
