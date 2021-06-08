@@ -95,22 +95,10 @@ export class FacebookDriver
      * Define params based upon user config
      */
     if (this.config.display) {
-      request.param('display', this.config.reRequest)
+      request.param('display', this.config.display)
     }
     if (this.config.authType) {
       request.param('auth_type', this.config.authType)
-    }
-  }
-
-  /**
-   * Configuring the access token API request to send extra fields
-   */
-  protected configureAccessTokenRequest(request: ApiRequestContract) {
-    /**
-     * Send state to Facebook when request is not stateles
-     */
-    if (!this.isStateless) {
-      request.field('state', this.stateCookieValue)
     }
   }
 
