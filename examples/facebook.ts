@@ -15,7 +15,7 @@ Route.get('facebook', async ({ response }) => {
 
 Route.get('/facebook/redirect', async ({ ally }) => {
   return ally.use('facebook').redirect((request) => {
-    request.scopes(['user', 'repo'])
+    request.scopes(['email'])
   })
 })
 

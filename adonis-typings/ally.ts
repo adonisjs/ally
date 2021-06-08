@@ -533,15 +533,14 @@ declare module '@ioc:Adonis/Addons/Ally' {
   export type FacebookDriverConfig = Oauth2ClientConfig & {
     driver: 'facebook'
     userInfoUrl?: string
-    graphVersion?: string
 
     /**
      * Can be configured at runtime
      */
     scopes?: LiteralStringUnion<FacebookScopes>[]
     userFields?: LiteralStringUnion<FacebookProfileFields>[]
-    popup?: boolean
-    reRequest?: boolean
+    display?: boolean
+    authType?: boolean
   }
 
   export interface FacebookDriverContract

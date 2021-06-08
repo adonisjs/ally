@@ -28,16 +28,14 @@ export class FacebookDriver
 {
   protected accessTokenUrl = 'https://graph.facebook.com/v10.0/oauth/access_token'
   protected authorizeUrl = 'https://www.facebook.com/v10.0/dialog/oauth'
-  protected graphUrl = 'https://graph.facebook.com'
-  protected graphVersion = 'v10.0'
-  protected userInfoUrl = `${this.graphUrl}/${this.graphVersion}/me`
+  protected userInfoUrl = 'https://graph.facebook.com/v10.0/me'
   protected userFields: Array<FacebookProfileFields> = [
     'name',
     'first_name',
     'last_name',
     'link',
     'email',
-    // 'picture',
+    'picture',
   ]
 
   /**
@@ -96,11 +94,11 @@ export class FacebookDriver
     /**
      * Define params based upon user config
      */
-    if (this.config.popup) {
+    if (this.config.display) {
       request.param('display', this.config.reRequest)
     }
-    if (this.config.reRequest) {
-      request.param('auth_type', this.config.reRequest)
+    if (this.config.authType) {
+      request.param('auth_type', this.config.authType)
     }
   }
 
@@ -134,9 +132,11 @@ export class FacebookDriver
   protected async getUserInfo(token: string, callback?: (request: ApiRequestContract) => void) {
     const fields = this.config.userFields || this.userFields
     const fieldList = fields.join(',')
-    const requestUrl = `${this.graphUrl}/${this.config.graphVersion || this.graphVersion}/me`
 
-    const request = this.getAuthenticatedRequest(requestUrl, token).param('fields', fieldList)
+    const request = this.getAuthenticatedRequest(
+      this.config.userInfoUrl || this.userInfoUrl,
+      token
+    ).param('fields', fieldList)
     const body = await request.get()
 
     // Get the user information

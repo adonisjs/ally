@@ -36,5 +36,4 @@ GITHUB_CLIENT_SECRET: Env.schema.string(),
 ```ts
 FACEBOOK_CLIENT_ID: Env.schema.string(),
 FACEBOOK_CLIENT_SECRET: Env.schema.string(),
-FACEBOOK_GRAPH_VERSION: Env.schema.string(),
 ```

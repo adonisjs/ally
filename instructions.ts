@@ -84,7 +84,6 @@ const ENV_VARS = {
   facebook: {
     clientId: 'FACEBOOK_CLIENT_ID',
     clientSecret: 'FACEBOOK_CLIENT_SECRET',
-    graphVersion: 'FACEBOOK_GRAPH_VERSION',
   },
 }
 

@@ -36,7 +36,6 @@ const allyConfig: AllyConfig = {
     driver: 'facebook',
     clientId: Env.get('FACEBOOK_CLIENT_ID'),
     clientSecret: Env.get('FACEBOOK_CLIENT_SECRET'),
-    graphVersion: Env.get('FACEBOOK_GRAPH_VERSION'),
     callbackUrl: `http://localhost:${Env.get('PORT')}/facebook/callback`,
   },
 }
