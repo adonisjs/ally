@@ -30,3 +30,10 @@ TWITTER_CLIENT_SECRET: Env.schema.string(),
 GITHUB_CLIENT_ID: Env.schema.string(),
 GITHUB_CLIENT_SECRET: Env.schema.string(),
 ```
+
+### Variables for Facebook provider
+
+```ts
+FACEBOOK_CLIENT_ID: Env.schema.string(),
+FACEBOOK_CLIENT_SECRET: Env.schema.string(),
+```

@@ -51,6 +51,10 @@ const PROVIDER_PROMPT_CHOICES = [
     name: 'linkedin' as const,
     message: 'LinkedIn',
   },
+  {
+    name: 'facebook' as const,
+    message: 'Facebook',
+  },
 ]
 
 /**
@@ -76,6 +80,10 @@ const ENV_VARS = {
   linkedin: {
     clientId: 'LINKEDIN_CLIENT_ID',
     clientSecret: 'LINKEDIN_CLIENT_SECRET',
+  },
+  facebook: {
+    clientId: 'FACEBOOK_CLIENT_ID',
+    clientSecret: 'FACEBOOK_CLIENT_SECRET',
   },
 }
 
