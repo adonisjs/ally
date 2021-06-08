@@ -498,7 +498,8 @@ declare module '@ioc:Adonis/Addons/Ally' {
     | 'user_videos'
 
   /**
-   * Most used user profile fields. For more to go https://developers.facebook.com/docs/graph-api/reference/user
+   * Most used user profile fields.
+   * For more visit https://developers.facebook.com/docs/graph-api/reference/user
    */
   export type FacebookProfileFields =
     | 'id'
@@ -539,8 +540,8 @@ declare module '@ioc:Adonis/Addons/Ally' {
      */
     scopes?: LiteralStringUnion<FacebookScopes>[]
     userFields?: LiteralStringUnion<FacebookProfileFields>[]
-    display?: boolean
-    authType?: boolean
+    display?: string
+    authType?: string
   }
 
   export interface FacebookDriverContract

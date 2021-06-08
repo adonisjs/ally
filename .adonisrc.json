@@ -6,7 +6,8 @@
     "./examples/github",
     "./examples/twitter",
     "./examples/google",
-    "./examples/linkedin"
+    "./examples/linkedin",
+    "./examples/facebook"
   ],
   "directories": {
     "config": "./examples/config"

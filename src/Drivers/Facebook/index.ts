@@ -9,11 +9,12 @@
 
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import {
-  FacebookScopes,
   FacebookToken,
-  FacebookProfileFields,
+  FacebookScopes,
+  LiteralStringUnion,
   ApiRequestContract,
   FacebookDriverConfig,
+  FacebookProfileFields,
   FacebookDriverContract,
   RedirectRequestContract,
 } from '@ioc:Adonis/Addons/Ally'
@@ -29,13 +30,18 @@ export class FacebookDriver
   protected accessTokenUrl = 'https://graph.facebook.com/v10.0/oauth/access_token'
   protected authorizeUrl = 'https://www.facebook.com/v10.0/dialog/oauth'
   protected userInfoUrl = 'https://graph.facebook.com/v10.0/me'
-  protected userFields: Array<FacebookProfileFields> = [
+
+  /**
+   * The default set of fields to query for the user request
+   */
+  protected userFields: LiteralStringUnion<FacebookProfileFields>[] = [
     'name',
     'first_name',
     'last_name',
     'link',
     'email',
-    'picture',
+    'picture.width(400).height(400)',
+    'verified',
   ]
 
   /**
@@ -118,17 +124,14 @@ export class FacebookDriver
    * https://developers.facebook.com/docs/graph-api/reference/user/
    */
   protected async getUserInfo(token: string, callback?: (request: ApiRequestContract) => void) {
-    const fields = this.config.userFields || this.userFields
-    const fieldList = fields.join(',')
+    const request = this.getAuthenticatedRequest(this.config.userInfoUrl || this.userInfoUrl, token)
+    request.param('fields', (this.config.userFields || this.userFields).join(','))
 
-    const request = this.getAuthenticatedRequest(
-      this.config.userInfoUrl || this.userInfoUrl,
-      token
-    ).param('fields', fieldList)
     const body = await request.get()
 
-    // Get the user information
-
+    /**
+     * Invoke callback if defined
+     */
     if (typeof callback === 'function') {
       callback(request)
     }
@@ -138,8 +141,9 @@ export class FacebookDriver
       name: body.name,
       nickName: body.name,
       // https://developers.facebook.com/docs/graph-api/reference/user/picture/
-      avatarUrl: 'picture' in body ? body.picture.data.url : null,
+      avatarUrl: body.picture?.data?.url || null,
       email: body.email || null, // May not always be there (requires email scope)
+      // Important note: https://developers.facebook.com/docs/facebook-login/multiple-providers#postfb1
       emailVerificationState:
         'verified' in body
           ? body.verified
