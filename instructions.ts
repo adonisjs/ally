@@ -158,6 +158,9 @@ function defineEnvVars(projectRoot: string, sink: typeof sinkStatic, state: Inst
     if (state.providers[provider] === true) {
       env.set(state.envVars[provider].clientId, 'clientId')
       env.set(state.envVars[provider].clientSecret, 'clientSecret')
+    } else {
+      env.unset(state.envVars[provider].clientId)
+      env.unset(state.envVars[provider].clientSecret)
     }
   })
 
