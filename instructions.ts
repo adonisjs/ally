@@ -18,6 +18,7 @@ type InstructionsState = {
     twitter: boolean
     discord: boolean
     linkedin: boolean
+    facebook: boolean
   }
   envVars: typeof ENV_VARS
 }
@@ -192,6 +193,7 @@ export default async function instructions(
       twitter: false,
       discord: false,
       linkedin: false,
+      facebook: false,
     },
     envVars: ENV_VARS,
   }
@@ -202,6 +204,7 @@ export default async function instructions(
   state.providers.google = selectedProviders.includes('google')
   state.providers.twitter = selectedProviders.includes('twitter')
   state.providers.linkedin = selectedProviders.includes('linkedin')
+  state.providers.facebook = selectedProviders.includes('facebook')
 
   /**
    * Make contract file
