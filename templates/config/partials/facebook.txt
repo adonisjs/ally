@@ -1,12 +1,11 @@
-	/*
-	|--------------------------------------------------------------------------
-	| facebook driver
-	|--------------------------------------------------------------------------
-	*/
-	facebook: {
-		driver: 'facebook',
-		clientId: Env.get('{{ envVars.facebook.clientId }}'),
-		clientSecret: Env.get('{{ envVars.facebook.clientSecret }}'),
-		callbackUrl: 'http://localhost:3333/facebook',
-    graphVersion: 'v10.0'
-	},
+  /*
+  |--------------------------------------------------------------------------
+  | Facebook driver
+  |--------------------------------------------------------------------------
+  */
+  facebook: {
+    driver: 'facebook',
+    clientId: Env.get('{{ envVars.facebook.clientId }}'),
+    clientSecret: Env.get('{{ envVars.facebook.clientSecret }}'),
+    callbackUrl: 'http://localhost:3333/facebook/callback',
+  },

@@ -7,5 +7,5 @@
 		driver: 'google',
 		clientId: Env.get('{{ envVars.google.clientId }}'),
 		clientSecret: Env.get('{{ envVars.google.clientSecret }}'),
-		callbackUrl: 'http://localhost:3333/google',
+		callbackUrl: 'http://localhost:3333/google/callback',
 	},

@@ -7,5 +7,5 @@
 		driver: 'discord',
 		clientId: Env.get('{{ envVars.discord.clientId }}'),
 		clientSecret: Env.get('{{ envVars.discord.clientSecret }}'),
-		callbackUrl: 'http://localhost:3333/discord',
+		callbackUrl: 'http://localhost:3333/discord/callback',
 	},

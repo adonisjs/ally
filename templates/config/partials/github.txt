@@ -7,5 +7,5 @@
 		driver: 'github',
 		clientId: Env.get('{{ envVars.github.clientId }}'),
 		clientSecret: Env.get('{{ envVars.github.clientSecret }}'),
-		callbackUrl: 'http://localhost:3333/github',
+		callbackUrl: 'http://localhost:3333/github/callback',
 	},

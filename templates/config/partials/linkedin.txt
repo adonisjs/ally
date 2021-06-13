@@ -7,5 +7,5 @@
     driver: 'linkedin',
     clientId: Env.get('{{ envVars.linkedin.clientId }}'),
     clientSecret: Env.get('{{ envVars.linkedin.clientSecret }}'),
-    callbackUrl: 'http://localhost:3333/linkedin',
+    callbackUrl: 'http://localhost:3333/linkedin/callback',
   },
