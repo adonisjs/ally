@@ -557,7 +557,7 @@ declare module '@ioc:Adonis/Addons/Ally' {
 
   /**
    * Available spotify scopes
-   * https://docs.github.com/en/free-pro-team@latest/developers/apps/scopes-for-oauth-apps#available-scopes
+   * https://developer.spotify.com/documentation/general/guides/scopes/
    */
   export type SpotifyScopes =
     | 'ugc-image-upload'
