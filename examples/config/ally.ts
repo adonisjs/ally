@@ -38,6 +38,12 @@ const allyConfig: AllyConfig = {
     clientSecret: Env.get('FACEBOOK_CLIENT_SECRET'),
     callbackUrl: `http://localhost:${Env.get('PORT')}/facebook/callback`,
   },
+  spotify: {
+    driver: 'spotify',
+    clientId: Env.get('SPOTIFY_CLIENT_ID'),
+    clientSecret: Env.get('SPOTIFY_CLIENT_SECRET'),
+    callbackUrl: `http://localhost:${Env.get('PORT')}/spotify/callback`,
+  },
 }
 
 export default allyConfig

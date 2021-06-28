@@ -19,6 +19,7 @@ type InstructionsState = {
     discord: boolean
     linkedin: boolean
     facebook: boolean
+    spotify: boolean
   }
   envVars: typeof ENV_VARS
 }
@@ -56,6 +57,10 @@ const PROVIDER_PROMPT_CHOICES = [
     name: 'facebook' as const,
     message: 'Facebook',
   },
+  {
+    name: 'spotify' as const,
+    message: 'Spotify',
+  },
 ]
 
 /**
@@ -85,6 +90,10 @@ const ENV_VARS = {
   facebook: {
     clientId: 'FACEBOOK_CLIENT_ID',
     clientSecret: 'FACEBOOK_CLIENT_SECRET',
+  },
+  spotify: {
+    clientId: 'SPOTIFY_CLIENT_ID',
+    clientSecret: 'SPOTIFY_CLIENT_SECRET',
   },
 }
 
@@ -197,6 +206,7 @@ export default async function instructions(
       discord: false,
       linkedin: false,
       facebook: false,
+      spotify: false,
     },
     envVars: ENV_VARS,
   }
@@ -208,6 +218,7 @@ export default async function instructions(
   state.providers.twitter = selectedProviders.includes('twitter')
   state.providers.linkedin = selectedProviders.includes('linkedin')
   state.providers.facebook = selectedProviders.includes('facebook')
+  state.providers.spotify = selectedProviders.includes('spotify')
 
   /**
    * Make contract file
