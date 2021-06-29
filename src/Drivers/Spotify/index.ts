@@ -91,18 +91,6 @@ export class SpotifyDriver
   }
 
   /**
-   * Configuring the access token API request to send extra fields
-   */
-  protected configureAccessTokenRequest(request: ApiRequestContract) {
-    /**
-     * Send state to Spotify when request is not stateles
-     */
-    if (!this.isStateless) {
-      request.field('state', this.stateCookieValue)
-    }
-  }
-
-  /**
    * Returns the HTTP request with the authorization header set
    */
   protected getAuthenticatedRequest(url: string, token: string) {
