@@ -130,7 +130,7 @@ export class SpotifyDriver
       nickName: body.display_name,
       name: body.display_name,
       email: body.email,
-      avatarUrl: body.images[0].url,
+      avatarUrl: body.images.length !== 0 ? body.images[0].url : null,
       emailVerificationState: 'unsupported' as const,
       original: body,
     }
