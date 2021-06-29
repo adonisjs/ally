@@ -43,5 +43,11 @@ declare module '@ioc:Adonis/Addons/Ally' {
       implementation: FacebookDriverContract
     }
     {{/providers.facebook}}
+    {{#providers.spotify}}
+    spotify: {
+      config: SpotifyDriverConfig
+      implementation: SpotifyDriverContract
+    }
+    {{/providers.spotify}}
 	}
 }

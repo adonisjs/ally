@@ -61,3 +61,9 @@ export const facebook = {
   AUTHORIZE_URL: 'https://www.facebook.com/v10.0/dialog/oauth',
   ACCESS_TOKEN_URL: 'https://graph.facebook.com/v10.0/dialog/oauth/access_token',
 }
+
+export const spotify = {
+  AUTHORIZE_URL: 'https://accounts.spotify.com/authorize',
+  ACCESS_TOKEN_URL: 'https://accounts.spotify.com/api/token',
+  USER_INFO_URL: 'https://api.spotify.com/v1/me',
+}

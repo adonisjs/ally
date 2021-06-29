@@ -550,6 +550,61 @@ declare module '@ioc:Adonis/Addons/Ally' {
   }
 
   /**
+   * ----------------------------------------
+   * Spotify driver
+   * ----------------------------------------
+   */
+
+  /**
+   * Available spotify scopes
+   * https://developer.spotify.com/documentation/general/guides/scopes/
+   */
+  export type SpotifyScopes =
+    | 'ugc-image-upload'
+    | 'user-read-recently-played'
+    | 'user-top-read'
+    | 'user-read-playback-position'
+    | 'user-read-playback-state'
+    | 'user-modify-playback-state'
+    | 'user-read-currently-playing'
+    | 'app-remote-control'
+    | 'streaming'
+    | 'playlist-modify-public'
+    | 'playlist-modify-private'
+    | 'playlist-read-private'
+    | 'playlist-read-collaborative'
+    | 'user-follow-modify'
+    | 'user-follow-read'
+    | 'user-library-modify'
+    | 'user-library-read'
+    | 'user-read-email'
+    | 'user-read-private'
+
+  /**
+   * Shape of the Spotify access token
+   */
+  export type SpotifyToken = {
+    token: string
+    type: string
+    refreshToken: string
+    expiresIn: number
+    expiresAt: Exclude<Oauth2AccessToken['expiresAt'], undefined>
+  }
+
+  /**
+   * Extra options available for Spotify
+   */
+  export type SpotifyDriverConfig = Oauth2ClientConfig & {
+    driver: 'spotify'
+    scopes?: LiteralStringUnion<SpotifyScopes>[]
+    showDialog?: boolean
+  }
+
+  export interface SpotifyDriverContract extends AllyDriverContract<SpotifyToken, SpotifyScopes> {
+    version: 'oauth2'
+  }
+
+  /**
    * END OF DRIVERS
    */
 

@@ -11,7 +11,8 @@ async function run() {
 
   const server = app.container.use('Adonis/Core/Server')
   server.optimize()
-  createServer(server.handle.bind(server)).listen(3000)
+  const port = process.env.PORT ? parseInt(process.env.PORT) : 3000
+  createServer(server.handle.bind(server)).listen(port)
 }
 
 run()

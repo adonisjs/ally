@@ -1,0 +1,12 @@
+  /*
+  |--------------------------------------------------------------------------
+  | Spotify driver
+  |--------------------------------------------------------------------------
+  */
+  spotify: {
+    driver: 'spotify',
+    clientId: Env.get('{{ envVars.spotify.clientId }}'),
+    clientSecret: Env.get('{{ envVars.spotify.clientSecret }}'),
+    callbackUrl: 'http://localhost:3333/spotify/callback',
+  },
+
