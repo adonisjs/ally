@@ -588,6 +588,7 @@ declare module '@ioc:Adonis/Addons/Ally' {
     type: string
     refreshToken: string
     expiresIn: number
+    expiresAt: Exclude<Oauth2AccessToken['expiresAt'], undefined>
   }
 
   /**
