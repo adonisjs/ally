@@ -1,6 +1,6 @@
 {
 	"name": "@adonisjs/ally",
-	"version": "4.0.2",
+	"version": "4.1.0",
 	"description": "Social authentication provider for AdonisJS",
 	"types": "./build/adonis-typings/index.d.ts",
 	"main": "build/providers/AllyProvider.js",
