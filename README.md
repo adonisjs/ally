@@ -6,7 +6,7 @@
 
 <div align="center">
   <h3>Social Authentication</h3>
-  <p>Social authentication provider for AdonisJS. Supports <strong>Github</strong>, <strong>Google</strong>, <strong>Twitter</strong>, <strong>Facebook</strong>, <strong>Discord</strong>, and <strong>LinkedIn</strong>.</p>
+  <p>Social authentication provider for AdonisJS. Supports <strong>Github</strong>, <strong>Google</strong>, <strong>Twitter</strong>, <strong>Facebook</strong>, <strong>Discord</strong>, <strong>Spotify</strong>, and <strong>LinkedIn</strong>.</p>
 </div>
 
 <br />
