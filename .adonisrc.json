@@ -8,7 +8,8 @@
     "./examples/google",
     "./examples/linkedin",
     "./examples/facebook",
-    "./examples/spotify"
+    "./examples/spotify",
+    "./examples/apple"
   ],
   "directories": {
     "config": "./examples/config"

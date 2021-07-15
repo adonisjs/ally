@@ -1,3 +1,5 @@
+import fs from 'fs'
+import path from 'path'
 import Env from '@ioc:Adonis/Core/Env'
 import { AllyConfig } from '@ioc:Adonis/Addons/Ally'
 
@@ -43,6 +45,14 @@ const allyConfig: AllyConfig = {
     clientId: Env.get('SPOTIFY_CLIENT_ID'),
     clientSecret: Env.get('SPOTIFY_CLIENT_SECRET'),
     callbackUrl: `http://localhost:${Env.get('PORT')}/spotify/callback`,
+  },
+  apple: {
+    driver: 'apple',
+    key: Env.get('APPLE_KEY'),
+    keyId: Env.get('APPLE_KEY_ID'),
+    teamId: Env.get('APPLE_TEAM_ID'),
+    clientId: Env.get('APPLE_CLIENT_ID'),
+    callbackUrl: `http://localhost:${Env.get('PORT')}/apple/callback`,
   },
 }
 

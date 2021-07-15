@@ -44,3 +44,12 @@ FACEBOOK_CLIENT_SECRET: Env.schema.string(),
 SPOTIFY_CLIENT_ID: Env.schema.string(),
 SPOTIFY_CLIENT_SECRET: Env.schema.string(),
 ```
+
+### Variables for Apple provider
+
+```ts
+APPLE_KEY: Env.schema.string(),
+APPLE_KEY_ID: Env.schema.string(),
+APPLE_TEAM_ID: Env.schema.string(),
+APPLE_CLIENT_ID: Env.schema.string(),
+```

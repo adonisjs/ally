@@ -67,3 +67,8 @@ export const spotify = {
   ACCESS_TOKEN_URL: 'https://accounts.spotify.com/api/token',
   USER_INFO_URL: 'https://api.spotify.com/v1/me',
 }
+
+export const apple = {
+  AUTHORIZE_URL: 'https://appleid.apple.com/auth/authorize',
+  ACCESS_TOKEN_URL: 'https://appleid.apple.com/auth/token',
+}

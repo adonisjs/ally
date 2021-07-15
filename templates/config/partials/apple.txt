@@ -1,0 +1,14 @@
+  /*
+  |--------------------------------------------------------------------------
+  | Apple driver
+  |--------------------------------------------------------------------------
+  */
+  apple: {
+    driver: 'apple',
+    key: Env.get('{{envVars.apple.key}}'),
+    keyId: Env.get('{{ envVars.apple.keyId }}'),
+    teamId: Env.get('{{ envVars.apple.teamId }}'),
+    clientId: Env.get('{{ envVars.apple.clientId }}'),
+    callbackUrl: 'http://localhost:3333/apple/callback',
+  },
+

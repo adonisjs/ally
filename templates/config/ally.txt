@@ -39,6 +39,9 @@ const allyConfig: AllyConfig = {
 {{#providers.spotify}}
 {{> spotify_provider}}
 {{/providers.spotify}}
+{{#providers.apple}}
+{{> apple_provider}}
+{{/providers.apple}}
 }
 
 export default allyConfig

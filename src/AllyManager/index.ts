@@ -22,6 +22,7 @@ import {
   LinkedInDriverConfig,
   FacebookDriverConfig,
   SpotifyDriverConfig,
+  AppleDriverConfig,
 } from '@ioc:Adonis/Addons/Ally'
 
 import { Ally } from '../Ally'
@@ -115,6 +116,14 @@ export class AllyManager implements AllyManagerContract {
   }
 
   /**
+   * Make the apple driver
+   */
+  protected makeApple(config: AppleDriverConfig, ctx: HttpContextContract) {
+    const { AppleDriver } = require('../Drivers/Apple')
+    return new AppleDriver(ctx, config)
+  }
+
+  /**
    * Makes an instance of the extended driver
    */
   protected makeExtendedDriver(mapping: string, config: any, ctx: HttpContextContract) {
@@ -146,6 +155,8 @@ export class AllyManager implements AllyManagerContract {
         return this.makeFacebook(config, ctx)
       case 'spotify':
         return this.makeSpotify(config, ctx)
+      case 'apple':
+        return this.makeApple(config, ctx)
       default:
         return this.makeExtendedDriver(mapping, config, ctx)
     }

@@ -7,6 +7,8 @@
  * file that was distributed with this source code.
  */
 
+import { DateTime } from 'luxon'
+
 declare module '@ioc:Adonis/Addons/Ally' {
   import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
   import { ApplicationContract } from '@ioc:Adonis/Core/Application'
@@ -601,6 +603,74 @@ declare module '@ioc:Adonis/Addons/Ally' {
   }
 
   export interface SpotifyDriverContract extends AllyDriverContract<SpotifyToken, SpotifyScopes> {
+    version: 'oauth2'
+  }
+
+  /**
+   * ----------------------------------------
+   * Apple driver
+   * ----------------------------------------
+   */
+
+  /**
+   * Available apple scopes
+   * https://developer.apple.com/documentation/sign_in_with_apple/clientconfigi/3230955-scope
+   */
+  export type AppleScopes = 'name' | 'email'
+
+  /**
+   * Shape of the Apple access token
+   */
+  export type AppleToken = {
+    token: string
+    type: string
+    id_token: string
+    refreshToken: string
+    expiresIn: number
+    expiresAt: DateTime
+  }
+
+  /**
+   * Shape of the Apple decoded token
+   * https://developer.apple.com/documentation/sign_in_with_apple/sign_in_with_apple_js/incorporating_sign_in_with_apple_into_other_platforms
+   */
+  export type AppleTokenDecoded = {
+    iss: string
+    aud: string
+    exp: number
+    iat: number
+    sub: string
+    at_hash: string
+    email: string
+    email_verified: 'verified' | 'unverified'
+    user?: {
+      email: string
+      name?: {
+        firstName: string
+        lastName: string
+      }
+    }
+    is_private_email: string
+    auth_time: number
+    nonce_supported: boolean
+  }
+
+  /**
+   * Extra options available for Apple
+   * @param teamId Team ID of your Apple Developer Account
+   * @param keyId Key ID, received from https://developer.apple.com/account/resources/authkeys/list
+   * @param key Private key, downloaded from https://developer.apple.com/account/resources/authkeys/list
+   */
+  export type AppleDriverConfig = Omit<Oauth2ClientConfig, 'clientSecret'> & {
+    driver: 'apple'
+    teamId: string
+    keyId: string
+    key: string | Buffer
+    scopes?: LiteralStringUnion<AppleScopes>[]
+    usePopup?: boolean
+  }
+
+  export interface AppleDriverContract extends AllyDriverContract<AppleToken, AppleScopes> {
     version: 'oauth2'
   }
 
