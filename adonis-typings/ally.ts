@@ -631,6 +631,11 @@ declare module '@ioc:Adonis/Addons/Ally' {
   }
 
   /**
+   * Shape of the user returned from Apple
+   */
+  export interface AppleUserContract extends Omit<AllyUserContract<AppleToken>, 'token'> {}
+
+  /**
    * Shape of the Apple decoded token
    * https://developer.apple.com/documentation/sign_in_with_apple/sign_in_with_apple_js/incorporating_sign_in_with_apple_into_other_platforms
    */
@@ -642,7 +647,7 @@ declare module '@ioc:Adonis/Addons/Ally' {
     sub: string
     at_hash: string
     email: string
-    email_verified: 'verified' | 'unverified'
+    email_verified: 'true' | 'false'
     user?: {
       email?: string
       name?: {

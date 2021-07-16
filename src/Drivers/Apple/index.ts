@@ -12,6 +12,7 @@ import {
   AppleScopes,
   AppleToken,
   AppleTokenDecoded,
+  AppleUserContract,
   ApiRequestContract,
   AppleDriverConfig,
   AppleDriverContract,
@@ -101,22 +102,11 @@ export class AppleDriver
   }
 
   /**
-   * Returns the HTTP request with the authorization header set
-   */
-  protected getAuthenticatedRequest(url: string, token: string) {
-    const request = this.httpClient(url)
-    request.header('Authorization', `Bearer ${token}`)
-    request.header('Accept', 'application/json')
-    request.parseAs('json')
-    return request
-  }
-
-  /**
    * Get Apple Signning Keys to verify token
    * @param token an id_token receoived from Apple
    * @returns signing key
    */
-  protected async getAppleSigningKey(token) {
+  protected async getAppleSigningKey(token): Promise<string> {
     const decodedToken = JWT.decode(token, { complete: true })
     const key = await this.jwksClient?.getSigningKey(decodedToken?.header.kid)
     return (key as CertSigningKey)?.publicKey || (key as RsaSigningKey)?.rsaPublicKey
@@ -125,27 +115,24 @@ export class AppleDriver
   /**
    * Parses user info from the Apple Token
    */
-  protected async getUserInfo(token: string, callback?: (request: ApiRequestContract) => void) {
+  protected async getUserInfo(token: string): Promise<AppleUserContract> {
     const signingKey = await this.getAppleSigningKey(token)
     const decodedUser = JWT.verify(token, signingKey, {
       issuer: 'https://appleid.apple.com',
       audience: this.config.clientId,
     })
-
-    if (typeof callback === 'function') {
-      callback(request)
-    }
+    const firstName = (decodedUser as AppleTokenDecoded)?.user?.name?.firstName || ''
+    const lastName = (decodedUser as AppleTokenDecoded)?.user?.name?.lastName || ''
 
     return {
       id: (decodedUser as AppleTokenDecoded).sub,
       avatarUrl: null,
       original: null,
       nickName: (decodedUser as AppleTokenDecoded).sub,
-      name: `${(decodedUser as AppleTokenDecoded)?.user?.name?.firstName} ${
-        (decodedUser as AppleTokenDecoded)?.user?.name?.lastName
-      }`,
+      name: `${firstName}${lastName ? ` ${lastName}` : ''}`,
       email: (decodedUser as AppleTokenDecoded).email,
-      emailVerificationState: (decodedUser as AppleTokenDecoded).email_verified,
+      emailVerificationState:
+        (decodedUser as AppleTokenDecoded).email_verified === 'true' ? 'verified' : 'unverified',
     }
   }
 
@@ -154,7 +141,7 @@ export class AppleDriver
    * https://developer.apple.com/documentation/sign_in_with_apple/generate_and_validate_tokens
    * @returns clientSecret
    */
-  protected generateClientSecret() {
+  protected generateClientSecret(): string {
     const clientSecret = JWT.sign({}, this.config.key, {
       algorithm: 'ES256',
       keyid: this.config.keyId,
@@ -214,7 +201,7 @@ export class AppleDriver
    */
   public async user(callback?: (request: ApiRequestContract) => void) {
     const token = await this.accessToken(callback)
-    const user = await this.getUserInfo(token.id_token, callback)
+    const user = await this.getUserInfo(token.id_token)
 
     return {
       ...user,
@@ -225,8 +212,8 @@ export class AppleDriver
   /**
    * Finds the user by the access token
    */
-  public async userFromToken(token: string, callback?: (request: ApiRequestContract) => void) {
-    const user = await this.getUserInfo(token, callback)
+  public async userFromToken(token: string) {
+    const user = await this.getUserInfo(token)
 
     return {
       ...user,
