@@ -644,13 +644,13 @@ declare module '@ioc:Adonis/Addons/Ally' {
     email: string
     email_verified: 'verified' | 'unverified'
     user?: {
-      email: string
+      email?: string
       name?: {
         firstName: string
         lastName: string
       }
     }
-    is_private_email: string
+    is_private_email: boolean
     auth_time: number
     nonce_supported: boolean
   }
@@ -667,7 +667,6 @@ declare module '@ioc:Adonis/Addons/Ally' {
     keyId: string
     key: string | Buffer
     scopes?: LiteralStringUnion<AppleScopes>[]
-    usePopup?: boolean
   }
 
   export interface AppleDriverContract extends AllyDriverContract<AppleToken, AppleScopes> {
