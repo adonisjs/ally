@@ -77,7 +77,7 @@ export class DiscordDriver
     /**
      * Define user defined scopes or the default one's
      */
-    request.scopes(this.config.scopes || ['email'])
+    request.scopes(this.config.scopes || ['identify', 'email'])
 
     request.param('response_type', 'code')
     request.param('grant_type', 'authorization_code')
