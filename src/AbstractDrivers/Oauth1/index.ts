@@ -37,19 +37,19 @@ export abstract class Oauth1Driver<Token extends Oauth1AccessToken, Scopes exten
    * driver. One option is to prefix the driver name. For example:
    * `twitter_oauth_token`
    */
-  protected abstract oauthTokenCookieName = 'oauth_token'
+  protected abstract oauthTokenCookieName: string
 
   /**
    * Name of the "oauth_token" param. This is the query string value post
    * authorization redirect
    */
-  protected abstract oauthTokenParamName = 'oauth_token'
+  protected abstract oauthTokenParamName: string
 
   /**
    * Name of the "oauth_verifier" param. This is the query string value post
    * authorization redirect
    */
-  protected abstract oauthTokenVerifierName = 'oauth_verifier'
+  protected abstract oauthTokenVerifierName: string
 
   /**
    * The parameter name from which to fetch the error message or error code
@@ -57,7 +57,7 @@ export abstract class Oauth1Driver<Token extends Oauth1AccessToken, Scopes exten
    *
    * You must check the auth provider docs to find it
    */
-  protected abstract errorParamName = 'error'
+  protected abstract errorParamName: string
 
   /**
    * Request token URL for the auth provider. The initial set of tokens

@@ -42,7 +42,7 @@ export abstract class Oauth2Driver<Token extends Oauth2AccessToken, Scopes exten
    * driver. One option is to prefix the driver name. For example:
    * `gh_oauth_state`
    */
-  protected abstract stateCookieName = 'oauth_state'
+  protected abstract stateCookieName: string
 
   /**
    * The parameter in which to send the state to the oauth provider. The same
@@ -50,7 +50,7 @@ export abstract class Oauth2Driver<Token extends Oauth2AccessToken, Scopes exten
    *
    * You must check the auth provider docs to find it
    */
-  protected abstract stateParamName = 'state'
+  protected abstract stateParamName: string
 
   /**
    * The parameter name from which to fetch the error message or error code
@@ -58,7 +58,7 @@ export abstract class Oauth2Driver<Token extends Oauth2AccessToken, Scopes exten
    *
    * You must check the auth provider docs to find it
    */
-  protected abstract errorParamName = 'error'
+  protected abstract errorParamName: string
 
   /**
    * The parameter name from which to fetch the authorization code. It is usually
@@ -66,7 +66,7 @@ export abstract class Oauth2Driver<Token extends Oauth2AccessToken, Scopes exten
    *
    * You must check the auth provider docs to find it
    */
-  protected abstract codeParamName = 'code'
+  protected abstract codeParamName: string
 
   /**
    * Authorization URL for the auth provider. The user will be redirected
