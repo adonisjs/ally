@@ -661,7 +661,7 @@ declare module '@ioc:Adonis/Addons/Ally' {
   }
 
   /**
-   * Extra options available for Spotify
+   * Extra options available for Twitch
    */
   export type TwitchDriverConfig = Oauth2ClientConfig & {
     driver: 'twitch'
