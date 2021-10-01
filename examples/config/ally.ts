@@ -44,6 +44,12 @@ const allyConfig: AllyConfig = {
     clientSecret: Env.get('SPOTIFY_CLIENT_SECRET'),
     callbackUrl: `http://localhost:${Env.get('PORT')}/spotify/callback`,
   },
+  twitch: {
+    driver: 'twitch',
+    clientId: Env.get('TWITCH_CLIENT_ID'),
+    clientSecret: Env.get('TWITCH_CLIENT_SECRET'),
+    callbackUrl: `http://localhost:${Env.get('PORT')}/twitch/callback`,
+  },
 }
 
 export default allyConfig

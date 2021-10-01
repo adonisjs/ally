@@ -67,3 +67,9 @@ export const spotify = {
   ACCESS_TOKEN_URL: 'https://accounts.spotify.com/api/token',
   USER_INFO_URL: 'https://api.spotify.com/v1/me',
 }
+
+export const twitch = {
+  AUTHORIZE_URL: 'https://id.twitch.tv/oauth2/authorize',
+  ACCESS_TOKEN_URL: 'https://id.twitch.tv/oauth2/token',
+  USER_INFO_URL: 'https://api.twitch.tv/helix/users',
+}

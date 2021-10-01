@@ -605,6 +605,74 @@ declare module '@ioc:Adonis/Addons/Ally' {
   }
 
   /**
+   * ----------------------------------------
+   * Twitch driver
+   * ----------------------------------------
+   */
+
+  /**
+   * Available twitch scopes
+   * https://dev.twitch.tv/docs/authentication
+   */
+  export type TwitchScopes =
+    | 'analytics:read:extensions'
+    | 'analytics:read:games'
+    | 'bits:read'
+    | 'channel:edit:commercial'
+    | 'channel:manage:broadcast'
+    | 'channel:manage:extensions'
+    | 'channel:manage:polls'
+    | 'channel:manage:predictions'
+    | 'channel:manage:redemptions'
+    | 'channel:manage:schedule'
+    | 'channel:manage:videos'
+    | 'channel:read:editors'
+    | 'channel:read:goals'
+    | 'channel:read:hype_train'
+    | 'channel:read:polls'
+    | 'channel:read:predictions'
+    | 'channel:read:redemptions'
+    | 'channel:read:stream_key'
+    | 'channel:read:subscriptions'
+    | 'clips:edit'
+    | 'moderation:read'
+    | 'moderator:manage:automod'
+    | 'user:edit'
+    | 'user:edit:follows'
+    | 'user:manage:blocked_users'
+    | 'user:read:blocked_users'
+    | 'user:read:broadcast'
+    | 'user:read:email'
+    | 'user:read:follows'
+    | 'user:read:subscriptions'
+
+  /**
+   * Shape of the Twitch access token
+   */
+  export type TwitchToken = {
+    token: Exclude<Oauth2AccessToken['token'], undefined>
+    access_token: string
+    type: Exclude<Oauth2AccessToken['type'], undefined>
+    refreshToken: string
+    expires_in: number
+    expiresAt: Exclude<Oauth2AccessToken['expiresAt'], undefined>
+    scopes: LiteralStringUnion<TwitchScopes>[]
+    token_type: string
+  }
+
+  /**
+   * Extra options available for Spotify
+   */
+  export type TwitchDriverConfig = Oauth2ClientConfig & {
+    driver: 'twitch'
+    scopes?: LiteralStringUnion<TwitchScopes>[]
+  }
+
+  export interface TwitchDriverContract extends AllyDriverContract<TwitchToken, TwitchScopes> {
+    version: 'oauth2'
+  }
+
+  /**
    * END OF DRIVERS
    */
 

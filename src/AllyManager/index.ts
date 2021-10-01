@@ -22,6 +22,7 @@ import {
   LinkedInDriverConfig,
   FacebookDriverConfig,
   SpotifyDriverConfig,
+  TwitchDriverConfig,
 } from '@ioc:Adonis/Addons/Ally'
 
 import { Ally } from '../Ally'
@@ -115,6 +116,15 @@ export class AllyManager implements AllyManagerContract {
   }
 
   /**
+   * Make the twitch driver
+   */
+
+  protected makeTwitch(config: TwitchDriverConfig, ctx: HttpContextContract) {
+    const { TwitchDriver } = require('../Drivers/Twitch')
+    return new TwitchDriver(ctx, config)
+  }
+
+  /**
    * Makes an instance of the extended driver
    */
   protected makeExtendedDriver(mapping: string, config: any, ctx: HttpContextContract) {
@@ -146,6 +156,8 @@ export class AllyManager implements AllyManagerContract {
         return this.makeFacebook(config, ctx)
       case 'spotify':
         return this.makeSpotify(config, ctx)
+      case 'twitch':
+        return this.makeTwitch(config, ctx)
       default:
         return this.makeExtendedDriver(mapping, config, ctx)
     }

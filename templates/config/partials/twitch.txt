@@ -1,0 +1,12 @@
+  /*
+  |--------------------------------------------------------------------------
+  | Twitch driver
+  |--------------------------------------------------------------------------
+  */
+  twitch: {
+    driver: 'twitch',
+    clientId: Env.get('{{ envVars.twitch.clientId }}'),
+    clientSecret: Env.get('{{ envVars.twitch.clientSecret }}'),
+    callbackUrl: 'http://localhost:3333/twitch/callback',
+  },
+
