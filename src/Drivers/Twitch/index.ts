@@ -1,20 +1,7 @@
-/*
-|--------------------------------------------------------------------------
-| Ally Oauth driver
-|--------------------------------------------------------------------------
-|
-| This is a dummy implementation of the Oauth driver. Make sure you
-|
-| - Got through every line of code
-| - Read every comment
-|
-*/
-
 import { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import {
   TwitchToken,
   TwitchScopes,
-  // AllyUserContract,
   TwitchDriverConfig,
   ApiRequestContract,
   TwitchDriverContract,
