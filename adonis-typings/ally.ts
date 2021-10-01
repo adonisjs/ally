@@ -650,14 +650,11 @@ declare module '@ioc:Adonis/Addons/Ally' {
    * Shape of the Twitch access token
    */
   export type TwitchToken = {
-    token: Exclude<Oauth2AccessToken['token'], undefined>
-    access_token: string
-    type: Exclude<Oauth2AccessToken['type'], undefined>
+    token: string
     refreshToken: string
-    expires_in: number
     expiresAt: Exclude<Oauth2AccessToken['expiresAt'], undefined>
     scopes: LiteralStringUnion<TwitchScopes>[]
-    token_type: string
+    type: string
   }
 
   /**
