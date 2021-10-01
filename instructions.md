@@ -45,7 +45,7 @@ SPOTIFY_CLIENT_ID: Env.schema.string(),
 SPOTIFY_CLIENT_SECRET: Env.schema.string(),
 ```
 
-### Variables for Spotify provider
+### Variables for Twitch provider
 
 ```ts
 TWITCH_CLIENT_ID: Env.schema.string(),
