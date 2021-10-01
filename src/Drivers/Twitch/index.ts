@@ -90,7 +90,6 @@ export class TwitchDriver
     request.header('Client-id', this.config.clientId)
     request.header('Accept', 'application/json')
     request.parseAs('json')
-    console.log(request)
     return request
   }
 
