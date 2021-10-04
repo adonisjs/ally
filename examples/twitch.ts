@@ -27,7 +27,6 @@ Route.get('/twitch/callback', async ({ ally, request }) => {
     }
 
     if (twitch.hasError()) {
-      console.log('shit')
       return twitch.getError()
     }
 
