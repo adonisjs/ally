@@ -28,6 +28,7 @@ export class DiscordDriver
   protected accessTokenUrl = 'https://discord.com/api/oauth2/token'
   protected authorizeUrl = 'https://discord.com/api/oauth2/authorize'
   protected userInfoUrl = 'https://discord.com/api/users/@me'
+  protected userGuildsUrl = 'https://discord.com/api/users/@me/guilds'
 
   /**
    * The param name for the authorization code
@@ -154,6 +155,22 @@ export class DiscordDriver
   }
 
   /**
+   * Fetches the user guilds from the Discord API
+   * https://discord.com/developers/docs/resources/user#get-current-user-guilds
+   */
+  protected async getUserGuilds(token: string, callback?: (request: ApiRequestContract) => void) {
+    const request = this.getAuthenticatedRequest(this.userGuildsUrl, token)
+    if (typeof callback === 'function') {
+      callback(request)
+    }
+
+    const body = await request.get()
+    return {
+      guilds: body,
+    }
+  }
+
+  /**
    * Find if the current error code is for access denied
    */
   public accessDenied(): boolean {
@@ -174,6 +191,19 @@ export class DiscordDriver
 
     return {
       ...user,
+      token,
+    }
+  }
+
+  /**
+   * Returns list of guilds with details for the authorized user
+   */
+  public async guilds(callback?: (request: ApiRequestContract) => void) {
+    const token = await this.accessToken(callback)
+    const guilds = await this.getUserGuilds(token.token, callback)
+
+    return {
+      ...guilds,
       token,
     }
   }
