@@ -154,14 +154,18 @@ export abstract class Oauth1Driver<Token extends Oauth1AccessToken, Scopes exten
     /**
      * Read and cache in-memory
      */
-    this.oauthTokenCookieValue = this.ctx.request.encryptedCookie(this.oauthTokenCookieName)
-    this.oauthSecretCookieValue = this.ctx.request.encryptedCookie(this.oauthSecretCookieName)
+    this.oauthTokenCookieValue = this.ctx.request.encryptedCookie(this.oauthTokenCookieName, null)
+    this.oauthSecretCookieValue = this.ctx.request.encryptedCookie(this.oauthSecretCookieName, null)
 
     /**
      * Clear cookies
      */
-    this.ctx.response.clearCookie(this.oauthTokenCookieName)
-    this.ctx.response.clearCookie(this.oauthSecretCookieName)
+    if (this.oauthTokenCookieValue) {
+      this.ctx.response.clearCookie(this.oauthTokenCookieName)
+    }
+    if (this.oauthSecretCookieValue) {
+      this.ctx.response.clearCookie(this.oauthSecretCookieName)
+    }
   }
 
   /**

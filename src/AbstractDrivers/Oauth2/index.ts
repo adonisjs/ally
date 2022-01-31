@@ -148,8 +148,10 @@ export abstract class Oauth2Driver<Token extends Oauth2AccessToken, Scopes exten
       return
     }
 
-    this.stateCookieValue = this.ctx.request.encryptedCookie(this.stateCookieName)
-    this.ctx.response.clearCookie(this.stateCookieName)
+    this.stateCookieValue = this.ctx.request.encryptedCookie(this.stateCookieName, null)
+    if (this.stateCookieValue) {
+      this.ctx.response.clearCookie(this.stateCookieName)
+    }
   }
 
   /**
