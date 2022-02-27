@@ -81,7 +81,7 @@
 		"anyBranch": false
 	},
 	"dependencies": {
-		"@poppinss/oauth-client": "^3.0.1",
+		"@poppinss/oauth-client": "^4.0.0",
 		"@poppinss/utils": "^3.2.0"
 	},
 	"peerDependencies": {
