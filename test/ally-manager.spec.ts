@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-import test from 'japa'
+import { test } from '@japa/runner'
 import { Ally } from '../src/Ally'
 import { AllyManager } from '../src/AllyManager'
 import { GithubDriver } from '../src/Drivers/Github'
@@ -15,11 +15,11 @@ import { GithubDriver } from '../src/Drivers/Github'
 import { setup, fs } from '../test-helpers'
 
 test.group('AllyManager', (group) => {
-  group.after(async () => {
+  group.teardown(async () => {
     await fs.cleanup()
   })
 
-  test('make instance of a mapping', async (assert) => {
+  test('make instance of a mapping', async ({ assert }) => {
     const app = await setup(true)
     const manager = new AllyManager(app, {
       github: {
@@ -31,7 +31,7 @@ test.group('AllyManager', (group) => {
     assert.instanceOf(manager.makeMapping(HttpContext.create('/', {}), 'github'), GithubDriver)
   })
 
-  test('register provider as singleton', async (assert) => {
+  test('register provider as singleton', async ({ assert }) => {
     const app = await setup(true)
     assert.strictEqual(
       app.container.resolveBinding('Adonis/Addons/Ally'),
@@ -39,14 +39,14 @@ test.group('AllyManager', (group) => {
     )
   })
 
-  test('add ally getter to http context', async (assert) => {
+  test('add ally getter to http context', async ({ assert }) => {
     const app = await setup(true)
     const HttpContext = app.container.resolveBinding('Adonis/Core/HttpContext')
 
     assert.instanceOf(HttpContext.create('/', {}).ally, Ally)
   })
 
-  test('extend ally manager to add custom drivers', async (assert) => {
+  test('extend ally manager to add custom drivers', async ({ assert }) => {
     const app = await setup(true)
     class MyCustomDriver {}
 
