@@ -17,7 +17,7 @@
 	"scripts": {
 		"mrm": "mrm --preset=@adonisjs/mrm-preset",
 		"pretest": "npm run lint",
-		"test": "node -r ts-node/register/transpile-only .bin/test.ts",
+		"test": "node -r @adonisjs/require-ts/build/register bin/test.ts",
 		"clean": "del-cli build",
 		"start": "node -r @adonisjs/assembler/build/register examples/app.ts",
 		"copyfiles": "copyfiles \"templates/**/*.txt\" \"instructions.md\" build",
@@ -63,7 +63,6 @@
 		"nock": "^13.2.4",
 		"np": "^7.6.0",
 		"prettier": "^2.5.1",
-		"ts-node": "^10.5.0",
 		"typescript": "^4.5.5"
 	},
 	"husky": {
