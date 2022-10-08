@@ -186,6 +186,18 @@ export class GoogleDriver
   }
 
   /**
+   * Get access token
+   */
+  public async accessToken(callback?: (request: ApiRequestContract) => void): Promise<GoogleToken> {
+    const token = await super.accessToken(callback)
+
+    return {
+      ...token,
+      idToken: token.id_token,
+    }
+  }
+
+  /**
    * Returns details for the authorized user
    */
   public async user(callback?: (request: ApiRequestContract) => void) {
