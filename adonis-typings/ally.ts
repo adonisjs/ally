@@ -370,7 +370,10 @@ declare module '@ioc:Adonis/Addons/Ally' {
    * Shape of the Google access token
    */
   export type GoogleToken = Oauth2AccessToken & {
-    // @deprecated Use `idToken` instead
+    /**
+     * @deprecated
+     * Use `idToken` instead
+     */
     id_token: string
     idToken: string
     grantedScopes: string[]
