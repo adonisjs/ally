@@ -1,0 +1,12 @@
+---
+to: {{ app.contractsPath('ally.ts') }}
+---
+import allyConfig from '#config/ally'
+
+declare module '@adonisjs/ally/types' {
+  /**
+   * Here we get a list of social providers you have configured inside
+   * the config/ally.ts file.
+   */
+  interface SocialProviders extends InferSocialProviders<typeof allyConfig> {}
+}

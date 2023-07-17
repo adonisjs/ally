@@ -6,12 +6,17 @@
   "main": "build/index.js",
   "files": [
     "build/src",
+    "build/stubs",
+    "build/providers",
     "build/index.d.ts",
-    "build/index.js"
+    "build/index.js",
+    "build/configure.d.ts",
+    "build/configure.js"
   ],
   "exports": {
     ".": "./build/index.js",
-    "./types": "./build/src/types.js"
+    "./types": "./build/src/types.js",
+    "./ally_provider": "./build/providers/ally_provider.js"
   },
   "engines": {
     "node": ">=18.16.0"
@@ -21,10 +26,10 @@
     "test": "c8 npm run quick:test",
     "clean": "del-cli build",
     "typecheck": "tsc --noEmit",
-    "start": "node -r @adonisjs/assembler/build/register examples/app.ts",
-    "copyfiles": "copyfiles \"templates/**/*.txt\" \"instructions.md\" build",
+    "start": "node --loader=ts-node/esm examples/app.ts",
+    "copy:templates": "copyfiles \"stubs/**/*.stub\" build",
     "compile": "npm run lint && npm run clean && tsc",
-    "build": "npm run compile && npm run copyfiles",
+    "build": "npm run compile && npm run copy:templates",
     "prepublishOnly": "npm run build",
     "lint": "eslint . --ext=.ts",
     "format": "prettier --write .",

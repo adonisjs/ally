@@ -1,0 +1,7 @@
+---
+to: {{ app.configPath('ally.ts') }}
+---
+import { defineConfig } from '@adonisjs/ally'
+import env from '#start/env'
+
+export default defineConfig({})
