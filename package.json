@@ -36,7 +36,7 @@
     "release": "np",
     "version": "npm run build",
     "sync-labels": "github-label-sync --labels .github/labels.json adonisjs/ally",
-    "quick:test": "node --loader=ts-node/esm bin/test.ts"
+    "quick:test": "node --enable-source-maps --loader=ts-node/esm bin/test.ts"
   },
   "keywords": [
     "adonis",
@@ -54,6 +54,7 @@
     "@commitlint/cli": "^17.6.6",
     "@commitlint/config-conventional": "^17.6.6",
     "@japa/assert": "^2.0.0-1",
+    "@japa/expect-type": "^2.0.0-0",
     "@japa/runner": "^3.0.0-6",
     "@swc/core": "^1.3.69",
     "@types/node": "^20.4.2",
@@ -71,6 +72,7 @@
     "typescript": "^5.1.6"
   },
   "dependencies": {
+    "@japa/file-system": "^2.0.0-1",
     "@poppinss/oauth-client": "^5.1.0-3",
     "@poppinss/utils": "^6.5.0-3"
   },
@@ -107,7 +109,10 @@
       "html"
     ],
     "exclude": [
-      "tests/**"
+      "tests/**",
+      "src/drivers/**",
+      "src/abstract_drivers/**",
+      "stubs/**"
     ]
   }
 }

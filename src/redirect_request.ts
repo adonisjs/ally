@@ -24,6 +24,10 @@ export class RedirectRequest<Scopes extends string> extends UrlBuilder {
     this.#scopeSeparator = scopeSeparator
   }
 
+  /**
+   * Register a custom function to transform scopes. Exposed for drivers
+   * to implement.
+   */
   transformScopes(callback: (scopes: LiteralStringUnion<Scopes>[]) => string[]): this {
     this.#scopesTransformer = callback
     return this
@@ -42,14 +46,6 @@ export class RedirectRequest<Scopes extends string> extends UrlBuilder {
   }
 
   /**
-   * Clear existing scopes
-   */
-  clearScopes(): this {
-    this.clearParam(this.#scopeParamName)
-    return this
-  }
-
-  /**
    * Merge to existing scopes
    */
   mergeScopes(scopes: LiteralStringUnion<Scopes>[]): this {
@@ -57,10 +53,23 @@ export class RedirectRequest<Scopes extends string> extends UrlBuilder {
       scopes = this.#scopesTransformer(scopes)
     }
 
-    const params = this.getParams()
-    const mergedScopes = (params[this.#scopeParamName] || []).concat(scopes)
-    this.scopes(mergedScopes)
+    const existingScopes = this.getParams()[this.#scopeParamName]
+    const scopesString = scopes.join(this.#scopeSeparator)
 
+    if (!existingScopes) {
+      this.param(this.#scopeParamName, scopesString)
+      return this
+    }
+
+    this.param(this.#scopeParamName, `${existingScopes}${this.#scopeSeparator}${scopesString}`)
+    return this
+  }
+
+  /**
+   * Clear existing scopes
+   */
+  clearScopes(): this {
+    this.clearParam(this.#scopeParamName)
     return this
   }
 }

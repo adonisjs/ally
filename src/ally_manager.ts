@@ -47,6 +47,9 @@ export class AllyManager<KnownSocialProviders extends Record<string, AllyManager
       )
     }
 
-    return driver(this.#ctx) as ReturnType<KnownSocialProviders[SocialProvider]>
+    const driverInstance = driver(this.#ctx) as ReturnType<KnownSocialProviders[SocialProvider]>
+    this.#driversCache.set(provider, driverInstance)
+
+    return driverInstance
   }
 }

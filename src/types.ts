@@ -208,7 +208,6 @@ export type DiscordToken = {
  * Extra options available for Discord
  */
 export type DiscordDriverConfig = Oauth2ClientConfig & {
-  driver: 'discord'
   userInfoUrl?: string
   scopes?: LiteralStringUnion<DiscordScopes>[]
   prompt?: 'consent' | 'none'
@@ -278,7 +277,6 @@ export type GithubToken = {
  * Extra options available for Github
  */
 export type GithubDriverConfig = Oauth2ClientConfig & {
-  driver: 'github'
   login?: string
   scopes?: LiteralStringUnion<GithubScopes>[]
   allowSignup?: boolean
@@ -310,7 +308,6 @@ export type TwitterToken = {
  * Extra options available for twitter
  */
 export type TwitterDriverConfig = Oauth1ClientConfig & {
-  driver: 'twitter'
   userInfoUrl?: string
 }
 
@@ -383,7 +380,6 @@ export type GoogleToken = Oauth2AccessToken & {
  * https://developers.google.com/identity/protocols/oauth2/openid-connect#re-consent
  */
 export type GoogleDriverConfig = Oauth2ClientConfig & {
-  driver: 'google'
   userInfoUrl?: string
 
   /**
@@ -436,7 +432,6 @@ export type LinkedInToken = {
  * https://docs.microsoft.com/en-us/linkedin/shared/authentication/authorization-code-flow?context=linkedin%2Fcontext&tabs=HTTPS#step-2-request-an-authorization-code
  */
 export type LinkedInDriverConfig = Oauth2ClientConfig & {
-  driver: 'linkedin'
   userInfoUrl?: string
   userEmailUrl?: string
 
@@ -534,7 +529,6 @@ export type FacebookToken = {
  * https://developers.facebook.com/docs/facebook-login/manually-build-a-login-flow
  */
 export type FacebookDriverConfig = Oauth2ClientConfig & {
-  driver: 'facebook'
   userInfoUrl?: string
 
   /**
@@ -596,7 +590,6 @@ export type SpotifyToken = {
  * Extra options available for Spotify
  */
 export type SpotifyDriverConfig = Oauth2ClientConfig & {
-  driver: 'spotify'
   scopes?: LiteralStringUnion<SpotifyScopes>[]
   showDialog?: boolean
 }
