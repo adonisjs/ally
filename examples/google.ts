@@ -7,17 +7,17 @@
  * file that was distributed with this source code.
  */
 
-import Route from '@ioc:Adonis/Core/Route'
+import router from '@adonisjs/core/services/router'
 
-Route.get('google', async ({ response }) => {
+router.get('google', async ({ response }) => {
   return response.send('<a href="/google/redirect"> Login with Google </a>')
 })
 
-Route.get('/google/redirect', async ({ ally }) => {
+router.get('/google/redirect', async ({ ally }) => {
   return ally.use('google').redirect()
 })
 
-Route.get('/google/callback', async ({ ally }) => {
+router.get('/google/callback', async ({ ally }) => {
   try {
     const google = ally.use('google')
     if (google.accessDenied()) {

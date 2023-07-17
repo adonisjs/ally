@@ -7,19 +7,19 @@
  * file that was distributed with this source code.
  */
 
-import Route from '@ioc:Adonis/Core/Route'
+import router from '@adonisjs/core/services/router'
 
-Route.get('github', async ({ response }) => {
+router.get('github', async ({ response }) => {
   return response.send('<a href="/github/redirect"> Login with Github </a>')
 })
 
-Route.get('/github/redirect', async ({ ally }) => {
+router.get('/github/redirect', async ({ ally }) => {
   return ally.use('github').redirect((request) => {
     request.scopes(['read:user'])
   })
 })
 
-Route.get('/github/callback', async ({ ally }) => {
+router.get('/github/callback', async ({ ally }) => {
   try {
     const gh = ally.use('github')
     if (gh.accessDenied()) {
@@ -37,7 +37,7 @@ Route.get('/github/callback', async ({ ally }) => {
     const user = await gh.user()
     return user
   } catch (error) {
-    console.log({ error: error.response })
+    console.log({ error: error.cause })
     throw error
   }
 })

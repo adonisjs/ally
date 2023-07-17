@@ -7,19 +7,19 @@
  * file that was distributed with this source code.
  */
 
-import Route from '@ioc:Adonis/Core/Route'
+import router from '@adonisjs/core/services/router'
 
-Route.get('facebook', async ({ response }) => {
+router.get('facebook', async ({ response }) => {
   return response.send('<a href="/facebook/redirect"> Login with facebook </a>')
 })
 
-Route.get('/facebook/redirect', async ({ ally }) => {
+router.get('/facebook/redirect', async ({ ally }) => {
   return ally.use('facebook').redirect((request) => {
     request.scopes(['email'])
   })
 })
 
-Route.get('/facebook/callback', async ({ ally }) => {
+router.get('/facebook/callback', async ({ ally }) => {
   try {
     const facebook = ally.use('facebook')
     if (facebook.accessDenied()) {

@@ -7,19 +7,19 @@
  * file that was distributed with this source code.
  */
 
-import Route from '@ioc:Adonis/Core/Route'
+import router from '@adonisjs/core/services/router'
 
-Route.get('discord', async ({ response }) => {
+router.get('discord', async ({ response }) => {
   return response.send('<a href="/discord/redirect"> Login with Discord</a>')
 })
 
-Route.get('/discord/redirect', async ({ ally }) => {
+router.get('/discord/redirect', async ({ ally }) => {
   return ally.use('discord').redirect((request) => {
     request.scopes(['identify', 'guilds'])
   })
 })
 
-Route.get('/discord/callback', async ({ ally }) => {
+router.get('/discord/callback', async ({ ally }) => {
   try {
     const discord = ally.use('discord')
     if (discord.accessDenied()) {
