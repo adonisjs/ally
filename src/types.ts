@@ -627,4 +627,5 @@ export type AllyManagerDriverFactory = (ctx: HttpContext) => AllyDriverContract<
  * from the config file
  */
 export interface SocialProviders {}
-export type InferSocialProviders<T extends Record<string, AllyManagerDriverFactory>> = T
+export type InferSocialProviders<T extends { services: Record<string, AllyManagerDriverFactory> }> =
+  T['services']
