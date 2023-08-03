@@ -47,7 +47,7 @@
   "author": "adonisjs,virk",
   "license": "MIT",
   "devDependencies": {
-    "@adonisjs/core": "^6.1.5-8",
+    "@adonisjs/core": "^6.1.5-15",
     "@adonisjs/eslint-config": "^1.1.8",
     "@adonisjs/prettier-config": "^1.1.8",
     "@adonisjs/tsconfig": "^1.1.8",
@@ -75,6 +75,9 @@
   "dependencies": {
     "@poppinss/oauth-client": "^5.1.0-3",
     "@poppinss/utils": "^6.5.0-3"
+  },
+  "peerDependencies": {
+    "@adonisjs/core": "^6.1.5-15"
   },
   "repository": {
     "type": "git",

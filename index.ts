@@ -11,7 +11,7 @@ import './src/bindings/types.js'
 
 export { HttpClient as ApiRequest } from '@poppinss/oauth-client'
 
-export * as errors from './src/exceptions.js'
+export * as errors from './src/errors.js'
 export { AllyManager } from './src/ally_manager.js'
 export { defineConfig } from './src/define_config.js'
 export { RedirectRequest } from './src/redirect_request.js'

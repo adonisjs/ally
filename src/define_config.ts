@@ -25,17 +25,24 @@ export function defineConfig<
 >(
   config: KnownSocialProviders
 ): {
-  [K in keyof KnownSocialProviders]: (
-    ctx: HttpContext
-  ) => ReturnType<AllyDriversList[KnownSocialProviders[K]['driver']]>
+  services: {
+    [K in keyof KnownSocialProviders]: (
+      ctx: HttpContext
+    ) => ReturnType<AllyDriversList[KnownSocialProviders[K]['driver']]>
+  }
+  driversInUse: Set<keyof AllyDriversList>
 } {
   /**
-   * Converting user defined config to an object of providers
+   * Converting user defined config to an object of services
    * that can be injected into the AllyManager class
    */
-  const managerHashers = Object.keys(config).reduce(
+  const driversInUse: Set<keyof AllyDriversList> = new Set()
+
+  const services = Object.keys(config).reduce(
     (result, provider: keyof KnownSocialProviders) => {
       const providerConfig = config[provider]
+      driversInUse.add(providerConfig.driver)
+
       result[provider] = (ctx: HttpContext) => {
         return allyDriversCollection.create<KnownSocialProviders[typeof provider]['driver']>(
           providerConfig.driver,
@@ -52,5 +59,8 @@ export function defineConfig<
     }
   )
 
-  return managerHashers
+  return {
+    services,
+    driversInUse,
+  }
 }

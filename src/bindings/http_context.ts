@@ -11,18 +11,16 @@ import { HttpContext } from '@adonisjs/core/http'
 
 import './types.js'
 import { AllyManager } from '../ally_manager.js'
-import { AllyManagerDriverFactory, SocialProviders } from '../types.js'
+import { AllyManagerDriverFactory } from '../types.js'
 
 /**
  * Extends HttpContext class with the ally getter
  */
-export function extendHttpContext(
-  config: SocialProviders extends Record<string, AllyManagerDriverFactory> ? SocialProviders : never
-) {
+export function extendHttpContext(config: Record<string, AllyManagerDriverFactory>) {
   HttpContext.getter(
     'ally',
     function (this: HttpContext) {
-      return new AllyManager(config, this)
+      return new AllyManager(config, this) as unknown as HttpContext['ally']
     },
     true
   )

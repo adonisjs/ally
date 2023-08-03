@@ -20,7 +20,7 @@ import {
   RedirectRequestContract,
 } from '../types.js'
 
-import * as errors from '../exceptions.js'
+import * as errors from '../errors.js'
 import { RedirectRequest } from '../redirect_request.js'
 
 /**

@@ -12,8 +12,15 @@ import { HttpContextFactory } from '@adonisjs/core/factories/http'
 
 import { AllyManager } from '../src/ally_manager.js'
 import { GithubDriver } from '../src/drivers/github.js'
+import allyDriversCollection from '../src/drivers_collection.js'
 
-test.group('Ally manager', () => {
+test.group('Ally manager', (group) => {
+  group.each.setup(() => {
+    return () => {
+      allyDriversCollection.list = {}
+    }
+  })
+
   test('create an instance of a driver', ({ assert, expectTypeOf }) => {
     const ctx = new HttpContextFactory().create()
 

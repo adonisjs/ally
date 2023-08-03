@@ -9,29 +9,53 @@
 
 import { RuntimeException } from '@poppinss/utils'
 import type { HttpContext } from '@adonisjs/core/http'
-
 import type { AllyDriversList } from './types.js'
-import { GithubDriver } from './drivers/github.js'
-import { GoogleDriver } from './drivers/google.js'
-import { SpotifyDriver } from './drivers/spotify.js'
-import { TwitterDriver } from './drivers/twitter.js'
-import { DiscordDriver } from './drivers/discord.js'
-import { FacebookDriver } from './drivers/facebook.js'
-import { LinkedInDriver } from './drivers/linked_in.js'
 
+/**
+ * A global collection of ally drivers.
+ */
 class AllyDriversCollection {
+  async registerBundledDrivers(drivers: Set<keyof AllyDriversList>) {
+    if (drivers.has('discord') && !this.list['discord']) {
+      const { DiscordDriver } = await import('../src/drivers/discord.js')
+      this.extend('discord', (config, ctx) => new DiscordDriver(ctx, config))
+    }
+
+    if (drivers.has('facebook') && !this.list['facebook']) {
+      const { FacebookDriver } = await import('../src/drivers/facebook.js')
+      this.extend('facebook', (config, ctx) => new FacebookDriver(ctx, config))
+    }
+
+    if (drivers.has('github') && !this.list['github']) {
+      const { GithubDriver } = await import('../src/drivers/github.js')
+      this.extend('github', (config, ctx) => new GithubDriver(ctx, config))
+    }
+
+    if (drivers.has('google') && !this.list['google']) {
+      const { GoogleDriver } = await import('../src/drivers/google.js')
+      this.extend('google', (config, ctx) => new GoogleDriver(ctx, config))
+    }
+
+    if (drivers.has('linkedin') && !this.list['linkedin']) {
+      const { LinkedInDriver } = await import('../src/drivers/linked_in.js')
+      this.extend('linkedin', (config, ctx) => new LinkedInDriver(ctx, config))
+    }
+
+    if (drivers.has('spotify') && !this.list['spotify']) {
+      const { SpotifyDriver } = await import('../src/drivers/spotify.js')
+      this.extend('spotify', (config, ctx) => new SpotifyDriver(ctx, config))
+    }
+
+    if (drivers.has('twitter') && !this.list['twitter']) {
+      const { TwitterDriver } = await import('../src/drivers/twitter.js')
+      this.extend('twitter', (config, ctx) => new TwitterDriver(ctx, config))
+    }
+  }
+
   /**
    * List of registered drivers
    */
-  list: Partial<AllyDriversList> = {
-    discord: (config, ctx) => new DiscordDriver(ctx, config),
-    facebook: (config, ctx) => new FacebookDriver(ctx, config),
-    github: (config, ctx) => new GithubDriver(ctx, config),
-    google: (config, ctx) => new GoogleDriver(ctx, config),
-    linkedin: (config, ctx) => new LinkedInDriver(ctx, config),
-    spotify: (config, ctx) => new SpotifyDriver(ctx, config),
-    twitter: (config, ctx) => new TwitterDriver(ctx, config),
-  }
+  list: Partial<AllyDriversList> = {}
 
   /**
    * Extend drivers collection and add a custom

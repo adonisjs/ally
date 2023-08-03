@@ -7,7 +7,9 @@
  * file that was distributed with this source code.
  */
 
-import { ApplicationService } from '@adonisjs/core/types'
+import type { ApplicationService } from '@adonisjs/core/types'
+
+import driversList from '../src/drivers_collection.js'
 import { extendHttpContext } from '../src/bindings/http_context.js'
 
 /**
@@ -17,6 +19,8 @@ export default class AllyProvider {
   constructor(protected app: ApplicationService) {}
 
   async boot() {
-    extendHttpContext(this.app.config.get('ally'))
+    const config = this.app.config.get<any>('ally')
+    extendHttpContext(config.services)
+    await driversList.registerBundledDrivers(config.driversInUse)
   }
 }

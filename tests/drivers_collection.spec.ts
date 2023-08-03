@@ -18,7 +18,7 @@ import { SpotifyDriver } from '../src/drivers/spotify.js'
 import { FacebookDriver } from '../src/drivers/facebook.js'
 import { LinkedInDriver } from '../src/drivers/linked_in.js'
 import allyDriversCollection from '../src/drivers_collection.js'
-import {
+import type {
   DiscordDriverContract,
   FacebookDriverContract,
   GithubDriverContract,
@@ -28,9 +28,18 @@ import {
   TwitterDriverContract,
 } from '../src/types.js'
 
-test.group('Drivers Collection', () => {
-  test('create an instance of a unknown driver', ({ assert, expectTypeOf }) => {
+test.group('Drivers Collection', (group) => {
+  group.each.setup(() => {
+    return () => {
+      allyDriversCollection.list = {}
+    }
+  })
+
+  test('create an instance of a known driver', async ({ assert, expectTypeOf }) => {
     const ctx = new HttpContextFactory().create()
+    await allyDriversCollection.registerBundledDrivers(
+      new Set(['github', 'google', 'discord', 'facebook', 'linkedin', 'spotify', 'twitter'])
+    )
 
     const discord = allyDriversCollection.create(
       'discord',
