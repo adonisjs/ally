@@ -10,12 +10,15 @@
 import { RuntimeException } from '@poppinss/utils'
 import type { HttpContext } from '@adonisjs/core/http'
 import type { AllyDriversList } from './types.js'
+import debug from './debug.js'
 
 /**
  * A global collection of ally drivers.
  */
 class AllyDriversCollection {
   async registerBundledDrivers(drivers: Set<keyof AllyDriversList>) {
+    debug('drivers in use %O', drivers)
+
     if (drivers.has('discord') && !this.list['discord']) {
       const { DiscordDriver } = await import('../src/drivers/discord.js')
       this.extend('discord', (config, ctx) => new DiscordDriver(ctx, config))
@@ -65,6 +68,7 @@ class AllyDriversCollection {
     driverName: Name,
     factoryCallback: AllyDriversList[Name]
   ): this {
+    debug('registering %s driver', driverName)
     this.list[driverName] = factoryCallback
     return this
   }
@@ -84,6 +88,7 @@ class AllyDriversCollection {
       )
     }
 
+    debug('creating instance of %s driver', name)
     return driverFactory(config as any, ctx) as ReturnType<AllyDriversList[Name]>
   }
 }
