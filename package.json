@@ -47,6 +47,7 @@
   "author": "adonisjs,virk",
   "license": "MIT",
   "devDependencies": {
+    "@adonisjs/assembler": "^6.1.3-18",
     "@adonisjs/core": "^6.1.5-18",
     "@adonisjs/eslint-config": "^1.1.8",
     "@adonisjs/prettier-config": "^1.1.8",

@@ -37,7 +37,11 @@ test.group('Configure', (group) => {
     const app = ignitor.createApp('web')
     await app.init()
     await app.boot()
+
     await fs.create('.env', '')
+    await fs.createJson('tsconfig.json', {})
+    await fs.create('start/env.ts', `export default Env.create(new URL('./'), {})`)
+    await fs.create('adonisrc.ts', `export default defineConfig({})`)
 
     const ace = await app.container.make('ace')
     ace.prompt.trap('Select the social auth providers you plan to use').chooseOptions([2, 4])
@@ -46,8 +50,8 @@ test.group('Configure', (group) => {
     await command.exec()
 
     await assert.fileExists('config/ally.ts')
-    await assert.fileExists('.adonisrc.json')
-    await assert.fileContains('.adonisrc.json', '@adonisjs/ally/ally_provider')
+    await assert.fileExists('adonisrc.ts')
+    await assert.fileContains('adonisrc.ts', '@adonisjs/ally/ally_provider')
     await assert.fileContains('config/ally.ts', 'defineConfig')
     await assert.fileContains('config/ally.ts', `declare module '@adonisjs/ally/types' {`)
     await assert.fileContains(
@@ -72,5 +76,10 @@ test.group('Configure', (group) => {
     await assert.fileContains('.env', 'GITHUB_CLIENT_SECRET')
     await assert.fileContains('.env', 'LINKEDIN_CLIENT_ID')
     await assert.fileContains('.env', 'LINKEDIN_CLIENT_SECRET')
+
+    await assert.fileContains('start/env.ts', 'GITHUB_CLIENT_ID: Env.schema.string()')
+    await assert.fileContains('start/env.ts', 'GITHUB_CLIENT_SECRET: Env.schema.string()')
+    await assert.fileContains('start/env.ts', 'LINKEDIN_CLIENT_ID: Env.schema.string()')
+    await assert.fileContains('start/env.ts', 'LINKEDIN_CLIENT_SECRET: Env.schema.string()')
   })
 })

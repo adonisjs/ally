@@ -44,4 +44,16 @@ export async function configure(command: Configure) {
       return result
     }, {})
   )
+
+  /**
+   * Define env variables validation for the selected providers
+   */
+  await command.defineEnvValidations({
+    variables: providers.reduce<Record<string, string>>((result, provider) => {
+      result[`${provider.toUpperCase()}_CLIENT_ID`] = 'Env.schema.string()'
+      result[`${provider.toUpperCase()}_CLIENT_SECRET`] = 'Env.schema.string()'
+      return result
+    }, {}),
+    leadingComment: 'Variables for configuring ally package',
+  })
 }
