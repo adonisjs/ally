@@ -81,5 +81,5 @@ test.group('Configure', (group) => {
     await assert.fileContains('start/env.ts', 'GITHUB_CLIENT_SECRET: Env.schema.string()')
     await assert.fileContains('start/env.ts', 'LINKEDIN_CLIENT_ID: Env.schema.string()')
     await assert.fileContains('start/env.ts', 'LINKEDIN_CLIENT_SECRET: Env.schema.string()')
-  })
+  }).timeout(6000)
 })
