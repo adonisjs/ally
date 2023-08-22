@@ -8,7 +8,7 @@
  */
 
 import { Exception } from '@poppinss/utils'
-import { Oauth1Client } from '@poppinss/oauth-client'
+import { Oauth1Client } from '@poppinss/oauth-client/oauth1'
 import type { HttpContext } from '@adonisjs/core/http'
 
 import {
