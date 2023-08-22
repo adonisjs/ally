@@ -27,17 +27,19 @@ export async function configure(command: Configure) {
     }),
   })
 
+  const codemods = await command.createCodemods()
+
   /**
    * Publish provider
    */
-  await command.updateRcFile((rcFile) => {
+  await codemods.updateRcFile((rcFile) => {
     rcFile.addProvider('@adonisjs/ally/ally_provider')
   })
 
   /**
    * Define env variables for the selected providers
    */
-  await command.defineEnvVariables(
+  await codemods.defineEnvVariables(
     providers.reduce<Record<string, string>>((result, provider) => {
       result[`${provider.toUpperCase()}_CLIENT_ID`] = ''
       result[`${provider.toUpperCase()}_CLIENT_SECRET`] = ''
@@ -48,7 +50,7 @@ export async function configure(command: Configure) {
   /**
    * Define env variables validation for the selected providers
    */
-  await command.defineEnvValidations({
+  await codemods.defineEnvValidations({
     variables: providers.reduce<Record<string, string>>((result, provider) => {
       result[`${provider.toUpperCase()}_CLIENT_ID`] = 'Env.schema.string()'
       result[`${provider.toUpperCase()}_CLIENT_SECRET`] = 'Env.schema.string()'
