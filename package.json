@@ -48,7 +48,7 @@
   "license": "MIT",
   "devDependencies": {
     "@adonisjs/assembler": "^6.1.3-25",
-    "@adonisjs/core": "^6.1.5-28",
+    "@adonisjs/core": "^6.1.5-29",
     "@adonisjs/eslint-config": "^1.1.8",
     "@adonisjs/prettier-config": "^1.1.8",
     "@adonisjs/tsconfig": "^1.1.8",
@@ -78,7 +78,7 @@
     "@poppinss/utils": "^6.5.0"
   },
   "peerDependencies": {
-    "@adonisjs/core": "^6.1.5-28"
+    "@adonisjs/core": "^6.1.5-29"
   },
   "repository": {
     "type": "git",

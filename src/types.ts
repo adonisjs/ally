@@ -7,9 +7,9 @@
  * file that was distributed with this source code.
  */
 
-import { HttpContext } from '@adonisjs/core/http'
-import { ConfigProvider } from '@adonisjs/core/types'
-import {
+import type { HttpContext } from '@adonisjs/core/http'
+import type { ConfigProvider } from '@adonisjs/core/types'
+import type {
   Oauth2AccessToken,
   Oauth1RequestToken,
   Oauth1AccessToken,
@@ -18,7 +18,7 @@ import {
   ApiRequestContract,
   RedirectRequestContract as ClientRequestContract,
 } from '@poppinss/oauth-client/types'
-import { AllyManager } from './ally_manager.js'
+import type { AllyManager } from './ally_manager.js'
 
 export type { Oauth2AccessToken }
 export type { Oauth1AccessToken }

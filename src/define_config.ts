@@ -27,7 +27,7 @@ import type {
   LinkedInDriverConfig,
   FacebookDriverConfig,
   AllyManagerDriverFactory,
-} from '@adonisjs/ally/types'
+} from './types.js'
 
 /**
  * Shape of config after it has been resolved from
