@@ -8,12 +8,12 @@
  */
 
 import type { HttpContext } from '@adonisjs/core/http'
-import {
+import type { HttpClient } from '@poppinss/oauth-client'
+import type {
   GoogleToken,
   GoogleScopes,
   GoogleDriverConfig,
   ApiRequestContract,
-  GoogleDriverContract,
   RedirectRequestContract,
 } from '../types.js'
 import { Oauth2Driver } from '../abstract_drivers/oauth2.js'
@@ -59,10 +59,7 @@ const SCOPE_PREFIXES = {
 /**
  * Google driver to login user via Google
  */
-export class GoogleDriver
-  extends Oauth2Driver<GoogleToken, GoogleScopes>
-  implements GoogleDriverContract
-{
+export class GoogleDriver extends Oauth2Driver<GoogleToken, GoogleScopes> {
   protected accessTokenUrl = 'https://oauth2.googleapis.com/token'
   protected authorizeUrl = 'https://accounts.google.com/o/oauth2/v2/auth'
   protected userInfoUrl = 'https://www.googleapis.com/oauth2/v3/userinfo'
@@ -146,7 +143,7 @@ export class GoogleDriver
   /**
    * Returns the HTTP request with the authorization header set
    */
-  protected getAuthenticatedRequest(url: string, token: string) {
+  protected getAuthenticatedRequest(url: string, token: string): HttpClient {
     const request = this.httpClient(url)
     request.header('Authorization', `Bearer ${token}`)
     request.header('Accept', 'application/json')

@@ -8,13 +8,13 @@
  */
 
 import type { HttpContext } from '@adonisjs/core/http'
-import {
+import type { HttpClient } from '@poppinss/oauth-client'
+import type {
   GithubToken,
   GithubScopes,
   AllyUserContract,
   GithubDriverConfig,
   ApiRequestContract,
-  GithubDriverContract,
   RedirectRequestContract,
 } from '../types.js'
 import { Oauth2Driver } from '../abstract_drivers/oauth2.js'
@@ -22,10 +22,7 @@ import { Oauth2Driver } from '../abstract_drivers/oauth2.js'
 /**
  * Github driver to login user via Github
  */
-export class GithubDriver
-  extends Oauth2Driver<GithubToken, GithubScopes>
-  implements GithubDriverContract
-{
+export class GithubDriver extends Oauth2Driver<GithubToken, GithubScopes> {
   protected accessTokenUrl = 'https://github.com/login/oauth/access_token'
   protected authorizeUrl = 'https://github.com/login/oauth/authorize'
   protected userInfoUrl = 'https://api.github.com/user'
@@ -119,7 +116,7 @@ export class GithubDriver
   /**
    * Returns the HTTP request with the authorization header set
    */
-  protected getAuthenticatedRequest(url: string, token: string) {
+  protected getAuthenticatedRequest(url: string, token: string): HttpClient {
     const request = this.httpClient(url)
     request.header('Authorization', `token ${token}`)
     request.header('Accept', 'application/json')

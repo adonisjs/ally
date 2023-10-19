@@ -8,6 +8,7 @@
  */
 
 import { HttpContext } from '@adonisjs/core/http'
+import { ConfigProvider } from '@adonisjs/core/types'
 import {
   Oauth2AccessToken,
   Oauth1RequestToken,
@@ -17,6 +18,7 @@ import {
   ApiRequestContract,
   RedirectRequestContract as ClientRequestContract,
 } from '@poppinss/oauth-client/types'
+import { AllyManager } from './ally_manager.js'
 
 export type { Oauth2AccessToken }
 export type { Oauth1AccessToken }
@@ -158,6 +160,12 @@ export interface AllyDriverContract<
 }
 
 /**
+ * The manager driver factory method is called by the AllyManager to create
+ * an instance of a driver during an HTTP request
+ */
+export type AllyManagerDriverFactory = (ctx: HttpContext) => AllyDriverContract<any, any>
+
+/**
  * ----------------------------------------
  * Discord driver
  * ----------------------------------------
@@ -214,10 +222,6 @@ export type DiscordDriverConfig = Oauth2ClientConfig & {
   guildId?: `${bigint}` // a snowflake
   disableGuildSelect?: boolean
   permissions?: number
-}
-
-export interface DiscordDriverContract extends AllyDriverContract<DiscordToken, DiscordScopes> {
-  version: 'oauth2'
 }
 
 /**
@@ -284,10 +288,6 @@ export type GithubDriverConfig = Oauth2ClientConfig & {
   userEmailUrl?: string
 }
 
-export interface GithubDriverContract extends AllyDriverContract<GithubToken, GithubScopes> {
-  version: 'oauth2'
-}
-
 /**
  * ----------------------------------------
  * Twitter driver
@@ -309,10 +309,6 @@ export type TwitterToken = {
  */
 export type TwitterDriverConfig = Oauth1ClientConfig & {
   userInfoUrl?: string
-}
-
-export interface TwitterDriverContract extends AllyDriverContract<TwitterToken, string> {
-  version: 'oauth1'
 }
 
 /**
@@ -392,10 +388,6 @@ export type GoogleDriverConfig = Oauth2ClientConfig & {
   display?: 'page' | 'popup' | 'touch' | 'wrap'
 }
 
-export interface GoogleDriverContract extends AllyDriverContract<GoogleToken, GoogleScopes> {
-  version: 'oauth2'
-}
-
 /**
  * ----------------------------------------
  * LinkedIn driver
@@ -439,10 +431,6 @@ export type LinkedInDriverConfig = Oauth2ClientConfig & {
    * Can be configured at runtime
    */
   scopes?: LiteralStringUnion<LinkedInScopes>[]
-}
-
-export interface LinkedInDriverContract extends AllyDriverContract<LinkedInToken, LinkedInScopes> {
-  version: 'oauth2'
 }
 
 /**
@@ -540,10 +528,6 @@ export type FacebookDriverConfig = Oauth2ClientConfig & {
   authType?: string
 }
 
-export interface FacebookDriverContract extends AllyDriverContract<FacebookToken, FacebookScopes> {
-  version: 'oauth2'
-}
-
 /**
  * ----------------------------------------
  * Spotify driver
@@ -593,39 +577,23 @@ export type SpotifyDriverConfig = Oauth2ClientConfig & {
   scopes?: LiteralStringUnion<SpotifyScopes>[]
   showDialog?: boolean
 }
-
-export interface SpotifyDriverContract extends AllyDriverContract<SpotifyToken, SpotifyScopes> {
-  version: 'oauth2'
-}
-
 /**
  * END OF DRIVERS
  */
-
-/**
- * List of known ally drivers. The list can be extended using
- * declaration merging
- */
-export interface AllyDriversList {
-  discord: (config: DiscordDriverConfig, ctx: HttpContext) => DiscordDriverContract
-  facebook: (config: FacebookDriverConfig, ctx: HttpContext) => FacebookDriverContract
-  github: (config: GithubDriverConfig, ctx: HttpContext) => GithubDriverContract
-  google: (config: GoogleDriverConfig, ctx: HttpContext) => GoogleDriverContract
-  linkedin: (config: LinkedInDriverConfig, ctx: HttpContext) => LinkedInDriverContract
-  spotify: (config: SpotifyDriverConfig, ctx: HttpContext) => SpotifyDriverContract
-  twitter: (config: TwitterDriverConfig, ctx: HttpContext) => TwitterDriverContract
-}
-
-/**
- * The manager driver factory method is called by the AllyManager to create
- * an instance of a driver during an HTTP request
- */
-export type AllyManagerDriverFactory = (ctx: HttpContext) => AllyDriverContract<any, any>
 
 /**
  * Social providers are inferred inside the user application
  * from the config file
  */
 export interface SocialProviders {}
-export type InferSocialProviders<T extends { services: Record<string, AllyManagerDriverFactory> }> =
-  T['services']
+export type InferSocialProviders<
+  T extends ConfigProvider<Record<string, AllyManagerDriverFactory>>,
+> = Awaited<ReturnType<T['resolver']>>
+
+/**
+ * Ally service is shared with the HTTP context
+ */
+export interface AllyService
+  extends AllyManager<
+    SocialProviders extends Record<string, AllyManagerDriverFactory> ? SocialProviders : never
+  > {}

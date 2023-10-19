@@ -8,12 +8,13 @@
  */
 
 import type { HttpContext } from '@adonisjs/core/http'
-import {
+import type { HttpClient } from '@poppinss/oauth-client'
+
+import type {
   DiscordScopes,
   DiscordToken,
   ApiRequestContract,
   DiscordDriverConfig,
-  DiscordDriverContract,
   RedirectRequestContract,
 } from '../types.js'
 import { Oauth2Driver } from '../abstract_drivers/oauth2.js'
@@ -21,10 +22,7 @@ import { Oauth2Driver } from '../abstract_drivers/oauth2.js'
 /**
  * Discord driver to login user via Discord
  */
-export class DiscordDriver
-  extends Oauth2Driver<DiscordToken, DiscordScopes>
-  implements DiscordDriverContract
-{
+export class DiscordDriver extends Oauth2Driver<DiscordToken, DiscordScopes> {
   protected accessTokenUrl = 'https://discord.com/api/oauth2/token'
   protected authorizeUrl = 'https://discord.com/api/oauth2/authorize'
   protected userInfoUrl = 'https://discord.com/api/users/@me'
@@ -117,7 +115,7 @@ export class DiscordDriver
   /**
    * Returns the HTTP request with the authorization header set
    */
-  protected getAuthenticatedRequest(url: string, token: string) {
+  protected getAuthenticatedRequest(url: string, token: string): HttpClient {
     const request = this.httpClient(url)
     request.header('Authorization', `Bearer ${token}`)
     request.header('Accept', 'application/json')

@@ -13,17 +13,13 @@ import {
   AllyUserContract,
   ApiRequestContract,
   TwitterDriverConfig,
-  TwitterDriverContract,
 } from '../types.js'
 import { Oauth1Driver } from '../abstract_drivers/oauth1.js'
 
 /**
  * Twitter driver to login user via twitter
  */
-export class TwitterDriver
-  extends Oauth1Driver<TwitterToken, string>
-  implements TwitterDriverContract
-{
+export class TwitterDriver extends Oauth1Driver<TwitterToken, string> {
   protected requestTokenUrl = 'https://api.twitter.com/oauth/request_token'
   protected authorizeUrl = 'https://api.twitter.com/oauth/authenticate'
   protected accessTokenUrl = 'https://api.twitter.com/oauth/access_token'

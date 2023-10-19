@@ -56,21 +56,19 @@ test.group('Configure', (group) => {
     await assert.fileContains('config/ally.ts', `declare module '@adonisjs/ally/types' {`)
     await assert.fileContains(
       'config/ally.ts',
-      `github: {
-    driver: 'github',
+      `github: services.github({
     clientId: env.get('GITHUB_CLIENT_ID'),
     clientSecret: env.get('GITHUB_CLIENT_SECRET'),
     callbackUrl: '',
-  },`
+  }),`
     )
     await assert.fileContains(
       'config/ally.ts',
-      `linkedin: {
-    driver: 'linkedin',
+      `linkedin: services.linkedin({
     clientId: env.get('LINKEDIN_CLIENT_ID'),
     clientSecret: env.get('LINKEDIN_CLIENT_SECRET'),
     callbackUrl: '',
-  },`
+  }),`
     )
     await assert.fileContains('.env', 'GITHUB_CLIENT_ID')
     await assert.fileContains('.env', 'GITHUB_CLIENT_SECRET')
@@ -81,5 +79,5 @@ test.group('Configure', (group) => {
     await assert.fileContains('start/env.ts', 'GITHUB_CLIENT_SECRET: Env.schema.string()')
     await assert.fileContains('start/env.ts', 'LINKEDIN_CLIENT_ID: Env.schema.string()')
     await assert.fileContains('start/env.ts', 'LINKEDIN_CLIENT_SECRET: Env.schema.string()')
-  }).timeout(6000)
+  }).timeout(1000 * 60)
 })

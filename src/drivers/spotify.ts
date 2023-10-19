@@ -8,12 +8,12 @@
  */
 
 import type { HttpContext } from '@adonisjs/core/http'
-import {
+import type { HttpClient } from '@poppinss/oauth-client'
+import type {
   SpotifyScopes,
   SpotifyToken,
   ApiRequestContract,
   SpotifyDriverConfig,
-  SpotifyDriverContract,
   RedirectRequestContract,
 } from '../types.js'
 import { Oauth2Driver } from '../abstract_drivers/oauth2.js'
@@ -21,10 +21,7 @@ import { Oauth2Driver } from '../abstract_drivers/oauth2.js'
 /**
  * Spotify driver to login user via Spotify
  */
-export class SpotifyDriver
-  extends Oauth2Driver<SpotifyToken, SpotifyScopes>
-  implements SpotifyDriverContract
-{
+export class SpotifyDriver extends Oauth2Driver<SpotifyToken, SpotifyScopes> {
   protected accessTokenUrl = 'https://accounts.spotify.com/api/token'
   protected authorizeUrl = 'https://accounts.spotify.com/authorize'
   protected userInfoUrl = 'https://api.spotify.com/v1/me'
@@ -96,7 +93,7 @@ export class SpotifyDriver
   /**
    * Returns the HTTP request with the authorization header set
    */
-  protected getAuthenticatedRequest(url: string, token: string) {
+  protected getAuthenticatedRequest(url: string, token: string): HttpClient {
     const request = this.httpClient(url)
     request.header('Authorization', `Bearer ${token}`)
     request.header('Accept', 'application/json')

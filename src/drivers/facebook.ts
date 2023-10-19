@@ -7,15 +7,15 @@
  * file that was distributed with this source code.
  */
 
+import type { HttpClient } from '@poppinss/oauth-client'
 import type { HttpContext } from '@adonisjs/core/http'
-import {
+import type {
   FacebookToken,
   FacebookScopes,
   LiteralStringUnion,
   ApiRequestContract,
   FacebookDriverConfig,
   FacebookProfileFields,
-  FacebookDriverContract,
   RedirectRequestContract,
 } from '../types.js'
 import { Oauth2Driver } from '../abstract_drivers/oauth2.js'
@@ -23,10 +23,7 @@ import { Oauth2Driver } from '../abstract_drivers/oauth2.js'
 /**
  * Facebook driver to login user via Facebook
  */
-export class FacebookDriver
-  extends Oauth2Driver<FacebookToken, FacebookScopes>
-  implements FacebookDriverContract
-{
+export class FacebookDriver extends Oauth2Driver<FacebookToken, FacebookScopes> {
   protected accessTokenUrl = 'https://graph.facebook.com/v10.0/oauth/access_token'
   protected authorizeUrl = 'https://www.facebook.com/v10.0/dialog/oauth'
   protected userInfoUrl = 'https://graph.facebook.com/v10.0/me'
@@ -114,7 +111,7 @@ export class FacebookDriver
   /**
    * Returns the HTTP request with the authorization header set
    */
-  protected getAuthenticatedRequest(url: string, token: string) {
+  protected getAuthenticatedRequest(url: string, token: string): HttpClient {
     const request = this.httpClient(url)
     request.header('Authorization', `Bearer ${token}`)
     request.header('Accept', 'application/json')

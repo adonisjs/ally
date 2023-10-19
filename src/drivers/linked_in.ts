@@ -9,12 +9,12 @@
 
 import { Exception } from '@poppinss/utils'
 import type { HttpContext } from '@adonisjs/core/http'
-import {
+import type { HttpClient } from '@poppinss/oauth-client'
+import type {
   LinkedInToken,
   LinkedInScopes,
   ApiRequestContract,
   LinkedInDriverConfig,
-  LinkedInDriverContract,
   RedirectRequestContract,
 } from '../types.js'
 import { Oauth2Driver } from '../abstract_drivers/oauth2.js'
@@ -22,10 +22,7 @@ import { Oauth2Driver } from '../abstract_drivers/oauth2.js'
 /**
  * LinkedIn driver to login user via LinkedIn
  */
-export class LinkedInDriver
-  extends Oauth2Driver<LinkedInToken, LinkedInScopes>
-  implements LinkedInDriverContract
-{
+export class LinkedInDriver extends Oauth2Driver<LinkedInToken, LinkedInScopes> {
   protected accessTokenUrl = 'https://www.linkedin.com/oauth/v2/accessToken'
   protected authorizeUrl = 'https://www.linkedin.com/oauth/v2/authorization'
   protected userInfoUrl = 'https://api.linkedin.com/v2/me'
@@ -92,7 +89,7 @@ export class LinkedInDriver
   /**
    * Returns the HTTP request with the authorization header set
    */
-  protected getAuthenticatedRequest(url: string, token: string) {
+  protected getAuthenticatedRequest(url: string, token: string): HttpClient {
     const request = this.httpClient(url)
     request.header('Authorization', `Bearer ${token}`)
     request.header('Accept', 'application/json')
