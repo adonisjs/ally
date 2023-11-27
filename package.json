@@ -5,13 +5,10 @@
   "type": "module",
   "main": "build/index.js",
   "files": [
-    "build/src",
-    "build/stubs",
-    "build/providers",
-    "build/index.d.ts",
-    "build/index.js",
-    "build/configure.d.ts",
-    "build/configure.js"
+    "build",
+    "!build/bin",
+    "!build/examples",
+    "!build/tests"
   ],
   "exports": {
     ".": "./build/index.js",
@@ -27,9 +24,11 @@
     "clean": "del-cli build",
     "typecheck": "tsc --noEmit",
     "start": "node --loader=ts-node/esm examples/app.ts",
-    "copy:templates": "copyfiles \"stubs/**/*.stub\" build",
-    "compile": "npm run lint && npm run clean && tsc",
-    "build": "npm run compile && npm run copy:templates",
+    "copy:templates": "copyfiles --up=1 \"stubs/**/*.stub\" build",
+    "precompile": "npm run lint && npm run clean",
+    "compile": "tsup-node && tsc --emitDeclarationOnly --declaration",
+    "postcompile": "npm run copy:templates",
+    "build": "npm run compile",
     "prepublishOnly": "npm run build",
     "lint": "eslint . --ext=.ts",
     "format": "prettier --write .",
@@ -71,6 +70,7 @@
     "np": "^8.0.4",
     "prettier": "^3.1.0",
     "ts-node": "^10.9.1",
+    "tsup": "^8.0.1",
     "typescript": "5.2.2"
   },
   "dependencies": {
@@ -118,5 +118,17 @@
       "src/abstract_drivers/**",
       "stubs/**"
     ]
+  },
+  "tsup": {
+    "entry": [
+      "index.ts",
+      "./providers/ally_provider.ts"
+    ],
+    "outDir": "./build",
+    "clean": true,
+    "format": "esm",
+    "dts": false,
+    "sourcemap": true,
+    "target": "esnext"
   }
 }
