@@ -2,7 +2,7 @@
 
 <br />
 
-[![gh-workflow-image]][gh-workflow-url] [![npm-image]][npm-url] ![][typescript-image] [![license-image]][license-url] [![snyk-image]][snyk-url]
+[![gh-workflow-image]][gh-workflow-url] [![npm-image]][npm-url] ![][typescript-image] [![license-image]][license-url]
 
 ## Introduction
 Social authentication provider for AdonisJS. Supports *Github*, Google, Twitter, Facebook, Discord, Spotify, and LinkedIn.
@@ -21,8 +21,8 @@ In order to ensure that the AdonisJS community is welcoming to all, please revie
 ## License
 AdonisJS ally is open-sourced software licensed under the [MIT license](LICENSE.md).
 
-[gh-workflow-image]: https://img.shields.io/github/actions/workflow/status/adonisjs/ally/test.yml?style=for-the-badge
-[gh-workflow-url]: https://github.com/adonisjs/ally/actions/workflows/test.yml "Github action"
+[gh-workflow-image]: https://img.shields.io/github/actions/workflow/status/adonisjs/ally/checks.yml?style=for-the-badge
+[gh-workflow-url]: https://github.com/adonisjs/ally/actions/workflows/checks.yml "Github action"
 
 [npm-image]: https://img.shields.io/npm/v/@adonisjs/ally/latest.svg?style=for-the-badge&logo=npm
 [npm-url]: https://www.npmjs.com/package/@adonisjs/ally/v/latest "npm"
@@ -31,6 +31,3 @@ AdonisJS ally is open-sourced software licensed under the [MIT license](LICENSE.
 
 [license-url]: LICENSE.md
 [license-image]: https://img.shields.io/github/license/adonisjs/ally?style=for-the-badge
-
-[snyk-image]: https://img.shields.io/snyk/vulnerabilities/github/adonisjs/ally?label=Snyk%20Vulnerabilities&style=for-the-badge
-[snyk-url]: https://snyk.io/test/github/adonisjs/ally?targetFile=package.json "snyk"
