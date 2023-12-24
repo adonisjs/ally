@@ -8,7 +8,7 @@
 Social authentication provider for AdonisJS. Supports *Github*, Google, Twitter, Facebook, Discord, Spotify, and LinkedIn.
 
 ## Official Documentation
-The documentation is available on the [AdonisJS website](https://docs.adonisjs.com/guides/auth/social)
+The documentation is available on the [AdonisJS website](https://docs.adonisjs.com/guides/social_auth)
 
 ## Contributing
 One of the primary goals of AdonisJS is to have a vibrant community of users and contributors who believes in the principles of the framework.
