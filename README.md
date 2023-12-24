@@ -5,7 +5,7 @@
 [![gh-workflow-image]][gh-workflow-url] [![npm-image]][npm-url] ![][typescript-image] [![license-image]][license-url]
 
 ## Introduction
-Social authentication provider for AdonisJS. Supports *Github*, Google, Twitter, Facebook, Discord, Spotify, and LinkedIn.
+Social authentication provider for AdonisJS. Supports **Github**, **Google**, **Twitter**, **Facebook**, **Discord**, **Spotify**, and **LinkedIn**.
 
 ## Official Documentation
 The documentation is available on the [AdonisJS website](https://docs.adonisjs.com/guides/social_auth)
