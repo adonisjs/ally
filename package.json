@@ -90,11 +90,11 @@
   "homepage": "https://github.com/adonisjs/adonis-ally#readme",
   "publishConfig": {
     "access": "public",
-    "tag": "next"
+    "tag": "latest"
   },
   "np": {
     "message": "chore(release): %s",
-    "tag": "next",
+    "tag": "latest",
     "branch": "main",
     "anyBranch": false
   },
