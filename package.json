@@ -121,7 +121,8 @@
   },
   "tsup": {
     "entry": [
-      "index.ts",
+      "./index.ts",
+      "./src/types.ts",
       "./providers/ally_provider.ts"
     ],
     "outDir": "./build",
