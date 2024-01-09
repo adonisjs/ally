@@ -15,9 +15,6 @@ import { AllyManager } from '../src/ally_manager.js'
 import { defineConfig, services } from '../src/define_config.js'
 
 const BASE_URL = new URL('./tmp/', import.meta.url)
-const IMPORTER = (filePath: string) => {
-  return import(filePath)
-}
 
 test.group('Ally provider', () => {
   test('define HttpContext.ally property', async ({ assert }) => {
@@ -40,9 +37,7 @@ test.group('Ally provider', () => {
           }),
         },
       })
-      .create(BASE_URL, {
-        importer: IMPORTER,
-      })
+      .create(BASE_URL)
 
     const app = ignitor.createApp('web')
     await app.init()
