@@ -1,23 +1,23 @@
 /*
  * @adonisjs/ally
  *
- * (c) Harminder Virk <virk@adonisjs.com>
+ * (c) AdonisJS
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
-import Route from '@ioc:Adonis/Core/Route'
+import router from '@adonisjs/core/services/router'
 
-Route.get('linkedin', async ({ response }) => {
+router.get('linkedin', async ({ response }) => {
   return response.send('<a href="/linkedin/redirect"> Login with linkedin </a>')
 })
 
-Route.get('/linkedin/redirect', async ({ ally }) => {
+router.get('/linkedin/redirect', async ({ ally }) => {
   return ally.use('linkedin').redirect()
 })
 
-Route.get('/linkedin/callback', async ({ ally }) => {
+router.get('/linkedin/callback', async ({ ally }) => {
   try {
     const linkedin = ally.use('linkedin')
     if (linkedin.accessDenied()) {

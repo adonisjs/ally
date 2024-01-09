@@ -1,18 +1,49 @@
-import { join } from 'path'
-import { createServer } from 'http'
-import { Application } from '@adonisjs/core/build/standalone'
+import { Env } from '@adonisjs/core/env'
+import { IgnitorFactory } from '@adonisjs/core/factories'
+
+const APP_ROOT = new URL('./', import.meta.url)
+const IMPORTER = (filePath: string) => {
+  if (filePath.startsWith('./') || filePath.startsWith('../')) {
+    return import(new URL(filePath, APP_ROOT).href)
+  }
+  return import(filePath)
+}
+
+await Env.create(new URL('../', APP_ROOT), {})
+const allyConfig = await import('./config/ally.js')
 
 async function run() {
-  const app = new Application(join(__dirname, '../'), 'web')
-  await app.setup()
-  await app.registerProviders()
-  await app.bootProviders()
-  await app.requirePreloads()
+  const ignitor = new IgnitorFactory()
+    .withCoreConfig()
+    .withCoreProviders()
+    .merge({
+      config: {
+        ally: allyConfig.default,
+      },
+    })
+    .merge({
+      rcFileContents: {
+        providers: ['../providers/ally_provider.js'],
+        preloads: [
+          './discord.js',
+          './github.js',
+          './twitter.js',
+          './google.js',
+          './linkedin.js',
+          './facebook.js',
+          './spotify.js',
+        ],
+      },
+    })
+    .create(APP_ROOT, {
+      importer: IMPORTER,
+    })
 
-  const server = app.container.use('Adonis/Core/Server')
-  server.optimize()
-  const port = process.env.PORT ? parseInt(process.env.PORT) : 3000
-  createServer(server.handle.bind(server)).listen(port)
+  await ignitor.httpServer().start()
 }
 
 run()
+  .catch(console.error)
+  .then(() => {
+    console.log('ready')
+  })

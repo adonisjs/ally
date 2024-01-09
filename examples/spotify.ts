@@ -1,16 +1,25 @@
-import Route from '@ioc:Adonis/Core/Route'
+/*
+ * @adonisjs/ally
+ *
+ * (c) AdonisJS
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
-Route.get('spotify', async ({ response }) => {
+import router from '@adonisjs/core/services/router'
+
+router.get('spotify', async ({ response }) => {
   return response.send('<a href="/spotify/redirect"> Login with spotify </a>')
 })
 
-Route.get('/spotify/redirect', async ({ ally }) => {
+router.get('/spotify/redirect', async ({ ally }) => {
   return ally.use('spotify').redirect((request) => {
     request.scopes(['user-read-email'])
   })
 })
 
-Route.get('/spotify/callback', async ({ ally }) => {
+router.get('/spotify/callback', async ({ ally }) => {
   try {
     const spotify = ally.use('spotify')
     if (spotify.accessDenied()) {

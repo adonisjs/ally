@@ -1,10 +1,7 @@
 {
-  "extends": "./node_modules/@adonisjs/mrm-preset/_tsconfig",
+  "extends": "@adonisjs/tsconfig/tsconfig.package.json",
   "compilerOptions": {
-    "types": [
-      "@types/node",
-      "@adonisjs/core"
-    ],
-    "skipLibCheck": true
+    "rootDir": "./",
+    "outDir": "./build"
   }
 }

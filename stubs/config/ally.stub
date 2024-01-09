@@ -1,0 +1,21 @@
+{{{
+  exports({ to: app.configPath('ally.ts') })
+}}}
+import env from '#start/env'
+import { defineConfig, services } from '@adonisjs/ally'
+
+const allyConfig = defineConfig({
+{{#each providers as provider}}
+  {{provider.provider}}: services.{{provider.provider}}({
+    clientId: env.get('{{provider.envPrefix}}_CLIENT_ID'),
+    clientSecret: env.get('{{provider.envPrefix}}_CLIENT_SECRET'),
+    callbackUrl: '',
+  }),
+{{/each}}
+})
+
+export default allyConfig
+
+declare module '@adonisjs/ally/types' {
+  interface SocialProviders extends InferSocialProviders<typeof allyConfig> {}
+}
