@@ -11,6 +11,7 @@ export { HttpClient as ApiRequest } from '@poppinss/oauth-client'
 
 export * as errors from './src/errors.js'
 export { configure } from './configure.js'
+export { stubsRoot } from './stubs/main.js'
 export { AllyManager } from './src/ally_manager.js'
 export { defineConfig, services } from './src/define_config.js'
 
