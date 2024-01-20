@@ -13,6 +13,7 @@
   "exports": {
     ".": "./build/index.js",
     "./types": "./build/src/types.js",
+    "./drivers/*": "./build/src/drivers/*.js",
     "./ally_provider": "./build/providers/ally_provider.js"
   },
   "engines": {
@@ -123,6 +124,7 @@
     "entry": [
       "./index.ts",
       "./src/types.ts",
+      "./src/drivers/*.ts",
       "./providers/ally_provider.ts"
     ],
     "outDir": "./build",
