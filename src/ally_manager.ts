@@ -16,16 +16,14 @@ import type { AllyDriverContract, AllyManagerDriverFactory } from './types.js'
  * HTTP request. The drivers are cached during the lifecycle of a request.
  */
 export class AllyManager<KnownSocialProviders extends Record<string, AllyManagerDriverFactory>> {
-  /**
-   * Config with the list of social providers
-   */
-  #config: KnownSocialProviders
   #ctx: HttpContext
   #driversCache: Map<keyof KnownSocialProviders, AllyDriverContract<any, any>> = new Map()
 
-  constructor(config: KnownSocialProviders, ctx: HttpContext) {
+  constructor(
+    public config: KnownSocialProviders,
+    ctx: HttpContext
+  ) {
     this.#ctx = ctx
-    this.#config = config
   }
 
   /**
@@ -38,7 +36,7 @@ export class AllyManager<KnownSocialProviders extends Record<string, AllyManager
       return this.#driversCache.get(provider) as ReturnType<KnownSocialProviders[SocialProvider]>
     }
 
-    const driver = this.#config[provider]
+    const driver = this.config[provider]
     if (!driver) {
       throw new RuntimeException(
         `Unknown ally provider "${String(
