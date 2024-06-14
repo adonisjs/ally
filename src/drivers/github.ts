@@ -142,7 +142,7 @@ export class GithubDriver extends Oauth2Driver<GithubToken, GithubScopes> {
       emailVerificationState: (body.email
         ? 'verified'
         : 'unsupported') as AllyUserContract<any>['emailVerificationState'],
-      name: body.name,
+      name: body.name ?? body.login,
       avatarUrl: body.avatar_url,
       original: body,
     }
