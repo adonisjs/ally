@@ -21,6 +21,11 @@ const allyConfig = defineConfig({
     clientSecret: process.env.LINKEDIN_CLIENT_SECRET!,
     callbackUrl: `http://localhost:${process.env.PORT}/linkedin/callback`,
   }),
+  linkedinOpenidConnect: services.linkedinOpenidConnect({
+    clientId: process.env.LINKEDIN_CLIENT_ID!,
+    clientSecret: process.env.LINKEDIN_CLIENT_SECRET!,
+    callbackUrl: `http://localhost:${process.env.PORT}/linkedin/callback`,
+  }),
   twitter: services.twitter({
     clientId: process.env.TWITTER_API_KEY!,
     clientSecret: process.env.TWITTER_APP_SECRET!,

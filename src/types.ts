@@ -435,6 +435,46 @@ export type LinkedInDriverConfig = Oauth2ClientConfig & {
 
 /**
  * ----------------------------------------
+ * LinkedIn openid connect driver
+ * ----------------------------------------
+ */
+
+/**
+ * Shape of the LinkedIn openid connect access token
+ */
+export type LinkedInOpenidConnectAccessToken = {
+  token: string
+  type: 'bearer'
+  expiresIn: number
+  expiresAt: Exclude<Oauth2AccessToken['expiresAt'], undefined>
+}
+
+/**
+ * Config accepted by the linkedIn openid connect driver. Most of the options can be
+ * overwritten at runtime
+ * https://learn.microsoft.com/en-us/linkedin/consumer/integrations/self-serve/sign-in-with-linkedin-v2#authenticating-members
+ */
+export type LinkedInOpenidConnectScopes = 'openid' | 'profile' | 'email'
+
+/**
+ * The configuration accepted by the driver implementation.
+ */
+export type LinkedInOpenidConnectDriverConfig = {
+  clientId: string
+  clientSecret: string
+  callbackUrl: string
+  authorizeUrl?: string
+  accessTokenUrl?: string
+  userInfoUrl?: string
+
+  /**
+   * Can be configured at runtime
+   */
+  scopes?: LiteralStringUnion<LinkedInOpenidConnectScopes>[]
+}
+
+/**
+ * ----------------------------------------
  * Facebook driver
  * ----------------------------------------
  */

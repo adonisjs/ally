@@ -30,6 +30,7 @@ async function run() {
           './twitter.js',
           './google.js',
           './linkedin.js',
+          './linkedin_openid_connect.js',
           './facebook.js',
           './spotify.js',
         ],
