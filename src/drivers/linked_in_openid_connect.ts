@@ -1,4 +1,4 @@
-import { Oauth2Driver } from '@adonisjs/ally'
+import { Oauth2Driver } from '../abstract_drivers/oauth2.js'
 import type { HttpContext } from '@adonisjs/core/http'
 import type {
   ApiRequestContract,
