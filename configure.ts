@@ -19,6 +19,7 @@ const AVAILABLE_PROVIDERS = [
   'github',
   'google',
   'linkedin',
+  'linkedinOpenidConnect',
   'spotify',
   'twitter',
 ]

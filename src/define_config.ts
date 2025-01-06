@@ -18,6 +18,7 @@ import type { TwitterDriver } from './drivers/twitter.js'
 import type { DiscordDriver } from './drivers/discord.js'
 import type { FacebookDriver } from './drivers/facebook.js'
 import type { LinkedInDriver } from './drivers/linked_in.js'
+import type { LinkedInOpenidConnectDriver } from './drivers/linked_in_openid_connect.js'
 import type {
   GoogleDriverConfig,
   GithubDriverConfig,
@@ -25,6 +26,7 @@ import type {
   DiscordDriverConfig,
   TwitterDriverConfig,
   LinkedInDriverConfig,
+  LinkedInOpenidConnectDriverConfig,
   FacebookDriverConfig,
   AllyManagerDriverFactory,
 } from './types.js'
@@ -79,6 +81,9 @@ export const services: {
   github: (config: GithubDriverConfig) => ConfigProvider<(ctx: HttpContext) => GithubDriver>
   google: (config: GoogleDriverConfig) => ConfigProvider<(ctx: HttpContext) => GoogleDriver>
   linkedin: (config: LinkedInDriverConfig) => ConfigProvider<(ctx: HttpContext) => LinkedInDriver>
+  linkedinOpenidConnect: (
+    config: LinkedInOpenidConnectDriverConfig
+  ) => ConfigProvider<(ctx: HttpContext) => LinkedInOpenidConnectDriver>
   spotify: (config: SpotifyDriverConfig) => ConfigProvider<(ctx: HttpContext) => SpotifyDriver>
   twitter: (config: TwitterDriverConfig) => ConfigProvider<(ctx: HttpContext) => TwitterDriver>
 } = {
@@ -110,6 +115,12 @@ export const services: {
     return configProvider.create(async () => {
       const { LinkedInDriver } = await import('./drivers/linked_in.js')
       return (ctx) => new LinkedInDriver(ctx, config)
+    })
+  },
+  linkedinOpenidConnect(config) {
+    return configProvider.create(async () => {
+      const { LinkedInOpenidConnectDriver } = await import('./drivers/linked_in_openid_connect.js')
+      return (ctx) => new LinkedInOpenidConnectDriver(ctx, config)
     })
   },
   spotify(config) {

@@ -21,6 +21,7 @@ import { FacebookDriver } from '../src/drivers/facebook.js'
 import { LinkedInDriver } from '../src/drivers/linked_in.js'
 import { SpotifyDriver } from '../src/drivers/spotify.js'
 import { TwitterDriver } from '../src/drivers/twitter.js'
+import { LinkedInOpenidConnectDriver } from '../src/drivers/linked_in_openid_connect.js'
 
 const BASE_URL = new URL('./', import.meta.url)
 const app = new AppFactory().create(BASE_URL, () => {}) as ApplicationService
@@ -140,6 +141,25 @@ test.group('Config services', () => {
     assert.strictEqual(ally.use('linkedin'), ally.use('linkedin'))
     expectTypeOf(ally.use).parameters.toEqualTypeOf<['linkedin']>()
     expectTypeOf(ally.use('linkedin')).toMatchTypeOf<LinkedInDriver>()
+  })
+
+  test('configure linkedin openid connect driver', async ({ assert, expectTypeOf }) => {
+    const managerConfig = await defineConfig({
+      linkedinOpenidConnect: services.linkedinOpenidConnect({
+        clientId: '',
+        clientSecret: '',
+        callbackUrl: '',
+        scopes: ['email', 'profile'],
+      }),
+    }).resolver(app)
+
+    const ctx = new HttpContextFactory().create()
+    const ally = new AllyManager(managerConfig, ctx)
+
+    assert.instanceOf(ally.use('linkedinOpenidConnect'), LinkedInOpenidConnectDriver)
+    assert.strictEqual(ally.use('linkedinOpenidConnect'), ally.use('linkedinOpenidConnect'))
+    expectTypeOf(ally.use).parameters.toEqualTypeOf<['linkedinOpenidConnect']>()
+    expectTypeOf(ally.use('linkedinOpenidConnect')).toMatchTypeOf<LinkedInOpenidConnectDriver>()
   })
 
   test('configure spotify driver', async ({ assert, expectTypeOf }) => {
