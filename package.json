@@ -17,7 +17,7 @@
     "./ally_provider": "./build/providers/ally_provider.js"
   },
   "engines": {
-    "node": ">=18.16.0"
+    "node": ">=20.6.0"
   },
   "scripts": {
     "pretest": "npm run lint",
