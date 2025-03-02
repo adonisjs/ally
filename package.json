@@ -24,7 +24,7 @@
     "test": "c8 npm run quick:test",
     "clean": "del-cli build",
     "typecheck": "tsc --noEmit",
-    "start": "node --loader=ts-node/esm examples/app.ts",
+    "start": "node --import=ts-node-maintained/register/esm examples/app.ts",
     "copy:templates": "copyfiles --up=1 \"stubs/**/*.stub\" build",
     "precompile": "npm run lint && npm run clean",
     "compile": "tsup-node && tsc --emitDeclarationOnly --declaration",
@@ -36,7 +36,7 @@
     "release": "np",
     "version": "npm run build",
     "sync-labels": "github-label-sync --labels .github/labels.json adonisjs/ally",
-    "quick:test": "node --enable-source-maps --loader=ts-node/esm bin/test.ts"
+    "quick:test": "node --enable-source-maps --import=ts-node-maintained/register/esm bin/test.ts"
   },
   "keywords": [
     "adonis",
@@ -70,7 +70,7 @@
     "nock": "^13.5.0",
     "np": "^9.2.0",
     "prettier": "^3.2.4",
-    "ts-node": "^10.9.2",
+    "ts-node-maintained": "^10.9.5",
     "tsup": "^8.0.1",
     "typescript": "^5.3.3"
   },
