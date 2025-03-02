@@ -44,7 +44,10 @@
     "social-auth",
     "oauth"
   ],
-  "author": "adonisjs,virk",
+  "author": "Harminder Virk <virk@adonisjs.com>",
+  "contributors": [
+    "Romain Lanz <romain.lanz@pm.me>"
+  ],
   "license": "MIT",
   "devDependencies": {
     "@adonisjs/assembler": "^7.1.0",
