@@ -86,12 +86,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/adonisjs/adonis-ally.git"
+    "url": "git+https://github.com/adonisjs/ally.git"
   },
   "bugs": {
-    "url": "https://github.com/adonisjs/adonis-ally/issues"
+    "url": "https://github.com/adonisjs/ally/issues"
   },
-  "homepage": "https://github.com/adonisjs/adonis-ally#readme",
+  "homepage": "https://github.com/adonisjs/ally#readme",
   "publishConfig": {
     "provenance": true,
     "access": "public"
