@@ -75,13 +75,15 @@ export class DiscordDriver extends Oauth2Driver<DiscordToken, DiscordScopes> {
    * Configuring the redirect request with defaults
    */
   protected configureRedirectRequest(request: RedirectRequestContract<DiscordScopes>) {
+    request.param('response_type', 'code')
+
     /**
      * Define user defined scopes or the default one's
      */
     request.scopes(this.config.scopes || ['identify', 'email'])
-
-    request.param('response_type', 'code')
-    request.param('grant_type', 'authorization_code')
+    
+    // User installation: the application will be authorized for installation to a user, 
+    // not an entire guild.
     request.param('integration_type', 1)
 
     /**
@@ -89,15 +91,8 @@ export class DiscordDriver extends Oauth2Driver<DiscordToken, DiscordScopes> {
      */
     if (this.config.prompt) {
       request.param('prompt', this.config.prompt)
-    }
-    if (this.config.guildId) {
-      request.param('guild_id', this.config.guildId)
-    }
-    if (this.config.disableGuildSelect !== undefined) {
-      request.param('disable_guild_select', this.config.disableGuildSelect)
-    }
-    if (this.config.permissions !== undefined) {
-      request.param('permissions', this.config.permissions)
+    } else {
+      request.param('prompt', 'consent')
     }
   }
 
