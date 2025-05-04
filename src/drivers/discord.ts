@@ -25,7 +25,7 @@ import { Oauth2Driver } from '../abstract_drivers/oauth2.js'
 export class DiscordDriver extends Oauth2Driver<DiscordToken, DiscordScopes> {
   protected accessTokenUrl = 'https://discord.com/api/oauth2/token'
   protected authorizeUrl = 'https://discord.com/oauth2/authorize'
-  protected userInfoUrl = 'https://discord.com/api/users/@me'
+  protected userInfoUrl = 'https://discord.com/oauth2/@me'
 
   /**
    * The param name for the authorization code
@@ -131,18 +131,18 @@ export class DiscordDriver extends Oauth2Driver<DiscordToken, DiscordScopes> {
 
     const body = await request.get()
     return {
-      id: body.id,
-      name: `${body.username}#${body.discriminator}`,
-      nickName: body.username,
-      avatarUrl: body.avatar
-        ? `https://cdn.discordapp.com/avatars/${body.id}/${body.avatar}.${
-            body.avatar.startsWith('a_') ? 'gif' : 'png'
+      id: body.user.id,
+      name: `${body.user.username}#${body.user.discriminator}`,
+      nickName: body.user.username,
+      avatarUrl: body.user.avatar
+        ? `https://cdn.discordapp.com/avatars/${body.user.id}/${body.user.avatar}.${
+            body.user.avatar.startsWith('a_') ? 'gif' : 'png'
           }`
-        : `https://cdn.discordapp.com/embed/avatars/${body.discriminator % 5}.png`,
-      email: body.email, // May not always be there (requires email scope)
+        : `https://cdn.discordapp.com/embed/avatars/${body.user.discriminator % 5}.png`,
+      email: body.user.email, // May not always be there (requires email scope)
       emailVerificationState:
         'verified' in body
-          ? body.verified
+          ? body.user.verified
             ? ('verified' as const)
             : ('unverified' as const)
           : ('unsupported' as const),
