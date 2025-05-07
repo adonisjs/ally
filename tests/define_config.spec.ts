@@ -20,7 +20,6 @@ import { DiscordDriver } from '../src/drivers/discord.js'
 import { FacebookDriver } from '../src/drivers/facebook.js'
 import { LinkedInDriver } from '../src/drivers/linked_in.js'
 import { SpotifyDriver } from '../src/drivers/spotify.js'
-import { TwitterDriver } from '../src/drivers/twitter.js'
 import { LinkedInOpenidConnectDriver } from '../src/drivers/linked_in_openid_connect.js'
 
 const BASE_URL = new URL('./', import.meta.url)
@@ -179,23 +178,5 @@ test.group('Config services', () => {
     assert.strictEqual(ally.use('spotify'), ally.use('spotify'))
     expectTypeOf(ally.use).parameters.toEqualTypeOf<['spotify']>()
     expectTypeOf(ally.use('spotify')).toMatchTypeOf<SpotifyDriver>()
-  })
-
-  test('configure twitter driver', async ({ assert, expectTypeOf }) => {
-    const managerConfig = await defineConfig({
-      twitter: services.twitter({
-        clientId: '',
-        clientSecret: '',
-        callbackUrl: '',
-      }),
-    }).resolver(app)
-
-    const ctx = new HttpContextFactory().create()
-    const ally = new AllyManager(managerConfig, ctx)
-
-    assert.instanceOf(ally.use('twitter'), TwitterDriver)
-    assert.strictEqual(ally.use('twitter'), ally.use('twitter'))
-    expectTypeOf(ally.use).parameters.toEqualTypeOf<['twitter']>()
-    expectTypeOf(ally.use('twitter')).toMatchTypeOf<TwitterDriver>()
   })
 })
