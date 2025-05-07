@@ -290,29 +290,6 @@ export type GithubDriverConfig = Oauth2ClientConfig & {
 
 /**
  * ----------------------------------------
- * Twitter driver
- * ----------------------------------------
- */
-
-/**
- * Shape of the twitter token
- */
-export type TwitterToken = {
-  token: string
-  secret: string
-  userId: string
-  screenName: string
-}
-
-/**
- * Extra options available for twitter
- */
-export type TwitterDriverConfig = Oauth1ClientConfig & {
-  userInfoUrl?: string
-}
-
-/**
- * ----------------------------------------
  * Google driver
  * ----------------------------------------
  */
