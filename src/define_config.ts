@@ -14,7 +14,6 @@ import type { ConfigProvider } from '@adonisjs/core/types'
 import type { GoogleDriver } from './drivers/google.js'
 import type { GithubDriver } from './drivers/github.js'
 import type { SpotifyDriver } from './drivers/spotify.js'
-import type { TwitterDriver } from './drivers/twitter.js'
 import type { DiscordDriver } from './drivers/discord.js'
 import type { FacebookDriver } from './drivers/facebook.js'
 import type { LinkedInDriver } from './drivers/linked_in.js'
@@ -24,7 +23,6 @@ import type {
   GithubDriverConfig,
   SpotifyDriverConfig,
   DiscordDriverConfig,
-  TwitterDriverConfig,
   LinkedInDriverConfig,
   LinkedInOpenidConnectDriverConfig,
   FacebookDriverConfig,
@@ -85,7 +83,6 @@ export const services: {
     config: LinkedInOpenidConnectDriverConfig
   ) => ConfigProvider<(ctx: HttpContext) => LinkedInOpenidConnectDriver>
   spotify: (config: SpotifyDriverConfig) => ConfigProvider<(ctx: HttpContext) => SpotifyDriver>
-  twitter: (config: TwitterDriverConfig) => ConfigProvider<(ctx: HttpContext) => TwitterDriver>
 } = {
   discord(config) {
     return configProvider.create(async () => {
@@ -127,12 +124,6 @@ export const services: {
     return configProvider.create(async () => {
       const { SpotifyDriver } = await import('./drivers/spotify.js')
       return (ctx) => new SpotifyDriver(ctx, config)
-    })
-  },
-  twitter(config) {
-    return configProvider.create(async () => {
-      const { TwitterDriver } = await import('./drivers/twitter.js')
-      return (ctx) => new TwitterDriver(ctx, config)
     })
   },
 }
