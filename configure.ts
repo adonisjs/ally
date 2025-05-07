@@ -21,7 +21,6 @@ const AVAILABLE_PROVIDERS = [
   'linkedin',
   'linkedinOpenidConnect',
   'spotify',
-  'twitter',
 ]
 
 /**
