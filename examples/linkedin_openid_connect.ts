@@ -1,14 +1,14 @@
 import router from '@adonisjs/core/services/router'
 
-router.get('linkedin', async ({ response }) => {
+router.get('od_linkedin', async ({ response }) => {
   return response.send('<a href="/linkedin/redirect"> Login with linkedin </a>')
 })
 
-router.get('/linkedin/redirect', async ({ ally }) => {
+router.get('/od_linkedin/redirect', async ({ ally }) => {
   return ally.use('linkedin').redirect()
 })
 
-router.get('/linkedin/callback', async ({ ally }) => {
+router.get('/od_linkedin/callback', async ({ ally }) => {
   try {
     const linkedin = ally.use('linkedinOpenidConnect')
     if (linkedin.accessDenied()) {

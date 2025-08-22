@@ -23,16 +23,16 @@ async function run() {
     })
     .merge({
       rcFileContents: {
-        providers: ['../providers/ally_provider.js'],
+        providers: [() => import('../providers/ally_provider.js')],
         preloads: [
-          './discord.js',
-          './github.js',
-          './twitter.js',
-          './google.js',
-          './linkedin.js',
-          './linkedin_openid_connect.js',
-          './facebook.js',
-          './spotify.js',
+          () => import('./discord.js'),
+          () => import('./github.js'),
+          () => import('./twitter.js'),
+          () => import('./google.js'),
+          () => import('./linkedin.js'),
+          () => import('./linkedin_openid_connect.js'),
+          () => import('./facebook.js'),
+          () => import('./spotify.js'),
         ],
       },
     })
