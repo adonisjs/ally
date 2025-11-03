@@ -11,14 +11,14 @@ import { configProvider } from '@adonisjs/core'
 import type { HttpContext } from '@adonisjs/core/http'
 import type { ConfigProvider } from '@adonisjs/core/types'
 
-import type { GoogleDriver } from './drivers/google.js'
-import type { GithubDriver } from './drivers/github.js'
-import type { SpotifyDriver } from './drivers/spotify.js'
-import type { TwitterDriver } from './drivers/twitter.js'
-import type { DiscordDriver } from './drivers/discord.js'
-import type { FacebookDriver } from './drivers/facebook.js'
-import type { LinkedInDriver } from './drivers/linked_in.js'
-import type { LinkedInOpenidConnectDriver } from './drivers/linked_in_openid_connect.js'
+import type { GoogleDriver } from './drivers/google.ts'
+import type { GithubDriver } from './drivers/github.ts'
+import type { SpotifyDriver } from './drivers/spotify.ts'
+import type { TwitterDriver } from './drivers/twitter.ts'
+import type { DiscordDriver } from './drivers/discord.ts'
+import type { FacebookDriver } from './drivers/facebook.ts'
+import type { LinkedInDriver } from './drivers/linked_in.ts'
+import type { LinkedInOpenidConnectDriver } from './drivers/linked_in_openid_connect.ts'
 import type {
   GoogleDriverConfig,
   GithubDriverConfig,
@@ -29,7 +29,7 @@ import type {
   LinkedInOpenidConnectDriverConfig,
   FacebookDriverConfig,
   AllyManagerDriverFactory,
-} from './types.js'
+} from './types.ts'
 
 /**
  * Shape of config after it has been resolved from

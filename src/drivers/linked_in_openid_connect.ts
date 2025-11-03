@@ -10,7 +10,7 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import type { HttpClient } from '@poppinss/oauth-client'
 
-import { Oauth2Driver } from '../abstract_drivers/oauth2.js'
+import { Oauth2Driver } from '../abstract_drivers/oauth2.ts'
 import type {
   ApiRequestContract,
   LinkedInOpenidConnectAccessToken,

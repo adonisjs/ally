@@ -10,8 +10,8 @@
 import { test } from '@japa/runner'
 import { HttpContextFactory } from '@adonisjs/core/factories/http'
 
-import { AllyManager } from '../src/ally_manager.js'
-import { GithubDriver } from '../src/drivers/github.js'
+import { AllyManager } from '../src/ally_manager.ts'
+import { GithubDriver } from '../src/drivers/github.ts'
 
 test.group('Ally manager', () => {
   test('create an instance of a driver', ({ assert, expectTypeOf }) => {

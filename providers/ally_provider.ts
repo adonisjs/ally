@@ -12,8 +12,8 @@ import { HttpContext } from '@adonisjs/core/http'
 import { RuntimeException } from '@adonisjs/core/exceptions'
 import type { ApplicationService } from '@adonisjs/core/types'
 
-import type { AllyService } from '../src/types.js'
-import { AllyManager } from '../src/ally_manager.js'
+import type { AllyService } from '../src/types.ts'
+import { AllyManager } from '../src/ally_manager.ts'
 
 declare module '@adonisjs/core/http' {
   export interface HttpContext {

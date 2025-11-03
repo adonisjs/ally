@@ -17,8 +17,8 @@ import type {
   FacebookDriverConfig,
   FacebookProfileFields,
   RedirectRequestContract,
-} from '../types.js'
-import { Oauth2Driver } from '../abstract_drivers/oauth2.js'
+} from '../types.ts'
+import { Oauth2Driver } from '../abstract_drivers/oauth2.ts'
 
 /**
  * Facebook OAuth2 driver for authenticating users via Facebook.

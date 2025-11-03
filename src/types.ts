@@ -18,7 +18,7 @@ import type {
   ApiRequestContract,
   RedirectRequestContract as ClientRequestContract,
 } from '@poppinss/oauth-client/types'
-import type { AllyManager } from './ally_manager.js'
+import type { AllyManager } from './ally_manager.ts'
 
 export type { Oauth2AccessToken }
 export type { Oauth1AccessToken }

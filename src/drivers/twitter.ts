@@ -13,8 +13,8 @@ import {
   type AllyUserContract,
   type ApiRequestContract,
   type TwitterDriverConfig,
-} from '../types.js'
-import { Oauth1Driver } from '../abstract_drivers/oauth1.js'
+} from '../types.ts'
+import { Oauth1Driver } from '../abstract_drivers/oauth1.ts'
 
 /**
  * Twitter OAuth1 driver for authenticating users via Twitter.

@@ -18,10 +18,10 @@ import {
   type ApiRequestContract,
   type AllyDriverContract,
   type RedirectRequestContract,
-} from '../types.js'
+} from '../types.ts'
 
-import * as errors from '../errors.js'
-import { RedirectRequest } from '../redirect_request.js'
+import * as errors from '../errors.ts'
+import { RedirectRequest } from '../redirect_request.ts'
 
 /**
  * Abstract base class for implementing OAuth1 social authentication drivers.

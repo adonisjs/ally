@@ -15,8 +15,8 @@ import type {
   GoogleDriverConfig,
   ApiRequestContract,
   RedirectRequestContract,
-} from '../types.js'
-import { Oauth2Driver } from '../abstract_drivers/oauth2.js'
+} from '../types.ts'
+import { Oauth2Driver } from '../abstract_drivers/oauth2.ts'
 
 const SCOPE_PREFIXES = {
   'https://www.googleapis.com/auth': [

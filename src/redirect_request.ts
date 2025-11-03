@@ -8,7 +8,7 @@
  */
 
 import { UrlBuilder } from '@poppinss/oauth-client'
-import { type LiteralStringUnion } from './types.js'
+import { type LiteralStringUnion } from './types.ts'
 
 /**
  * Redirect request with first-class support for defining OAuth scopes.

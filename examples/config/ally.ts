@@ -1,4 +1,4 @@
-import { defineConfig, services } from '../../index.js'
+import { defineConfig, services } from '../../index.ts'
 
 const allyConfig = defineConfig({
   discord: services.discord({

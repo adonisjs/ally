@@ -9,7 +9,7 @@
 
 import type { HttpContext } from '@adonisjs/core/http'
 import { RuntimeException } from '@adonisjs/core/exceptions'
-import type { AllyDriverContract, AllyManagerDriverFactory } from './types.js'
+import type { AllyDriverContract, AllyManagerDriverFactory } from './types.ts'
 
 /**
  * AllyManager is used to create and manage social authentication driver

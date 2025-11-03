@@ -15,8 +15,8 @@ import type {
   ApiRequestContract,
   SpotifyDriverConfig,
   RedirectRequestContract,
-} from '../types.js'
-import { Oauth2Driver } from '../abstract_drivers/oauth2.js'
+} from '../types.ts'
+import { Oauth2Driver } from '../abstract_drivers/oauth2.ts'
 
 /**
  * Spotify OAuth2 driver for authenticating users via Spotify.

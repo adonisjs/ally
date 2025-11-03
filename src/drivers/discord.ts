@@ -16,8 +16,8 @@ import type {
   ApiRequestContract,
   DiscordDriverConfig,
   RedirectRequestContract,
-} from '../types.js'
-import { Oauth2Driver } from '../abstract_drivers/oauth2.js'
+} from '../types.ts'
+import { Oauth2Driver } from '../abstract_drivers/oauth2.ts'
 
 /**
  * Discord OAuth2 driver for authenticating users via Discord.

@@ -16,8 +16,8 @@ import type {
   GithubDriverConfig,
   ApiRequestContract,
   RedirectRequestContract,
-} from '../types.js'
-import { Oauth2Driver } from '../abstract_drivers/oauth2.js'
+} from '../types.ts'
+import { Oauth2Driver } from '../abstract_drivers/oauth2.ts'
 
 /**
  * GitHub OAuth2 driver for authenticating users via GitHub.

@@ -8,7 +8,7 @@
  */
 
 import { test } from '@japa/runner'
-import { RedirectRequest } from '../src/redirect_request.js'
+import { RedirectRequest } from '../src/redirect_request.ts'
 
 test.group('Redirect request', () => {
   test('define scopes param', ({ assert }) => {

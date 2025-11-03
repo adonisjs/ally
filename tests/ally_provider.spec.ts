@@ -11,8 +11,8 @@ import { test } from '@japa/runner'
 import { IgnitorFactory } from '@adonisjs/core/factories'
 import { HttpContextFactory } from '@adonisjs/core/factories/http'
 
-import { AllyManager } from '../src/ally_manager.js'
-import { defineConfig, services } from '../src/define_config.js'
+import { AllyManager } from '../src/ally_manager.ts'
+import { defineConfig, services } from '../src/define_config.ts'
 
 const BASE_URL = new URL('./tmp/', import.meta.url)
 
