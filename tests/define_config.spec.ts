@@ -9,7 +9,7 @@
 
 import { test } from '@japa/runner'
 import { AppFactory } from '@adonisjs/core/factories/app'
-import { ApplicationService } from '@adonisjs/core/types'
+import { type ApplicationService } from '@adonisjs/core/types'
 import { HttpContextFactory } from '@adonisjs/core/factories/http'
 
 import { AllyManager } from '../src/ally_manager.js'

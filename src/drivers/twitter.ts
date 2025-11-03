@@ -9,10 +9,10 @@
 
 import type { HttpContext } from '@adonisjs/core/http'
 import {
-  TwitterToken,
-  AllyUserContract,
-  ApiRequestContract,
-  TwitterDriverConfig,
+  type TwitterToken,
+  type AllyUserContract,
+  type ApiRequestContract,
+  type TwitterDriverConfig,
 } from '../types.js'
 import { Oauth1Driver } from '../abstract_drivers/oauth1.js'
 

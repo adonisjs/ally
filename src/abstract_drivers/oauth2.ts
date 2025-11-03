@@ -12,12 +12,12 @@ import type { HttpContext } from '@adonisjs/core/http'
 import { Oauth2Client } from '@poppinss/oauth-client/oauth2'
 
 import {
-  AllyUserContract,
-  Oauth2AccessToken,
-  Oauth2DriverConfig,
-  ApiRequestContract,
-  AllyDriverContract,
-  RedirectRequestContract,
+  type AllyUserContract,
+  type Oauth2AccessToken,
+  type Oauth2DriverConfig,
+  type ApiRequestContract,
+  type AllyDriverContract,
+  type RedirectRequestContract,
 } from '../types.js'
 
 import * as errors from '../errors.js'
