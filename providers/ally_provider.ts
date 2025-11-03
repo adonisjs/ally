@@ -9,7 +9,7 @@
 
 import { configProvider } from '@adonisjs/core'
 import { HttpContext } from '@adonisjs/core/http'
-import { RuntimeException } from '@poppinss/utils'
+import { RuntimeException } from '@adonisjs/core/exceptions'
 import type { ApplicationService } from '@adonisjs/core/types'
 
 import type { AllyService } from '../src/types.js'

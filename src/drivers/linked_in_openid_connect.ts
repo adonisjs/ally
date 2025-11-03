@@ -6,7 +6,7 @@ import type {
   LinkedInOpenidConnectDriverConfig,
   LinkedInOpenidConnectScopes,
   RedirectRequestContract,
-} from '@adonisjs/ally/types'
+} from '../types.ts'
 import type { HttpClient } from '@poppinss/oauth-client'
 
 /**

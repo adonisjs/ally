@@ -7,8 +7,8 @@
  * file that was distributed with this source code.
  */
 
-import { RuntimeException } from '@poppinss/utils'
 import type { HttpContext } from '@adonisjs/core/http'
+import { RuntimeException } from '@adonisjs/core/exceptions'
 import type { AllyDriverContract, AllyManagerDriverFactory } from './types.js'
 
 /**

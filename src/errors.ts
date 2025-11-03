@@ -7,7 +7,7 @@
  * file that was distributed with this source code.
  */
 
-import { createError } from '@poppinss/utils'
+import { createError } from '@adonisjs/core/exceptions'
 
 export const E_OAUTH_MISSING_CODE = createError<[string]>(
   'Cannot request access token. Redirect request is missing the "%s" param',
