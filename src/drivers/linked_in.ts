@@ -20,7 +20,37 @@ import type {
 import { Oauth2Driver } from '../abstract_drivers/oauth2.js'
 
 /**
- * LinkedIn driver to login user via LinkedIn
+ * LinkedIn OAuth2 driver for authenticating users via LinkedIn.
+ * Supports fetching user profile information including name, email, and profile picture.
+ * Note: This driver fetches email separately as it's not included in the basic profile.
+ *
+ * @example
+ * ```ts
+ * router.get('/linkedin/redirect', ({ ally }) => {
+ *   return ally.use('linkedin').redirect((request) => {
+ *     request.scopes(['r_emailaddress', 'r_liteprofile'])
+ *   })
+ * })
+ *
+ * router.get('/linkedin/callback', async ({ ally }) => {
+ *   const linkedin = ally.use('linkedin')
+ *
+ *   if (linkedin.accessDenied()) {
+ *     return 'Access was denied'
+ *   }
+ *
+ *   if (linkedin.stateMisMatch()) {
+ *     return 'State mismatch error'
+ *   }
+ *
+ *   if (linkedin.hasError()) {
+ *     return linkedin.getError()
+ *   }
+ *
+ *   const user = await linkedin.user()
+ *   return user
+ * })
+ * ```
  */
 export class LinkedInDriver extends Oauth2Driver<LinkedInToken, LinkedInScopes> {
   protected accessTokenUrl = 'https://www.linkedin.com/oauth/v2/accessToken'
@@ -59,6 +89,10 @@ export class LinkedInDriver extends Oauth2Driver<LinkedInToken, LinkedInScopes> 
    */
   protected scopesSeparator = ' '
 
+  /**
+   * @param ctx - The HTTP context
+   * @param config - Configuration for the LinkedIn driver
+   */
   constructor(
     ctx: HttpContext,
     public config: LinkedInDriverConfig
@@ -72,7 +106,9 @@ export class LinkedInDriver extends Oauth2Driver<LinkedInToken, LinkedInScopes> 
   }
 
   /**
-   * Configuring the redirect request with defaults
+   * Configures the redirect request with default scopes.
+   *
+   * @param request - The redirect request to configure
    */
   protected configureRedirectRequest(request: RedirectRequestContract<LinkedInScopes>) {
     /**
@@ -87,7 +123,11 @@ export class LinkedInDriver extends Oauth2Driver<LinkedInToken, LinkedInScopes> 
   }
 
   /**
-   * Returns the HTTP request with the authorization header set
+   * Creates an authenticated HTTP request with the proper authorization
+   * header for LinkedIn API calls.
+   *
+   * @param url - The API endpoint URL
+   * @param token - The access token
    */
   protected getAuthenticatedRequest(url: string, token: string): HttpClient {
     const request = this.httpClient(url)
@@ -98,7 +138,10 @@ export class LinkedInDriver extends Oauth2Driver<LinkedInToken, LinkedInScopes> 
   }
 
   /**
-   * Fetches the user info from the LinkedIn API
+   * Fetches the authenticated user's profile information from the LinkedIn API.
+   *
+   * @param token - The access token
+   * @param callback - Optional callback to customize the API request
    */
   protected async getUserInfo(token: string, callback?: (request: ApiRequestContract) => void) {
     let url = this.config.userInfoUrl || this.userInfoUrl
@@ -135,7 +178,11 @@ export class LinkedInDriver extends Oauth2Driver<LinkedInToken, LinkedInScopes> 
   }
 
   /**
-   * Fetches the user email from the LinkedIn API
+   * Fetches the user's email address from the LinkedIn API.
+   * Requires the 'r_emailaddress' scope.
+   *
+   * @param token - The access token
+   * @param callback - Optional callback to customize the API request
    */
   protected async getUserEmail(token: string, callback?: (request: ApiRequestContract) => void) {
     let url = this.config.userEmailUrl || this.userEmailUrl
@@ -165,7 +212,8 @@ export class LinkedInDriver extends Oauth2Driver<LinkedInToken, LinkedInScopes> 
   }
 
   /**
-   * Find if the current error code is for access denied
+   * Check if the error from the callback indicates that the user
+   * denied authorization or cancelled the login.
    */
   accessDenied(): boolean {
     const error = this.getError()
@@ -177,7 +225,16 @@ export class LinkedInDriver extends Oauth2Driver<LinkedInToken, LinkedInScopes> 
   }
 
   /**
-   * Returns details for the authorized user
+   * Get the authenticated user's profile and email information using
+   * the authorization code from the callback request.
+   *
+   * @param callback - Optional callback to customize the API request
+   *
+   * @example
+   * ```ts
+   * const user = await ally.use('linkedin').user()
+   * console.log(user.name, user.email)
+   * ```
    */
   async user(callback?: (request: ApiRequestContract) => void) {
     const token = await this.accessToken(callback)
@@ -193,7 +250,16 @@ export class LinkedInDriver extends Oauth2Driver<LinkedInToken, LinkedInScopes> 
   }
 
   /**
-   * Finds the user by the access token
+   * Get the user's profile and email information using an existing
+   * access token.
+   *
+   * @param token - The LinkedIn access token
+   * @param callback - Optional callback to customize the API request
+   *
+   * @example
+   * ```ts
+   * const user = await ally.use('linkedin').userFromToken(accessToken)
+   * ```
    */
   async userFromToken(token: string, callback?: (request: ApiRequestContract) => void) {
     const user = await this.getUserInfo(token, callback)

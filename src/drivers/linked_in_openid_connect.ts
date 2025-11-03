@@ -1,5 +1,16 @@
-import { Oauth2Driver } from '../abstract_drivers/oauth2.js'
+/*
+ * @adonisjs/ally
+ *
+ * (c) AdonisJS
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 import type { HttpContext } from '@adonisjs/core/http'
+import type { HttpClient } from '@poppinss/oauth-client'
+
+import { Oauth2Driver } from '../abstract_drivers/oauth2.js'
 import type {
   ApiRequestContract,
   LinkedInOpenidConnectAccessToken,
@@ -7,10 +18,39 @@ import type {
   LinkedInOpenidConnectScopes,
   RedirectRequestContract,
 } from '../types.ts'
-import type { HttpClient } from '@poppinss/oauth-client'
 
 /**
- * LinkedIn openid connect driver to login user via LinkedIn using openid connect requirements
+ * LinkedIn OpenID Connect OAuth2 driver for authenticating users via LinkedIn.
+ * This driver uses the OpenID Connect protocol for authentication.
+ * Supports fetching user profile information including name, email, and profile picture.
+ *
+ * @example
+ * ```ts
+ * router.get('/linkedin/redirect', ({ ally }) => {
+ *   return ally.use('linkedinOpenidConnect').redirect((request) => {
+ *     request.scopes(['openid', 'profile', 'email'])
+ *   })
+ * })
+ *
+ * router.get('/linkedin/callback', async ({ ally }) => {
+ *   const linkedin = ally.use('linkedinOpenidConnect')
+ *
+ *   if (linkedin.accessDenied()) {
+ *     return 'Access was denied'
+ *   }
+ *
+ *   if (linkedin.stateMisMatch()) {
+ *     return 'State mismatch error'
+ *   }
+ *
+ *   if (linkedin.hasError()) {
+ *     return linkedin.getError()
+ *   }
+ *
+ *   const user = await linkedin.user()
+ *   return user
+ * })
+ * ```
  */
 export class LinkedInOpenidConnectDriver extends Oauth2Driver<
   LinkedInOpenidConnectAccessToken,
@@ -51,6 +91,10 @@ export class LinkedInOpenidConnectDriver extends Oauth2Driver<
    */
   protected scopesSeparator = ' '
 
+  /**
+   * @param ctx - The HTTP context
+   * @param config - Configuration for the LinkedIn OpenID Connect driver
+   */
   constructor(
     ctx: HttpContext,
     public config: LinkedInOpenidConnectDriverConfig
@@ -66,7 +110,9 @@ export class LinkedInOpenidConnectDriver extends Oauth2Driver<
   }
 
   /**
-   * Configuring the redirect request with defaults
+   * Configures the redirect request with default scopes for OpenID Connect.
+   *
+   * @param request - The redirect request to configure
    */
   protected configureRedirectRequest(
     request: RedirectRequestContract<LinkedInOpenidConnectScopes>
@@ -83,7 +129,11 @@ export class LinkedInOpenidConnectDriver extends Oauth2Driver<
   }
 
   /**
-   * Returns the HTTP request with the authorization header set
+   * Creates an authenticated HTTP request with the proper authorization
+   * header for LinkedIn API calls.
+   *
+   * @param url - The API endpoint URL
+   * @param token - The access token
    */
   protected getAuthenticatedRequest(url: string, token: string): HttpClient {
     const request = this.httpClient(url)
@@ -94,7 +144,11 @@ export class LinkedInOpenidConnectDriver extends Oauth2Driver<
   }
 
   /**
-   * Fetches the user info from the LinkedIn API
+   * Fetches the authenticated user's profile information from the LinkedIn API
+   * using the OpenID Connect userinfo endpoint.
+   *
+   * @param token - The access token
+   * @param callback - Optional callback to customize the API request
    */
   protected async getUserInfo(token: string, callback?: (request: ApiRequestContract) => void) {
     let url = this.config.userInfoUrl || this.userInfoUrl
@@ -121,7 +175,8 @@ export class LinkedInOpenidConnectDriver extends Oauth2Driver<
   }
 
   /**
-   * Find if the current error code is for access denied
+   * Check if the error from the callback indicates that the user
+   * denied authorization or cancelled the login.
    */
   accessDenied(): boolean {
     const error = this.getError()
@@ -133,7 +188,16 @@ export class LinkedInOpenidConnectDriver extends Oauth2Driver<
   }
 
   /**
-   * Returns details for the authorized user
+   * Get the authenticated user's profile information using
+   * the authorization code from the callback request.
+   *
+   * @param callback - Optional callback to customize the API request
+   *
+   * @example
+   * ```ts
+   * const user = await ally.use('linkedinOpenidConnect').user()
+   * console.log(user.name, user.email)
+   * ```
    */
   async user(callback?: (request: ApiRequestContract) => void) {
     const accessToken = await this.accessToken(callback)
@@ -146,7 +210,16 @@ export class LinkedInOpenidConnectDriver extends Oauth2Driver<
   }
 
   /**
-   * Finds the user by the access token
+   * Get the user's profile information using an existing
+   * access token.
+   *
+   * @param token - The LinkedIn access token
+   * @param callback - Optional callback to customize the API request
+   *
+   * @example
+   * ```ts
+   * const user = await ally.use('linkedinOpenidConnect').userFromToken(accessToken)
+   * ```
    */
   async userFromToken(token: string, callback?: (request: ApiRequestContract) => void) {
     const user = await this.getUserInfo(token, callback)

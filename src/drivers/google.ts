@@ -57,7 +57,37 @@ const SCOPE_PREFIXES = {
 }
 
 /**
- * Google driver to login user via Google
+ * Google OAuth2 driver for authenticating users via Google.
+ * Supports fetching user profile information including name, email, and profile picture.
+ * Automatically prefixes scopes with the appropriate Google API URL.
+ *
+ * @example
+ * ```ts
+ * router.get('/google/redirect', ({ ally }) => {
+ *   return ally.use('google').redirect((request) => {
+ *     request.scopes(['userinfo.email', 'userinfo.profile', 'calendar.readonly'])
+ *   })
+ * })
+ *
+ * router.get('/google/callback', async ({ ally }) => {
+ *   const google = ally.use('google')
+ *
+ *   if (google.accessDenied()) {
+ *     return 'Access was denied'
+ *   }
+ *
+ *   if (google.stateMisMatch()) {
+ *     return 'State mismatch error'
+ *   }
+ *
+ *   if (google.hasError()) {
+ *     return google.getError()
+ *   }
+ *
+ *   const user = await google.user()
+ *   return user
+ * })
+ * ```
  */
 export class GoogleDriver extends Oauth2Driver<GoogleToken, GoogleScopes> {
   protected accessTokenUrl = 'https://oauth2.googleapis.com/token'
@@ -95,6 +125,10 @@ export class GoogleDriver extends Oauth2Driver<GoogleToken, GoogleScopes> {
    */
   protected scopesSeparator = ' '
 
+  /**
+   * @param ctx - The HTTP context
+   * @param config - Configuration for the Google driver
+   */
   constructor(
     ctx: HttpContext,
     public config: GoogleDriverConfig
@@ -108,7 +142,10 @@ export class GoogleDriver extends Oauth2Driver<GoogleToken, GoogleScopes> {
   }
 
   /**
-   * Configuring the redirect request with defaults
+   * Configures the redirect request with default scopes and Google-specific
+   * parameters like access_type, prompt, display, and hosted domain.
+   *
+   * @param request - The redirect request to configure
    */
   protected configureRedirectRequest(request: RedirectRequestContract<GoogleScopes>) {
     request.transformScopes((scopes) => this.buildScopes(scopes))
@@ -141,7 +178,11 @@ export class GoogleDriver extends Oauth2Driver<GoogleToken, GoogleScopes> {
   }
 
   /**
-   * Returns the HTTP request with the authorization header set
+   * Creates an authenticated HTTP request with the proper authorization
+   * header for Google API calls.
+   *
+   * @param url - The API endpoint URL
+   * @param token - The access token
    */
   protected getAuthenticatedRequest(url: string, token: string): HttpClient {
     const request = this.httpClient(url)
@@ -152,7 +193,10 @@ export class GoogleDriver extends Oauth2Driver<GoogleToken, GoogleScopes> {
   }
 
   /**
-   * Fetches the user info from the Google API
+   * Fetches the authenticated user's profile information from the Google API.
+   *
+   * @param token - The access token
+   * @param callback - Optional callback to customize the API request
    */
   protected async getUserInfo(token: string, callback?: (request: ApiRequestContract) => void) {
     const request = this.getAuthenticatedRequest(this.config.userInfoUrl || this.userInfoUrl, token)
@@ -174,7 +218,8 @@ export class GoogleDriver extends Oauth2Driver<GoogleToken, GoogleScopes> {
   }
 
   /**
-   * Find if the current error code is for access denied
+   * Check if the error from the callback indicates that the user
+   * denied authorization.
    */
   accessDenied(): boolean {
     const error = this.getError()
@@ -186,7 +231,10 @@ export class GoogleDriver extends Oauth2Driver<GoogleToken, GoogleScopes> {
   }
 
   /**
-   * Get access token
+   * Get the access token using the authorization code from the callback request.
+   * Returns a GoogleToken that includes the ID token.
+   *
+   * @param callback - Optional callback to customize the API request
    */
   async accessToken(callback?: (request: ApiRequestContract) => void): Promise<GoogleToken> {
     const token = await super.accessToken(callback)
@@ -198,7 +246,16 @@ export class GoogleDriver extends Oauth2Driver<GoogleToken, GoogleScopes> {
   }
 
   /**
-   * Returns details for the authorized user
+   * Get the authenticated user's profile information using
+   * the authorization code from the callback request.
+   *
+   * @param callback - Optional callback to customize the API request
+   *
+   * @example
+   * ```ts
+   * const user = await ally.use('google').user()
+   * console.log(user.name, user.email)
+   * ```
    */
   async user(callback?: (request: ApiRequestContract) => void) {
     const token = await this.accessToken(callback)
@@ -211,7 +268,16 @@ export class GoogleDriver extends Oauth2Driver<GoogleToken, GoogleScopes> {
   }
 
   /**
-   * Finds the user by the access token
+   * Get the user's profile information using an existing
+   * access token.
+   *
+   * @param token - The Google access token
+   * @param callback - Optional callback to customize the API request
+   *
+   * @example
+   * ```ts
+   * const user = await ally.use('google').userFromToken(accessToken)
+   * ```
    */
   async userFromToken(token: string, callback?: (request: ApiRequestContract) => void) {
     const user = await this.getUserInfo(token, callback)
@@ -223,7 +289,10 @@ export class GoogleDriver extends Oauth2Driver<GoogleToken, GoogleScopes> {
   }
 
   /**
-   * Prefixes google scopes with the url
+   * Prefixes Google scopes with the appropriate API URL.
+   * Converts short scope names like 'userinfo.email' to full URLs.
+   *
+   * @param scopes - Array of scope names to prefix
    */
   buildScopes(scopes: string[]) {
     return scopes.map((name) => {

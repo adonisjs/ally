@@ -20,7 +20,36 @@ import type {
 import { Oauth2Driver } from '../abstract_drivers/oauth2.js'
 
 /**
- * Discord driver to login user via Discord
+ * Discord OAuth2 driver for authenticating users via Discord.
+ * Supports fetching user profile information including username and email.
+ *
+ * @example
+ * ```ts
+ * router.get('/discord/redirect', ({ ally }) => {
+ *   return ally.use('discord').redirect((request) => {
+ *     request.scopes(['identify', 'email', 'guilds'])
+ *   })
+ * })
+ *
+ * router.get('/discord/callback', async ({ ally }) => {
+ *   const discord = ally.use('discord')
+ *
+ *   if (discord.accessDenied()) {
+ *     return 'Access was denied'
+ *   }
+ *
+ *   if (discord.stateMisMatch()) {
+ *     return 'State mismatch error'
+ *   }
+ *
+ *   if (discord.hasError()) {
+ *     return discord.getError()
+ *   }
+ *
+ *   const user = await discord.user()
+ *   return user
+ * })
+ * ```
  */
 export class DiscordDriver extends Oauth2Driver<DiscordToken, DiscordScopes> {
   protected accessTokenUrl = 'https://discord.com/api/oauth2/token'
@@ -58,6 +87,10 @@ export class DiscordDriver extends Oauth2Driver<DiscordToken, DiscordScopes> {
    */
   protected scopesSeparator = ' '
 
+  /**
+   * @param ctx - The HTTP context
+   * @param config - Configuration for the Discord driver
+   */
   constructor(
     ctx: HttpContext,
     public config: DiscordDriverConfig
@@ -72,7 +105,10 @@ export class DiscordDriver extends Oauth2Driver<DiscordToken, DiscordScopes> {
   }
 
   /**
-   * Configuring the redirect request with defaults
+   * Configures the redirect request with default scopes and Discord-specific
+   * parameters like prompt, guild_id, and permissions.
+   *
+   * @param request - The redirect request to configure
    */
   protected configureRedirectRequest(request: RedirectRequestContract<DiscordScopes>) {
     /**
@@ -102,7 +138,9 @@ export class DiscordDriver extends Oauth2Driver<DiscordToken, DiscordScopes> {
   }
 
   /**
-   * Configuring the access token API request to send extra fields
+   * Configures the access token request with Discord-specific requirements.
+   *
+   * @param request - The API request to configure
    */
   protected configureAccessTokenRequest(request: ApiRequestContract) {
     /**
@@ -114,7 +152,11 @@ export class DiscordDriver extends Oauth2Driver<DiscordToken, DiscordScopes> {
   }
 
   /**
-   * Returns the HTTP request with the authorization header set
+   * Creates an authenticated HTTP request with the proper authorization
+   * header for Discord API calls.
+   *
+   * @param url - The API endpoint URL
+   * @param token - The access token
    */
   protected getAuthenticatedRequest(url: string, token: string): HttpClient {
     const request = this.httpClient(url)
@@ -125,8 +167,12 @@ export class DiscordDriver extends Oauth2Driver<DiscordToken, DiscordScopes> {
   }
 
   /**
-   * Fetches the user info from the Discord API
-   * https://discord.com/developers/docs/resources/user#get-current-user
+   * Fetches the authenticated user's profile information from the Discord API.
+   *
+   * @param token - The access token
+   * @param callback - Optional callback to customize the API request
+   *
+   * @see https://discord.com/developers/docs/resources/user#get-current-user
    */
   protected async getUserInfo(token: string, callback?: (request: ApiRequestContract) => void) {
     const request = this.getAuthenticatedRequest(this.config.userInfoUrl || this.userInfoUrl, token)
@@ -156,7 +202,8 @@ export class DiscordDriver extends Oauth2Driver<DiscordToken, DiscordScopes> {
   }
 
   /**
-   * Find if the current error code is for access denied
+   * Check if the error from the callback indicates that the user
+   * denied authorization.
    */
   accessDenied(): boolean {
     const error = this.getError()
@@ -168,7 +215,16 @@ export class DiscordDriver extends Oauth2Driver<DiscordToken, DiscordScopes> {
   }
 
   /**
-   * Returns details for the authorized user
+   * Get the authenticated user's profile information using
+   * the authorization code from the callback request.
+   *
+   * @param callback - Optional callback to customize the API request
+   *
+   * @example
+   * ```ts
+   * const user = await ally.use('discord').user()
+   * console.log(user.name, user.email)
+   * ```
    */
   async user(callback?: (request: ApiRequestContract) => void) {
     const token = await this.accessToken(callback)
@@ -181,7 +237,16 @@ export class DiscordDriver extends Oauth2Driver<DiscordToken, DiscordScopes> {
   }
 
   /**
-   * Finds the user by the access token
+   * Get the user's profile information using an existing
+   * access token.
+   *
+   * @param token - The Discord access token
+   * @param callback - Optional callback to customize the API request
+   *
+   * @example
+   * ```ts
+   * const user = await ally.use('discord').userFromToken(accessToken)
+   * ```
    */
   async userFromToken(token: string, callback?: (request: ApiRequestContract) => void) {
     const user = await this.getUserInfo(token, callback)

@@ -20,7 +20,36 @@ import type {
 import { Oauth2Driver } from '../abstract_drivers/oauth2.js'
 
 /**
- * Github driver to login user via Github
+ * GitHub OAuth2 driver for authenticating users via GitHub.
+ * Supports fetching user profile information and email addresses.
+ *
+ * @example
+ * ```ts
+ * router.get('/github/redirect', ({ ally }) => {
+ *   return ally.use('github').redirect((request) => {
+ *     request.scopes(['user:email', 'read:org'])
+ *   })
+ * })
+ *
+ * router.get('/github/callback', async ({ ally }) => {
+ *   const github = ally.use('github')
+ *
+ *   if (github.accessDenied()) {
+ *     return 'Access was denied'
+ *   }
+ *
+ *   if (github.stateMisMatch()) {
+ *     return 'State mismatch error'
+ *   }
+ *
+ *   if (github.hasError()) {
+ *     return github.getError()
+ *   }
+ *
+ *   const user = await github.user()
+ *   return user
+ * })
+ * ```
  */
 export class GithubDriver extends Oauth2Driver<GithubToken, GithubScopes> {
   protected accessTokenUrl = 'https://github.com/login/oauth/access_token'
@@ -59,6 +88,10 @@ export class GithubDriver extends Oauth2Driver<GithubToken, GithubScopes> {
    */
   protected scopesSeparator = ' '
 
+  /**
+   * @param ctx - The HTTP context
+   * @param config - Configuration for the GitHub driver
+   */
   constructor(
     ctx: HttpContext,
     public config: GithubDriverConfig
@@ -72,7 +105,10 @@ export class GithubDriver extends Oauth2Driver<GithubToken, GithubScopes> {
   }
 
   /**
-   * Configuring the redirect request with defaults
+   * Configures the redirect request with default scopes and GitHub-specific
+   * parameters like allow_signup and login.
+   *
+   * @param request - The redirect request to configure
    */
   protected configureRedirectRequest(request: RedirectRequestContract<GithubScopes>) {
     /**
@@ -96,7 +132,10 @@ export class GithubDriver extends Oauth2Driver<GithubToken, GithubScopes> {
   }
 
   /**
-   * Configuring the access token API request to send extra fields
+   * Configures the access token request with GitHub-specific requirements.
+   * GitHub doesn't accept the grant_type field that is set by default.
+   *
+   * @param request - The API request to configure
    */
   protected configureAccessTokenRequest(request: ApiRequestContract) {
     /**
@@ -114,7 +153,11 @@ export class GithubDriver extends Oauth2Driver<GithubToken, GithubScopes> {
   }
 
   /**
-   * Returns the HTTP request with the authorization header set
+   * Creates an authenticated HTTP request with the proper authorization
+   * header for GitHub API calls.
+   *
+   * @param url - The API endpoint URL
+   * @param token - The access token
    */
   protected getAuthenticatedRequest(url: string, token: string): HttpClient {
     const request = this.httpClient(url)
@@ -125,8 +168,12 @@ export class GithubDriver extends Oauth2Driver<GithubToken, GithubScopes> {
   }
 
   /**
-   * Fetches the user info from the Github API
-   * https://docs.github.com/en/rest/reference/users#get-the-authenticated-user
+   * Fetches the authenticated user's profile information from the GitHub API.
+   *
+   * @param token - The access token
+   * @param callback - Optional callback to customize the API request
+   *
+   * @see https://docs.github.com/en/rest/reference/users#get-the-authenticated-user
    */
   protected async getUserInfo(token: string, callback?: (request: ApiRequestContract) => void) {
     const request = this.getAuthenticatedRequest(this.config.userInfoUrl || this.userInfoUrl, token)
@@ -149,8 +196,14 @@ export class GithubDriver extends Oauth2Driver<GithubToken, GithubScopes> {
   }
 
   /**
-   * Fetches the user email from the Github API.
-   * https://docs.github.com/en/rest/reference/users#list-email-addresses-for-the-authenticated-user
+   * Fetches the user's email addresses from the GitHub API. This is needed
+   * when the user's email is not included in the basic profile response.
+   * Returns the primary verified email, or the first available email.
+   *
+   * @param token - The access token
+   * @param callback - Optional callback to customize the API request
+   *
+   * @see https://docs.github.com/en/rest/reference/users#list-email-addresses-for-the-authenticated-user
    */
   protected async getUserEmail(token: string, callback?: (request: ApiRequestContract) => void) {
     const request = this.getAuthenticatedRequest(
@@ -192,7 +245,8 @@ export class GithubDriver extends Oauth2Driver<GithubToken, GithubScopes> {
   }
 
   /**
-   * Find if the current error code is for access denied
+   * Check if the error from the callback indicates that the user
+   * denied authorization.
    */
   accessDenied(): boolean {
     const error = this.getError()
@@ -204,7 +258,16 @@ export class GithubDriver extends Oauth2Driver<GithubToken, GithubScopes> {
   }
 
   /**
-   * Returns details for the authorized user
+   * Get the authenticated user's profile and email information using
+   * the authorization code from the callback request.
+   *
+   * @param callback - Optional callback to customize the API request
+   *
+   * @example
+   * ```ts
+   * const user = await ally.use('github').user()
+   * console.log(user.name, user.email)
+   * ```
    */
   async user(callback?: (request: ApiRequestContract) => void) {
     const token = await this.accessToken(callback)
@@ -232,7 +295,16 @@ export class GithubDriver extends Oauth2Driver<GithubToken, GithubScopes> {
   }
 
   /**
-   * Finds the user by the access token
+   * Get the user's profile and email information using an existing
+   * access token.
+   *
+   * @param token - The GitHub access token
+   * @param callback - Optional callback to customize the API request
+   *
+   * @example
+   * ```ts
+   * const user = await ally.use('github').userFromToken(accessToken)
+   * ```
    */
   async userFromToken(token: string, callback?: (request: ApiRequestContract) => void) {
     const user = await this.getUserInfo(token, callback)

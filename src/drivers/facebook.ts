@@ -21,7 +21,36 @@ import type {
 import { Oauth2Driver } from '../abstract_drivers/oauth2.js'
 
 /**
- * Facebook driver to login user via Facebook
+ * Facebook OAuth2 driver for authenticating users via Facebook.
+ * Supports fetching user profile information including name, email, and profile picture.
+ *
+ * @example
+ * ```ts
+ * router.get('/facebook/redirect', ({ ally }) => {
+ *   return ally.use('facebook').redirect((request) => {
+ *     request.scopes(['email', 'public_profile'])
+ *   })
+ * })
+ *
+ * router.get('/facebook/callback', async ({ ally }) => {
+ *   const facebook = ally.use('facebook')
+ *
+ *   if (facebook.accessDenied()) {
+ *     return 'Access was denied'
+ *   }
+ *
+ *   if (facebook.stateMisMatch()) {
+ *     return 'State mismatch error'
+ *   }
+ *
+ *   if (facebook.hasError()) {
+ *     return facebook.getError()
+ *   }
+ *
+ *   const user = await facebook.user()
+ *   return user
+ * })
+ * ```
  */
 export class FacebookDriver extends Oauth2Driver<FacebookToken, FacebookScopes> {
   protected accessTokenUrl = 'https://graph.facebook.com/v10.0/oauth/access_token'
@@ -72,6 +101,10 @@ export class FacebookDriver extends Oauth2Driver<FacebookToken, FacebookScopes> 
    */
   protected scopesSeparator = ' '
 
+  /**
+   * @param ctx - The HTTP context
+   * @param config - Configuration for the Facebook driver
+   */
   constructor(
     ctx: HttpContext,
     public config: FacebookDriverConfig
@@ -86,7 +119,10 @@ export class FacebookDriver extends Oauth2Driver<FacebookToken, FacebookScopes> 
   }
 
   /**
-   * Configuring the redirect request with defaults
+   * Configures the redirect request with default scopes and Facebook-specific
+   * parameters like display and auth_type.
+   *
+   * @param request - The redirect request to configure
    */
   protected configureRedirectRequest(request: RedirectRequestContract<FacebookScopes>) {
     /**
@@ -109,7 +145,11 @@ export class FacebookDriver extends Oauth2Driver<FacebookToken, FacebookScopes> 
   }
 
   /**
-   * Returns the HTTP request with the authorization header set
+   * Creates an authenticated HTTP request with the proper authorization
+   * header for Facebook API calls.
+   *
+   * @param url - The API endpoint URL
+   * @param token - The access token
    */
   protected getAuthenticatedRequest(url: string, token: string): HttpClient {
     const request = this.httpClient(url)
@@ -120,8 +160,12 @@ export class FacebookDriver extends Oauth2Driver<FacebookToken, FacebookScopes> 
   }
 
   /**
-   * Fetches the user info from the Facebook API
-   * https://developers.facebook.com/docs/graph-api/reference/user/
+   * Fetches the authenticated user's profile information from the Facebook API.
+   *
+   * @param token - The access token
+   * @param callback - Optional callback to customize the API request
+   *
+   * @see https://developers.facebook.com/docs/graph-api/reference/user/
    */
   protected async getUserInfo(token: string, callback?: (request: ApiRequestContract) => void) {
     const request = this.getAuthenticatedRequest(this.config.userInfoUrl || this.userInfoUrl, token)
@@ -155,7 +199,8 @@ export class FacebookDriver extends Oauth2Driver<FacebookToken, FacebookScopes> 
   }
 
   /**
-   * Find if the current error code is for access denied
+   * Check if the error from the callback indicates that the user
+   * denied authorization.
    */
   accessDenied(): boolean {
     const error = this.getError()
@@ -167,7 +212,16 @@ export class FacebookDriver extends Oauth2Driver<FacebookToken, FacebookScopes> 
   }
 
   /**
-   * Returns details for the authorized user
+   * Get the authenticated user's profile information using
+   * the authorization code from the callback request.
+   *
+   * @param callback - Optional callback to customize the API request
+   *
+   * @example
+   * ```ts
+   * const user = await ally.use('facebook').user()
+   * console.log(user.name, user.email)
+   * ```
    */
   async user(callback?: (request: ApiRequestContract) => void) {
     const token = await this.accessToken(callback)
@@ -180,7 +234,16 @@ export class FacebookDriver extends Oauth2Driver<FacebookToken, FacebookScopes> 
   }
 
   /**
-   * Finds the user by the access token
+   * Get the user's profile information using an existing
+   * access token.
+   *
+   * @param token - The Facebook access token
+   * @param callback - Optional callback to customize the API request
+   *
+   * @example
+   * ```ts
+   * const user = await ally.use('facebook').userFromToken(accessToken)
+   * ```
    */
   async userFromToken(token: string, callback?: (request: ApiRequestContract) => void) {
     const user = await this.getUserInfo(token, callback)

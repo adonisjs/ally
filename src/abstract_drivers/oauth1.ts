@@ -24,75 +24,102 @@ import * as errors from '../errors.js'
 import { RedirectRequest } from '../redirect_request.js'
 
 /**
- * Abstract implementation for an Oauth1 driver
+ * Abstract base class for implementing OAuth1 social authentication drivers.
+ * Extends the OAuth1 client to provide AdonisJS-specific functionality like
+ * token management via cookies and integration with HTTP context.
+ *
+ * @example
+ * ```ts
+ * export class CustomDriver extends Oauth1Driver<CustomToken, CustomScopes> {
+ *   protected oauthTokenCookieName = 'custom_oauth_token'
+ *   protected oauthTokenParamName = 'oauth_token'
+ *   protected oauthTokenVerifierName = 'oauth_verifier'
+ *   protected errorParamName = 'error'
+ *   protected requestTokenUrl = 'https://provider.com/oauth/request_token'
+ *   protected authorizeUrl = 'https://provider.com/oauth/authorize'
+ *   protected accessTokenUrl = 'https://provider.com/oauth/access_token'
+ *   protected scopeParamName = ''
+ *   protected scopesSeparator = ' '
+ *
+ *   async user() {
+ *     // Implementation
+ *   }
+ * }
+ * ```
  */
 export abstract class Oauth1Driver<Token extends Oauth1AccessToken, Scopes extends string>
   extends Oauth1Client<Token>
   implements AllyDriverContract<Token, Scopes>
 {
   /**
-   * The cookie name for storing the "oauth_token". Must be unique for your
-   * driver. One option is to prefix the driver name. For example:
-   * `twitter_oauth_token`
+   * The cookie name for storing the OAuth token. Must be unique for
+   * your driver to avoid conflicts. For example: `twitter_oauth_token`
    */
   protected abstract oauthTokenCookieName: string
 
   /**
-   * Name of the "oauth_token" param. This is the query string value post
-   * authorization redirect
+   * The query parameter name for the OAuth token returned after
+   * authorization redirect. This is typically 'oauth_token'.
    */
   protected abstract oauthTokenParamName: string
 
   /**
-   * Name of the "oauth_verifier" param. This is the query string value post
-   * authorization redirect
+   * The query parameter name for the OAuth verifier returned after
+   * authorization redirect. This is typically 'oauth_verifier'.
    */
   protected abstract oauthTokenVerifierName: string
 
   /**
-   * The parameter name from which to fetch the error message or error code
-   * post redirect.
-   *
-   * You must check the auth provider docs to find it
+   * The query parameter name for error messages returned by the provider
+   * after authorization redirect.
    */
   protected abstract errorParamName: string
 
   /**
-   * Request token URL for the auth provider. The initial set of tokens
-   * are generated from this url
+   * The OAuth provider's endpoint for obtaining a request token.
+   * This is the first step in the OAuth1 flow.
    */
   protected abstract requestTokenUrl: string
 
   /**
-   * Authorization URL for the auth provider. The user will be redirected
-   * to this URL
+   * The OAuth provider's authorization URL where users are redirected
+   * to grant permissions.
    */
   protected abstract authorizeUrl: string
 
   /**
-   * The URL to hit to get an access token
+   * The OAuth provider's endpoint for exchanging the request token
+   * and verifier for an access token.
    */
   protected abstract accessTokenUrl: string
 
   /**
-   * The query param name for defining the Authorization scopes.
-   * Mostly it is `scope`. Leave to empty string when scopes
-   * are not applicable
+   * The query parameter name for defining authorization scopes.
+   * Leave as empty string if scopes are not supported by the provider.
    */
   protected abstract scopeParamName: string
 
   /**
-   * The identifier for joining multiple scopes. Mostly it is a space.
+   * The separator character for joining multiple scopes. This is
+   * typically a space ' '.
    */
   protected abstract scopesSeparator: string
 
   /**
-   * Returns details for the authorized user
+   * Fetch the user details from the OAuth provider using the
+   * authorization from the current request.
+   *
+   * @param callback - Optional callback to customize the API request
    */
   abstract user(callback?: (request: ApiRequestContract) => void): Promise<AllyUserContract<Token>>
 
   /**
-   * Finds the user by access token
+   * Fetch user details using an existing access token and secret.
+   * This is the OAuth1 equivalent of `userFromToken`.
+   *
+   * @param token - The access token
+   * @param secret - The token secret
+   * @param callback - Optional callback to customize the API request
    */
   abstract userFromTokenAndSecret(
     token: string,
@@ -101,28 +128,34 @@ export abstract class Oauth1Driver<Token extends Oauth1AccessToken, Scopes exten
   ): Promise<AllyUserContract<{ token: string; secret: string }>>
 
   /**
-   * Find if the current error code is for access denied
+   * Check if the current error indicates that the user denied access.
+   * Different providers use different error codes for access denial.
    */
   abstract accessDenied(): boolean
 
   /**
-   * Oauth client version
+   * OAuth protocol version identifier
    */
   version = 'oauth1' as const
 
   /**
-   * The value of "oauth_token" and "oauth_secret" from the cookies
+   * Cached OAuth token and secret values read from cookies
    */
   protected oauthTokenCookieValue?: string
   protected oauthSecretCookieValue?: string
 
   /**
-   * The cookie name for storing the secret
+   * The cookie name for storing the OAuth token secret.
+   * Automatically derived from the token cookie name.
    */
   protected get oauthSecretCookieName() {
     return `${this.oauthTokenCookieName}_secret`
   }
 
+  /**
+   * @param ctx - The current HTTP context
+   * @param config - OAuth1 driver configuration
+   */
   constructor(
     protected ctx: HttpContext,
     public config: Oauth1DriverConfig
@@ -131,23 +164,27 @@ export abstract class Oauth1Driver<Token extends Oauth1AccessToken, Scopes exten
   }
 
   /**
-   * The Oauth1Client will use the instance returned from this method to
-   * build the redirect url
+   * Creates a URL builder instance for constructing authorization URLs
+   * with scope support.
+   *
+   * @param url - The base authorization URL
    */
   protected urlBuilder(url: string) {
     return new RedirectRequest(url, this.scopeParamName, this.scopesSeparator)
   }
 
   /**
-   * Loads the value of state from the cookie and removes it right
-   * away. We read the cookie value and clear it during the
-   * current request lifecycle.
+   * Loads the OAuth token and secret from encrypted cookies and immediately
+   * clears the cookies. This must be called by child classes in their
+   * constructor to enable token verification.
    *
-   * :::::
-   * NOTE
-   * :::::
-   *
-   * This child class must call this method inside the constructor.
+   * @example
+   * ```ts
+   * constructor(ctx: HttpContext, config: DriverConfig) {
+   *   super(ctx, config)
+   *   this.loadState()
+   * }
+   * ```
    */
   protected loadState() {
     /**
@@ -164,7 +201,7 @@ export abstract class Oauth1Driver<Token extends Oauth1AccessToken, Scopes exten
   }
 
   /**
-   * Persists the token (aka state) inside the cookie
+   * Stores the OAuth token in an encrypted cookie for later use
    */
   #persistToken(token: string): void {
     this.ctx.response.encryptedCookie(this.oauthTokenCookieName, token, {
@@ -174,7 +211,7 @@ export abstract class Oauth1Driver<Token extends Oauth1AccessToken, Scopes exten
   }
 
   /**
-   * Persists the secret inside the cookie
+   * Stores the OAuth token secret in an encrypted cookie for later use
    */
   #persistSecret(secret: string): void {
     this.ctx.response.encryptedCookie(this.oauthSecretCookieName, secret, {
@@ -184,14 +221,24 @@ export abstract class Oauth1Driver<Token extends Oauth1AccessToken, Scopes exten
   }
 
   /**
-   * Perform stateless authentication. Only applicable for Oauth1 client
+   * OAuth1 does not support stateless authentication due to the
+   * three-legged authentication flow requiring token persistence.
    */
   stateless(): never {
     throw new Exception('OAuth1 does not support stateless authorization')
   }
 
   /**
-   * Returns the redirect URL for the request.
+   * Get the authorization redirect URL without performing the redirect.
+   * Useful when you need to manually handle the redirect or use the URL
+   * in a different context.
+   *
+   * @param callback - Optional callback to customize the redirect request
+   *
+   * @example
+   * ```ts
+   * const url = await ally.use('twitter').redirectUrl()
+   * ```
    */
   async redirectUrl(
     callback?: (request: RedirectRequestContract<Scopes>) => void
@@ -200,7 +247,15 @@ export abstract class Oauth1Driver<Token extends Oauth1AccessToken, Scopes exten
   }
 
   /**
-   * Redirect user for authorization.
+   * Redirect the user to the OAuth provider's authorization page.
+   * The request token is automatically obtained and stored in cookies.
+   *
+   * @param callback - Optional callback to customize the redirect request
+   *
+   * @example
+   * ```ts
+   * await ally.use('twitter').redirect()
+   * ```
    */
   async redirect(callback?: (request: RedirectRequestContract<Scopes>) => void): Promise<void> {
     const { token, secret } = await this.getRequestToken()
@@ -224,21 +279,23 @@ export abstract class Oauth1Driver<Token extends Oauth1AccessToken, Scopes exten
   }
 
   /**
-   * Find if there is a state mismatch
+   * Check if the OAuth token from the callback matches the token
+   * stored in the cookie.
    */
   stateMisMatch(): boolean {
     return this.oauthTokenCookieValue !== this.ctx.request.input(this.oauthTokenParamName)
   }
 
   /**
-   * Find if there is an error post redirect
+   * Check if an error was returned by the OAuth provider.
    */
   hasError(): boolean {
     return !!this.getError()
   }
 
   /**
-   * Get the post redirect error
+   * Get the error code or message returned by the OAuth provider.
+   * Returns 'unknown_error' if no verifier is present and no error was specified.
    */
   getError(): string | null {
     const error = this.ctx.request.input(this.errorParamName)
@@ -254,21 +311,30 @@ export abstract class Oauth1Driver<Token extends Oauth1AccessToken, Scopes exten
   }
 
   /**
-   * Returns the "oauth_verifier" token
+   * Get the OAuth verifier from the callback request.
    */
   getCode(): string | null {
     return this.ctx.request.input(this.oauthTokenVerifierName, null)
   }
 
   /**
-   * Find it the code exists
+   * Check if the OAuth verifier is present in the callback request.
    */
   hasCode(): boolean {
     return !!this.getCode()
   }
 
   /**
-   * Get access token
+   * Exchange the request token and verifier for an access token.
+   * This method validates the token and checks for errors before
+   * making the request.
+   *
+   * @param callback - Optional callback to customize the token request
+   *
+   * @example
+   * ```ts
+   * const token = await ally.use('twitter').accessToken()
+   * ```
    */
   async accessToken(callback?: (request: ApiRequestContract) => void): Promise<Token> {
     /**
@@ -302,7 +368,7 @@ export abstract class Oauth1Driver<Token extends Oauth1AccessToken, Scopes exten
   }
 
   /**
-   * Not applicable with Oauth1
+   * Not applicable with OAuth1. Use `userFromTokenAndSecret` instead.
    */
   async userFromToken(): Promise<never> {
     throw new Exception(

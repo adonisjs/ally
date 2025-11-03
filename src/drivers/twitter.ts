@@ -17,7 +17,35 @@ import {
 import { Oauth1Driver } from '../abstract_drivers/oauth1.js'
 
 /**
- * Twitter driver to login user via twitter
+ * Twitter OAuth1 driver for authenticating users via Twitter.
+ * Supports fetching user profile information including username, name, and email.
+ * Uses OAuth 1.0a protocol.
+ *
+ * @example
+ * ```ts
+ * router.get('/twitter/redirect', ({ ally }) => {
+ *   return ally.use('twitter').redirect()
+ * })
+ *
+ * router.get('/twitter/callback', async ({ ally }) => {
+ *   const twitter = ally.use('twitter')
+ *
+ *   if (twitter.accessDenied()) {
+ *     return 'Access was denied'
+ *   }
+ *
+ *   if (twitter.stateMisMatch()) {
+ *     return 'State mismatch error'
+ *   }
+ *
+ *   if (twitter.hasError()) {
+ *     return twitter.getError()
+ *   }
+ *
+ *   const user = await twitter.user()
+ *   return user
+ * })
+ * ```
  */
 export class TwitterDriver extends Oauth1Driver<TwitterToken, string> {
   protected requestTokenUrl = 'https://api.twitter.com/oauth/request_token'
@@ -57,6 +85,10 @@ export class TwitterDriver extends Oauth1Driver<TwitterToken, string> {
   protected scopeParamName = ''
   protected scopesSeparator = ' '
 
+  /**
+   * @param ctx - The HTTP context
+   * @param config - Configuration for the Twitter driver
+   */
   constructor(
     protected ctx: HttpContext,
     public config: TwitterDriverConfig
@@ -71,7 +103,13 @@ export class TwitterDriver extends Oauth1Driver<TwitterToken, string> {
   }
 
   /**
-   * Returns user info
+   * Fetches the authenticated user's profile information from the Twitter API.
+   *
+   * @param token - The OAuth token
+   * @param secret - The OAuth token secret
+   * @param callback - Optional callback to customize the API request
+   *
+   * @see https://developer.twitter.com/en/docs/twitter-api/v1/accounts-and-users/manage-account-settings/api-reference/get-account-verify_credentials
    */
   protected async getUserInfo(
     token: string,
@@ -112,7 +150,16 @@ export class TwitterDriver extends Oauth1Driver<TwitterToken, string> {
   }
 
   /**
-   * Returns details for the authorized user
+   * Get the authenticated user's profile information using
+   * the OAuth verifier from the callback request.
+   *
+   * @param callback - Optional callback to customize the API request
+   *
+   * @example
+   * ```ts
+   * const user = await ally.use('twitter').user()
+   * console.log(user.name, user.email)
+   * ```
    */
   async user(callback?: (request: ApiRequestContract) => void) {
     const token = await this.accessToken()
@@ -125,8 +172,17 @@ export class TwitterDriver extends Oauth1Driver<TwitterToken, string> {
   }
 
   /**
-   * Finds the user info from the "oauth_token" and "oauth_token_secret"
-   * access from the access token.
+   * Get the user's profile information using an existing OAuth token
+   * and token secret.
+   *
+   * @param token - The OAuth token
+   * @param secret - The OAuth token secret
+   * @param callback - Optional callback to customize the API request
+   *
+   * @example
+   * ```ts
+   * const user = await ally.use('twitter').userFromTokenAndSecret(token, secret)
+   * ```
    */
   async userFromTokenAndSecret(
     token: string,
@@ -142,7 +198,8 @@ export class TwitterDriver extends Oauth1Driver<TwitterToken, string> {
   }
 
   /**
-   * Find if the current error code is for access denied
+   * Check if the error from the callback indicates that the user
+   * denied authorization.
    */
   accessDenied(): boolean {
     return this.ctx.request.input('denied')

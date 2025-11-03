@@ -47,7 +47,27 @@ type ResolvedConfig<
 }
 
 /**
- * Define config for the ally
+ * Define configuration for Ally social authentication providers.
+ * This function accepts a map of provider names to their factory
+ * functions or config providers.
+ *
+ * @param config - An object mapping provider names to driver factories
+ *
+ * @example
+ * ```ts
+ * export default defineConfig({
+ *   github: services.github({
+ *     clientId: env.get('GITHUB_CLIENT_ID'),
+ *     clientSecret: env.get('GITHUB_CLIENT_SECRET'),
+ *     callbackUrl: 'http://localhost:3333/github/callback'
+ *   }),
+ *   google: services.google({
+ *     clientId: env.get('GOOGLE_CLIENT_ID'),
+ *     clientSecret: env.get('GOOGLE_CLIENT_SECRET'),
+ *     callbackUrl: 'http://localhost:3333/google/callback'
+ *   })
+ * })
+ * ```
  */
 export function defineConfig<
   KnownSocialProviders extends Record<
@@ -73,7 +93,21 @@ export function defineConfig<
 }
 
 /**
- * Helpers to configure social auth services
+ * Pre-configured helpers for setting up built-in social authentication
+ * providers. Each method accepts provider-specific configuration and
+ * returns a config provider that lazily loads and instantiates the driver.
+ *
+ * @example
+ * ```ts
+ * export default defineConfig({
+ *   github: services.github({
+ *     clientId: env.get('GITHUB_CLIENT_ID'),
+ *     clientSecret: env.get('GITHUB_CLIENT_SECRET'),
+ *     callbackUrl: 'http://localhost:3333/github/callback',
+ *     scopes: ['user', 'user:email']
+ *   })
+ * })
+ * ```
  */
 export const services: {
   discord: (config: DiscordDriverConfig) => ConfigProvider<(ctx: HttpContext) => DiscordDriver>

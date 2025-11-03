@@ -19,7 +19,36 @@ import type {
 import { Oauth2Driver } from '../abstract_drivers/oauth2.js'
 
 /**
- * Spotify driver to login user via Spotify
+ * Spotify OAuth2 driver for authenticating users via Spotify.
+ * Supports fetching user profile information including display name, email, and profile images.
+ *
+ * @example
+ * ```ts
+ * router.get('/spotify/redirect', ({ ally }) => {
+ *   return ally.use('spotify').redirect((request) => {
+ *     request.scopes(['user-read-email', 'user-read-private'])
+ *   })
+ * })
+ *
+ * router.get('/spotify/callback', async ({ ally }) => {
+ *   const spotify = ally.use('spotify')
+ *
+ *   if (spotify.accessDenied()) {
+ *     return 'Access was denied'
+ *   }
+ *
+ *   if (spotify.stateMisMatch()) {
+ *     return 'State mismatch error'
+ *   }
+ *
+ *   if (spotify.hasError()) {
+ *     return spotify.getError()
+ *   }
+ *
+ *   const user = await spotify.user()
+ *   return user
+ * })
+ * ```
  */
 export class SpotifyDriver extends Oauth2Driver<SpotifyToken, SpotifyScopes> {
   protected accessTokenUrl = 'https://accounts.spotify.com/api/token'
@@ -57,6 +86,10 @@ export class SpotifyDriver extends Oauth2Driver<SpotifyToken, SpotifyScopes> {
    */
   protected scopesSeparator = ' '
 
+  /**
+   * @param ctx - The HTTP context
+   * @param config - Configuration for the Spotify driver
+   */
   constructor(
     ctx: HttpContext,
     public config: SpotifyDriverConfig
@@ -71,7 +104,10 @@ export class SpotifyDriver extends Oauth2Driver<SpotifyToken, SpotifyScopes> {
   }
 
   /**
-   * Configuring the redirect request with defaults
+   * Configures the redirect request with default scopes and Spotify-specific
+   * parameters like show_dialog.
+   *
+   * @param request - The redirect request to configure
    */
   protected configureRedirectRequest(request: RedirectRequestContract<SpotifyScopes>) {
     /**
@@ -91,7 +127,11 @@ export class SpotifyDriver extends Oauth2Driver<SpotifyToken, SpotifyScopes> {
   }
 
   /**
-   * Returns the HTTP request with the authorization header set
+   * Creates an authenticated HTTP request with the proper authorization
+   * header for Spotify API calls.
+   *
+   * @param url - The API endpoint URL
+   * @param token - The access token
    */
   protected getAuthenticatedRequest(url: string, token: string): HttpClient {
     const request = this.httpClient(url)
@@ -102,8 +142,12 @@ export class SpotifyDriver extends Oauth2Driver<SpotifyToken, SpotifyScopes> {
   }
 
   /**
-   * Fetches the user info from the Spotify API
-   * https://discord.com/developers/docs/resources/user#get-current-user
+   * Fetches the authenticated user's profile information from the Spotify API.
+   *
+   * @param token - The access token
+   * @param callback - Optional callback to customize the API request
+   *
+   * @see https://developer.spotify.com/documentation/web-api/reference/get-current-users-profile
    */
   protected async getUserInfo(token: string, callback?: (request: ApiRequestContract) => void) {
     const request = this.getAuthenticatedRequest(this.userInfoUrl, token)
@@ -125,7 +169,8 @@ export class SpotifyDriver extends Oauth2Driver<SpotifyToken, SpotifyScopes> {
   }
 
   /**
-   * Find if the current error code is for access denied
+   * Check if the error from the callback indicates that the user
+   * denied authorization.
    */
   accessDenied(): boolean {
     const error = this.getError()
@@ -137,7 +182,16 @@ export class SpotifyDriver extends Oauth2Driver<SpotifyToken, SpotifyScopes> {
   }
 
   /**
-   * Returns details for the authorized user
+   * Get the authenticated user's profile information using
+   * the authorization code from the callback request.
+   *
+   * @param callback - Optional callback to customize the API request
+   *
+   * @example
+   * ```ts
+   * const user = await ally.use('spotify').user()
+   * console.log(user.name, user.email)
+   * ```
    */
   async user(callback?: (request: ApiRequestContract) => void) {
     const token = await this.accessToken(callback)
@@ -150,7 +204,16 @@ export class SpotifyDriver extends Oauth2Driver<SpotifyToken, SpotifyScopes> {
   }
 
   /**
-   * Finds the user by the access token
+   * Get the user's profile information using an existing
+   * access token.
+   *
+   * @param token - The Spotify access token
+   * @param callback - Optional callback to customize the API request
+   *
+   * @example
+   * ```ts
+   * const user = await ally.use('spotify').userFromToken(accessToken)
+   * ```
    */
   async userFromToken(token: string, callback?: (request: ApiRequestContract) => void) {
     const user = await this.getUserInfo(token, callback)

@@ -24,77 +24,101 @@ import * as errors from '../errors.js'
 import { RedirectRequest } from '../redirect_request.js'
 
 /**
- * Abstract implementation for an Oauth2 driver
+ * Abstract base class for implementing OAuth2 social authentication drivers.
+ * Extends the OAuth2 client to provide AdonisJS-specific functionality like
+ * CSRF protection, state management, and integration with HTTP context.
+ *
+ * @example
+ * ```ts
+ * export class CustomDriver extends Oauth2Driver<CustomToken, CustomScopes> {
+ *   protected stateCookieName = 'custom_oauth_state'
+ *   protected stateParamName = 'state'
+ *   protected errorParamName = 'error'
+ *   protected codeParamName = 'code'
+ *   protected authorizeUrl = 'https://provider.com/oauth/authorize'
+ *   protected accessTokenUrl = 'https://provider.com/oauth/token'
+ *   protected scopeParamName = 'scope'
+ *   protected scopesSeparator = ' '
+ *
+ *   async user() {
+ *     // Implementation
+ *   }
+ * }
+ * ```
  */
 export abstract class Oauth2Driver<Token extends Oauth2AccessToken, Scopes extends string>
   extends Oauth2Client<Token>
   implements AllyDriverContract<Token, Scopes>
 {
   /**
-   * Is the authorization process stateless?
+   * Whether the authorization process is stateless. When true,
+   * state verification via cookies is disabled.
    */
   protected isStateless: boolean = false
 
   /**
-   * The cookie name for storing the CSRF token. Must be unique for your
-   * driver. One option is to prefix the driver name. For example:
-   * `gh_oauth_state`
+   * The cookie name for storing the CSRF state token. Must be unique
+   * for your driver to avoid conflicts. For example: `gh_oauth_state`
    */
   protected abstract stateCookieName: string
 
   /**
-   * The parameter in which to send the state to the oauth provider. The same
-   * input is used to retrieve the state post redirect as well.
-   *
-   * You must check the auth provider docs to find it
+   * The query parameter name for sending the state to the OAuth provider.
+   * This is typically 'state' but varies by provider. Check the provider's
+   * OAuth documentation.
    */
   protected abstract stateParamName: string
 
   /**
-   * The parameter name from which to fetch the error message or error code
-   * post redirect.
-   *
-   * You must check the auth provider docs to find it
+   * The query parameter name for error messages returned by the provider
+   * after authorization redirect. This is typically 'error'.
    */
   protected abstract errorParamName: string
 
   /**
-   * The parameter name from which to fetch the authorization code. It is usually
-   * named as "code".
-   *
-   * You must check the auth provider docs to find it
+   * The query parameter name for the authorization code returned by the
+   * provider. This is typically 'code'.
    */
   protected abstract codeParamName: string
 
   /**
-   * Authorization URL for the auth provider. The user will be redirected
-   * to this URL
+   * The OAuth provider's authorization URL where users are redirected
+   * to grant permissions.
    */
   protected abstract authorizeUrl: string
 
   /**
-   * The URL to hit to get an access token
+   * The OAuth provider's endpoint for exchanging the authorization code
+   * for an access token.
    */
   protected abstract accessTokenUrl: string
 
   /**
-   * The query param name for defining the Authorization scopes.
-   * Mostly it is `scope`
+   * The query parameter name for defining authorization scopes.
+   * This is typically 'scope'.
    */
   protected abstract scopeParamName: string
 
   /**
-   * The identifier for joining multiple scopes. Mostly it is a space.
+   * The separator character for joining multiple scopes. This is
+   * typically a space ' ' or comma ','.
    */
   protected abstract scopesSeparator: string
 
   /**
-   * Returns details for the authorized user
+   * Fetch the user details from the OAuth provider using the
+   * authorization code from the current request.
+   *
+   * @param callback - Optional callback to customize the API request
    */
   abstract user(callback?: (request: ApiRequestContract) => void): Promise<AllyUserContract<Token>>
 
   /**
-   * Finds the user by access token
+   * Fetch user details using an existing access token. Useful for
+   * verifying tokens or fetching user info for already authenticated users.
+   *
+   * @param token - The access token
+   * @param callback - Optional callback to customize the API request
    */
   abstract userFromToken(
     token: string,
@@ -102,20 +126,25 @@ export abstract class Oauth2Driver<Token extends Oauth2AccessToken, Scopes exten
   ): Promise<AllyUserContract<{ token: string; type: 'bearer' }>>
 
   /**
-   * Find if the current error code is for access denied
+   * Check if the current error indicates that the user denied access.
+   * Different providers use different error codes for access denial.
    */
   abstract accessDenied(): boolean
 
   /**
-   * Oauth client version
+   * OAuth protocol version identifier
    */
   version = 'oauth2' as const
 
   /**
-   * The value of state read from the cookies.
+   * Cached state value read from the cookie
    */
   protected stateCookieValue?: string
 
+  /**
+   * @param ctx - The current HTTP context
+   * @param config - OAuth2 driver configuration
+   */
   constructor(
     protected ctx: HttpContext,
     public config: Oauth2DriverConfig
@@ -124,23 +153,27 @@ export abstract class Oauth2Driver<Token extends Oauth2AccessToken, Scopes exten
   }
 
   /**
-   * The Oauth2Client will use the instance returned from this method to
-   * build the redirect url
+   * Creates a URL builder instance for constructing authorization URLs
+   * with scope support.
+   *
+   * @param url - The base authorization URL
    */
   protected urlBuilder(url: string) {
     return new RedirectRequest(url, this.scopeParamName, this.scopesSeparator)
   }
 
   /**
-   * Loads the value of state from the cookie and removes it right
-   * away. We read the cookie value and clear it during the
-   * current request lifecycle.
+   * Loads the state value from the encrypted cookie and immediately clears
+   * the cookie. This must be called by child classes in their constructor
+   * to enable CSRF protection.
    *
-   * :::::
-   * NOTE
-   * :::::
-   *
-   * This child class must call this method inside the constructor.
+   * @example
+   * ```ts
+   * constructor(ctx: HttpContext, config: DriverConfig) {
+   *   super(ctx, config)
+   *   this.loadState()
+   * }
+   * ```
    */
   protected loadState() {
     if (this.isStateless) {
@@ -152,7 +185,7 @@ export abstract class Oauth2Driver<Token extends Oauth2AccessToken, Scopes exten
   }
 
   /**
-   * Persists the state inside the cookie
+   * Stores the CSRF state in an encrypted cookie for later verification
    */
   #persistState(): string | undefined {
     if (this.isStateless) {
@@ -169,7 +202,13 @@ export abstract class Oauth2Driver<Token extends Oauth2AccessToken, Scopes exten
   }
 
   /**
-   * Perform stateless authentication. Only applicable for Oauth2 client
+   * Enable stateless authentication by disabling CSRF state verification.
+   * Only use this in scenarios where state verification is not required.
+   *
+   * @example
+   * ```ts
+   * await ally.use('github').stateless().redirect()
+   * ```
    */
   stateless(): this {
     this.isStateless = true
@@ -177,7 +216,18 @@ export abstract class Oauth2Driver<Token extends Oauth2AccessToken, Scopes exten
   }
 
   /**
-   * Returns the redirect URL for the request.
+   * Get the authorization redirect URL without performing the redirect.
+   * Useful when you need to manually handle the redirect or use the URL
+   * in a different context.
+   *
+   * @param callback - Optional callback to customize the redirect request
+   *
+   * @example
+   * ```ts
+   * const url = await ally.use('github').redirectUrl((request) => {
+   *   request.scopes(['user:email'])
+   * })
+   * ```
    */
   async redirectUrl(
     callback?: (request: RedirectRequestContract<Scopes>) => void
@@ -187,7 +237,18 @@ export abstract class Oauth2Driver<Token extends Oauth2AccessToken, Scopes exten
   }
 
   /**
-   * Redirect user for authorization.
+   * Redirect the user to the OAuth provider's authorization page.
+   * The state parameter is automatically set for CSRF protection.
+   *
+   * @param callback - Optional callback to customize the redirect request
+   *
+   * @example
+   * ```ts
+   * await ally.use('github').redirect((request) => {
+   *   request.scopes(['user:email', 'read:org'])
+   *   request.param('allow_signup', 'false')
+   * })
+   * ```
    */
   async redirect(callback?: (request: RedirectRequestContract<Scopes>) => void): Promise<void> {
     const url = await this.redirectUrl((request) => {
@@ -203,7 +264,8 @@ export abstract class Oauth2Driver<Token extends Oauth2AccessToken, Scopes exten
   }
 
   /**
-   * Find if there is a state mismatch
+   * Check if the state parameter from the callback matches the state
+   * stored in the cookie. Returns false in stateless mode.
    */
   stateMisMatch(): boolean {
     if (this.isStateless) {
@@ -214,14 +276,15 @@ export abstract class Oauth2Driver<Token extends Oauth2AccessToken, Scopes exten
   }
 
   /**
-   * Find if there is an error post redirect
+   * Check if an error was returned by the OAuth provider.
    */
   hasError(): boolean {
     return !!this.getError()
   }
 
   /**
-   * Get the post redirect error
+   * Get the error code or message returned by the OAuth provider.
+   * Returns 'unknown_error' if no code is present and no error was specified.
    */
   getError(): string | null {
     const error = this.ctx.request.input(this.errorParamName)
@@ -237,21 +300,29 @@ export abstract class Oauth2Driver<Token extends Oauth2AccessToken, Scopes exten
   }
 
   /**
-   * Returns the authorization code
+   * Get the authorization code from the callback request.
    */
   getCode(): string | null {
     return this.ctx.request.input(this.codeParamName, null)
   }
 
   /**
-   * Find it the code exists
+   * Check if the authorization code is present in the callback request.
    */
   hasCode(): boolean {
     return !!this.getCode()
   }
 
   /**
-   * Get access token
+   * Exchange the authorization code for an access token. This method
+   * validates the state and checks for errors before making the request.
+   *
+   * @param callback - Optional callback to customize the token request
+   *
+   * @example
+   * ```ts
+   * const token = await ally.use('github').accessToken()
+   * ```
    */
   async accessToken(callback?: (request: ApiRequestContract) => void): Promise<Token> {
     /**
@@ -282,7 +353,7 @@ export abstract class Oauth2Driver<Token extends Oauth2AccessToken, Scopes exten
   }
 
   /**
-   * Not applicable with Oauth2
+   * Not applicable with OAuth2. Use `userFromToken` instead.
    */
   async userFromTokenAndSecret(): Promise<never> {
     throw new Exception(
