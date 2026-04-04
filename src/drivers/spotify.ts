@@ -15,6 +15,8 @@ import type {
   ApiRequestContract,
   SpotifyDriverConfig,
   RedirectRequestContract,
+  AllyUserContract,
+  Oauth2AccessToken,
 } from '../types.ts'
 import { Oauth2Driver } from '../abstract_drivers/oauth2.ts'
 
@@ -165,7 +167,7 @@ export class SpotifyDriver extends Oauth2Driver<SpotifyToken, SpotifyScopes> {
       avatarUrl: body.images[0]?.url || null,
       emailVerificationState: 'unsupported' as const,
       original: body,
-    }
+    } satisfies Omit<AllyUserContract<Oauth2AccessToken>, 'token'>
   }
 
   /**

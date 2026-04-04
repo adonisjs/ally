@@ -15,6 +15,8 @@ import type {
   GoogleDriverConfig,
   ApiRequestContract,
   RedirectRequestContract,
+  AllyUserContract,
+  Oauth2AccessToken,
 } from '../types.ts'
 import { Oauth2Driver } from '../abstract_drivers/oauth2.ts'
 
@@ -214,7 +216,7 @@ export class GoogleDriver extends Oauth2Driver<GoogleToken, GoogleScopes> {
       avatarUrl: body.picture,
       emailVerificationState: body.email_verified ? ('verified' as const) : ('unverified' as const),
       original: body,
-    }
+    } satisfies Omit<AllyUserContract<Oauth2AccessToken>, 'token'>
   }
 
   /**

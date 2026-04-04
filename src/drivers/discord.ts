@@ -16,6 +16,8 @@ import type {
   ApiRequestContract,
   DiscordDriverConfig,
   RedirectRequestContract,
+  AllyUserContract,
+  Oauth2AccessToken,
 } from '../types.ts'
 import { Oauth2Driver } from '../abstract_drivers/oauth2.ts'
 
@@ -198,7 +200,7 @@ export class DiscordDriver extends Oauth2Driver<DiscordToken, DiscordScopes> {
             : ('unverified' as const)
           : ('unsupported' as const),
       original: body,
-    }
+    } satisfies Omit<AllyUserContract<Oauth2AccessToken>, 'token'>
   }
 
   /**

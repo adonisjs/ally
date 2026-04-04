@@ -16,6 +16,8 @@ import type {
   ApiRequestContract,
   LinkedInDriverConfig,
   RedirectRequestContract,
+  AllyUserContract,
+  Oauth2AccessToken,
 } from '../types.ts'
 import { Oauth2Driver } from '../abstract_drivers/oauth2.ts'
 
@@ -174,7 +176,10 @@ export class LinkedInDriver extends Oauth2Driver<LinkedInToken, LinkedInScopes> 
       name: `${body.localizedFirstName} ${body.localizedLastName}`,
       avatarUrl: avatar,
       original: body,
-    }
+    } satisfies Omit<
+      AllyUserContract<Oauth2AccessToken>,
+      'token' | 'email' | 'emailVerificationState'
+    >
   }
 
   /**

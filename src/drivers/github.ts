@@ -16,6 +16,7 @@ import type {
   GithubDriverConfig,
   ApiRequestContract,
   RedirectRequestContract,
+  Oauth2AccessToken,
 } from '../types.ts'
 import { Oauth2Driver } from '../abstract_drivers/oauth2.ts'
 
@@ -192,7 +193,7 @@ export class GithubDriver extends Oauth2Driver<GithubToken, GithubScopes> {
       name: body.name ?? body.login,
       avatarUrl: body.avatar_url,
       original: body,
-    }
+    } satisfies Omit<AllyUserContract<Oauth2AccessToken>, 'token'>
   }
 
   /**

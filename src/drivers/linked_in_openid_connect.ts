@@ -12,10 +12,12 @@ import type { HttpClient } from '@poppinss/oauth-client'
 
 import { Oauth2Driver } from '../abstract_drivers/oauth2.ts'
 import type {
+  AllyUserContract,
   ApiRequestContract,
   LinkedInOpenidConnectAccessToken,
   LinkedInOpenidConnectDriverConfig,
   LinkedInOpenidConnectScopes,
+  Oauth2AccessToken,
   RedirectRequestContract,
 } from '../types.ts'
 
@@ -159,9 +161,6 @@ export class LinkedInOpenidConnectDriver extends Oauth2Driver<
     }
 
     const body = await request.get()
-    const emailVerificationState: 'verified' | 'unverified' = body.email_verified
-      ? 'verified'
-      : 'unverified'
 
     return {
       id: body.sub,
@@ -169,9 +168,9 @@ export class LinkedInOpenidConnectDriver extends Oauth2Driver<
       name: body.family_name,
       avatarUrl: body.picture,
       email: body.email,
-      emailVerificationState,
+      emailVerificationState: 'unsupported' as const,
       original: body,
-    }
+    } satisfies Omit<AllyUserContract<Oauth2AccessToken>, 'token'>
   }
 
   /**

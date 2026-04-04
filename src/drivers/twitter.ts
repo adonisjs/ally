@@ -13,6 +13,7 @@ import {
   type AllyUserContract,
   type ApiRequestContract,
   type TwitterDriverConfig,
+  type Oauth1AccessToken,
 } from '../types.ts'
 import { Oauth1Driver } from '../abstract_drivers/oauth1.ts'
 
@@ -146,7 +147,7 @@ export class TwitterDriver extends Oauth1Driver<TwitterToken, string> {
       emailVerificationState: 'unsupported' as const,
       avatarUrl: user.profile_image_url_https.replace('_normal.jpg', '_400x400.jpg'),
       original: user,
-    }
+    } satisfies Omit<AllyUserContract<Oauth1AccessToken>, 'token'>
   }
 
   /**

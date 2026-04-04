@@ -17,6 +17,8 @@ import type {
   FacebookDriverConfig,
   FacebookProfileFields,
   RedirectRequestContract,
+  AllyUserContract,
+  Oauth2AccessToken,
 } from '../types.ts'
 import { Oauth2Driver } from '../abstract_drivers/oauth2.ts'
 
@@ -195,7 +197,7 @@ export class FacebookDriver extends Oauth2Driver<FacebookToken, FacebookScopes> 
             : ('unverified' as const)
           : ('unsupported' as const),
       original: body,
-    }
+    } satisfies Omit<AllyUserContract<Oauth2AccessToken>, 'token'>
   }
 
   /**
