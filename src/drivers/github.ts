@@ -237,7 +237,15 @@ export class GithubDriver extends Oauth2Driver<GithubToken, GithubScopes> {
 
       return mainEmail
     } catch (error) {
-      if (error && error.response && error.response.statusCode === 404) {
+      if (
+        error &&
+        typeof error === 'object' &&
+        'response' in error &&
+        error.response &&
+        typeof error.response === 'object' &&
+        'statusCode' in error.response &&
+        error.response.statusCode === 404
+      ) {
         return
       }
       throw error

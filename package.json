@@ -39,8 +39,8 @@
     "quick:test": "cross-env NODE_DEBUG=\"adonisjs:ally\" node --enable-source-maps --import=@poppinss/ts-exec bin/test.ts"
   },
   "devDependencies": {
-    "@adonisjs/assembler": "^8.0.0",
-    "@adonisjs/core": "^7.0.0",
+    "@adonisjs/assembler": "^8.4.0",
+    "@adonisjs/core": "^7.3.0",
     "@adonisjs/eslint-config": "^3.0.0",
     "@adonisjs/prettier-config": "^1.4.5",
     "@adonisjs/tsconfig": "^2.0.0",
@@ -49,17 +49,17 @@
     "@japa/file-system": "^3.0.0",
     "@japa/runner": "^5.3.0",
     "@poppinss/ts-exec": "^1.4.4",
-    "@release-it/conventional-changelog": "^10.0.5",
-    "@types/node": "^25.3.0",
+    "@release-it/conventional-changelog": "^10.0.6",
+    "@types/node": "^25.5.2",
     "c8": "^11.0.0",
     "copyfiles": "^2.4.1",
     "cross-env": "^10.1.0",
     "del-cli": "^7.0.0",
-    "eslint": "^10.0.2",
+    "eslint": "^10.2.0",
     "prettier": "^3.8.1",
     "release-it": "^19.2.4",
     "tsup": "^8.5.1",
-    "typescript": "^5.9.3"
+    "typescript": "^6.0.2"
   },
   "dependencies": {
     "@poppinss/oauth-client": "^7.0.2"

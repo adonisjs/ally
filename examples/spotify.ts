@@ -36,7 +36,7 @@ router.get('/spotify/callback', async ({ ally }) => {
 
     const user = await spotify.user()
     return user
-  } catch (error) {
+  } catch (error: any) {
     console.log({ error: error.response })
     throw error
   }

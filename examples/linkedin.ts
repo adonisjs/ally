@@ -34,7 +34,7 @@ router.get('/linkedin/callback', async ({ ally }) => {
 
     const user = await linkedin.user()
     return user
-  } catch (error) {
+  } catch (error: any) {
     console.log({ error: error.response })
     throw error
   }

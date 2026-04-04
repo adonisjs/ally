@@ -34,7 +34,7 @@ router.get('/google/callback', async ({ ally }) => {
 
     const user = await google.user()
     return user
-  } catch (error) {
+  } catch (error: any) {
     console.log({ error: error.response })
     throw error
   }

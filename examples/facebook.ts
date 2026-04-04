@@ -36,7 +36,7 @@ router.get('/facebook/callback', async ({ ally }) => {
 
     const user = await facebook.user()
     return user
-  } catch (error) {
+  } catch (error: any) {
     console.log({ error: error.response })
     throw error
   }

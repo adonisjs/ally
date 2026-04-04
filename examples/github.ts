@@ -36,7 +36,7 @@ router.get('/github/callback', async ({ ally }) => {
 
     const user = await gh.user()
     return user
-  } catch (error) {
+  } catch (error: any) {
     console.log({ error: error.cause })
     throw error
   }
