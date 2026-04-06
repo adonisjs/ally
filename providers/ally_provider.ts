@@ -25,8 +25,18 @@ declare module '@adonisjs/core/http' {
  * AllyProvider extends the HTTP context with the "ally" property
  */
 export default class AllyProvider {
+  /**
+   * Create a new Ally provider instance.
+   *
+   * @param app - The AdonisJS application service.
+   */
   constructor(protected app: ApplicationService) {}
 
+  /**
+   * Boot the provider and register the `ctx.ally` getter.
+   *
+   * @returns A promise that resolves once the provider has been booted.
+   */
   async boot() {
     const allyConfigProvider = this.app.config.get<any>('ally')
 

@@ -53,9 +53,21 @@ import { Oauth2Driver } from '../abstract_drivers/oauth2.ts'
  * ```
  */
 export class GithubDriver extends Oauth2Driver<GithubToken, GithubScopes> {
+  /**
+   * GitHub token endpoint URL.
+   */
   protected accessTokenUrl = 'https://github.com/login/oauth/access_token'
+  /**
+   * GitHub authorization endpoint URL.
+   */
   protected authorizeUrl = 'https://github.com/login/oauth/authorize'
+  /**
+   * GitHub profile endpoint URL.
+   */
   protected userInfoUrl = 'https://api.github.com/user'
+  /**
+   * GitHub email endpoint URL.
+   */
   protected userEmailUrl = 'https://api.github.com/user/emails'
 
   /**

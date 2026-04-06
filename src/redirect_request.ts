@@ -16,11 +16,22 @@ import { type LiteralStringUnion } from './types.ts'
  * capabilities specific to social authentication providers.
  */
 export class RedirectRequest<Scopes extends string> extends UrlBuilder {
+  /**
+   * Optional callback used to transform scope values before serialization.
+   */
   #scopesTransformer: undefined | ((scopes: LiteralStringUnion<Scopes>[]) => string[])
+  /**
+   * Query parameter name used to serialize the scope string.
+   */
   #scopeParamName: string
+  /**
+   * Separator used when joining multiple scopes.
+   */
   #scopeSeparator: string
 
   /**
+   * Create a redirect request builder with scope helpers.
+   *
    * @param baseUrl - The authorization URL for the OAuth provider
    * @param scopeParamName - The query parameter name for scopes (e.g., 'scope')
    * @param scopeSeparator - The character used to separate multiple scopes (e.g., ' ' or ',')
@@ -37,6 +48,7 @@ export class RedirectRequest<Scopes extends string> extends UrlBuilder {
    * require scope prefixes or transformations.
    *
    * @param callback - Function that transforms the scopes array
+   * @returns The current redirect request instance.
    *
    * @example
    * ```ts
@@ -55,6 +67,7 @@ export class RedirectRequest<Scopes extends string> extends UrlBuilder {
    * any previously set scopes.
    *
    * @param scopes - Array of scope strings to request
+   * @returns The current redirect request instance.
    *
    * @example
    * ```ts
@@ -75,6 +88,7 @@ export class RedirectRequest<Scopes extends string> extends UrlBuilder {
    * for adding scopes without replacing the default ones.
    *
    * @param scopes - Array of scope strings to merge
+   * @returns The current redirect request instance.
    *
    * @example
    * ```ts
@@ -102,6 +116,8 @@ export class RedirectRequest<Scopes extends string> extends UrlBuilder {
 
   /**
    * Clear all existing scopes from the authorization request.
+   *
+   * @returns The current redirect request instance.
    *
    * @example
    * ```ts

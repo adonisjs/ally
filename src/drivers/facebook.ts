@@ -55,8 +55,17 @@ import { Oauth2Driver } from '../abstract_drivers/oauth2.ts'
  * ```
  */
 export class FacebookDriver extends Oauth2Driver<FacebookToken, FacebookScopes> {
+  /**
+   * Facebook token endpoint URL.
+   */
   protected accessTokenUrl = 'https://graph.facebook.com/v10.0/oauth/access_token'
+  /**
+   * Facebook authorization endpoint URL.
+   */
   protected authorizeUrl = 'https://www.facebook.com/v10.0/dialog/oauth'
+  /**
+   * Facebook profile endpoint URL.
+   */
   protected userInfoUrl = 'https://graph.facebook.com/v10.0/me'
 
   /**

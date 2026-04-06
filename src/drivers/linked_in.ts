@@ -55,9 +55,21 @@ import { Oauth2Driver } from '../abstract_drivers/oauth2.ts'
  * ```
  */
 export class LinkedInDriver extends Oauth2Driver<LinkedInToken, LinkedInScopes> {
+  /**
+   * LinkedIn token endpoint URL.
+   */
   protected accessTokenUrl = 'https://www.linkedin.com/oauth/v2/accessToken'
+  /**
+   * LinkedIn authorization endpoint URL.
+   */
   protected authorizeUrl = 'https://www.linkedin.com/oauth/v2/authorization'
+  /**
+   * LinkedIn profile endpoint URL.
+   */
   protected userInfoUrl = 'https://api.linkedin.com/v2/me'
+  /**
+   * LinkedIn email endpoint URL.
+   */
   protected userEmailUrl = 'https://api.linkedin.com/v2/clientAwareMemberHandles'
 
   /**

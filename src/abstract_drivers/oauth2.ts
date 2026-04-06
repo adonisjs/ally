@@ -116,6 +116,7 @@ export abstract class Oauth2Driver<Token extends Oauth2AccessToken, Scopes exten
    * authorization code from the current request.
    *
    * @param callback - Optional callback to customize the API request
+   * @returns A promise resolving to the authenticated user profile.
    */
   abstract user(callback?: (request: ApiRequestContract) => void): Promise<AllyUserContract<Token>>
 
@@ -125,6 +126,7 @@ export abstract class Oauth2Driver<Token extends Oauth2AccessToken, Scopes exten
    *
    * @param token - The access token
    * @param callback - Optional callback to customize the API request
+   * @returns A promise resolving to the authenticated user profile.
    */
   abstract userFromToken(
     token: string,
@@ -134,6 +136,8 @@ export abstract class Oauth2Driver<Token extends Oauth2AccessToken, Scopes exten
   /**
    * Check if the current error indicates that the user denied access.
    * Different providers use different error codes for access denial.
+   *
+   * @returns `true` when the provider reported an access-denied state.
    */
   abstract accessDenied(): boolean
 
@@ -154,6 +158,8 @@ export abstract class Oauth2Driver<Token extends Oauth2AccessToken, Scopes exten
   protected codeVerifierCookieValue?: string
 
   /**
+   * Create a new OAuth2 driver instance.
+   *
    * @param ctx - The current HTTP context
    * @param config - OAuth2 driver configuration
    */
@@ -169,6 +175,7 @@ export abstract class Oauth2Driver<Token extends Oauth2AccessToken, Scopes exten
    * with scope support.
    *
    * @param url - The base authorization URL
+   * @returns A redirect request builder for the given URL.
    */
   protected urlBuilder(url: string) {
     return new RedirectRequest(url, this.scopeParamName, this.scopesSeparator)
@@ -176,6 +183,8 @@ export abstract class Oauth2Driver<Token extends Oauth2AccessToken, Scopes exten
 
   /**
    * Find if the driver uses PKCE for the OAuth2 authorization code flow.
+   *
+   * @returns `true` when the driver has PKCE enabled.
    */
   #usesPkce(): boolean {
     return !!this.codeVerifierCookieName
@@ -211,6 +220,8 @@ export abstract class Oauth2Driver<Token extends Oauth2AccessToken, Scopes exten
   /**
    * Returns the PKCE code verifier for building the authorization redirect.
    * This method is expected to create and persist the verifier for later use.
+   *
+   * @returns The generated PKCE code verifier or `null` when PKCE is disabled.
    */
   protected getPkceCodeVerifierForRedirect(): string | null {
     if (!this.#usesPkce()) {
@@ -230,6 +241,8 @@ export abstract class Oauth2Driver<Token extends Oauth2AccessToken, Scopes exten
   /**
    * Returns the PKCE code verifier for the access token exchange.
    * This method only reads the verifier that was persisted during redirect.
+   *
+   * @returns The persisted PKCE code verifier or `null` when PKCE is disabled.
    */
   protected getPkceCodeVerifierForAccessToken(): string | null {
     if (!this.#usesPkce()) {
@@ -247,6 +260,8 @@ export abstract class Oauth2Driver<Token extends Oauth2AccessToken, Scopes exten
    * Enable stateless authentication by disabling CSRF state verification.
    * Only use this in scenarios where state verification is not required.
    *
+   * @returns The current driver instance.
+   *
    * @example
    * ```ts
    * await ally.use('github').stateless().redirect()
@@ -263,6 +278,7 @@ export abstract class Oauth2Driver<Token extends Oauth2AccessToken, Scopes exten
    * in a different context.
    *
    * @param callback - Optional callback to customize the redirect request
+   * @returns A promise resolving to the authorization URL.
    *
    * @example
    * ```ts
@@ -283,6 +299,7 @@ export abstract class Oauth2Driver<Token extends Oauth2AccessToken, Scopes exten
    * The state parameter is automatically set for CSRF protection.
    *
    * @param callback - Optional callback to customize the redirect request
+   * @returns A promise that resolves after the redirect response is prepared.
    *
    * @example
    * ```ts
@@ -314,6 +331,8 @@ export abstract class Oauth2Driver<Token extends Oauth2AccessToken, Scopes exten
   /**
    * Check if the state parameter from the callback matches the state
    * stored in the cookie. Returns false in stateless mode.
+   *
+   * @returns `true` when the state validation fails.
    */
   stateMisMatch(): boolean {
     if (this.isStateless) {
@@ -333,6 +352,8 @@ export abstract class Oauth2Driver<Token extends Oauth2AccessToken, Scopes exten
 
   /**
    * Check if an error was returned by the OAuth provider.
+   *
+   * @returns `true` when an error exists on the callback request.
    */
   hasError(): boolean {
     return !!this.getError()
@@ -341,6 +362,8 @@ export abstract class Oauth2Driver<Token extends Oauth2AccessToken, Scopes exten
   /**
    * Get the error code or message returned by the OAuth provider.
    * Returns 'unknown_error' if no code is present and no error was specified.
+   *
+   * @returns The provider error value when present.
    */
   getError(): string | null {
     const error = this.ctx.request.input(this.errorParamName)
@@ -357,6 +380,8 @@ export abstract class Oauth2Driver<Token extends Oauth2AccessToken, Scopes exten
 
   /**
    * Get the authorization code from the callback request.
+   *
+   * @returns The authorization code when present.
    */
   getCode(): string | null {
     return this.ctx.request.input(this.codeParamName, null)
@@ -364,6 +389,8 @@ export abstract class Oauth2Driver<Token extends Oauth2AccessToken, Scopes exten
 
   /**
    * Check if the authorization code is present in the callback request.
+   *
+   * @returns `true` when the callback request contains an authorization code.
    */
   hasCode(): boolean {
     return !!this.getCode()
@@ -374,6 +401,7 @@ export abstract class Oauth2Driver<Token extends Oauth2AccessToken, Scopes exten
    * validates the state and checks for errors before making the request.
    *
    * @param callback - Optional callback to customize the token request
+   * @returns A promise resolving to the access token payload.
    *
    * @example
    * ```ts
@@ -410,6 +438,8 @@ export abstract class Oauth2Driver<Token extends Oauth2AccessToken, Scopes exten
 
   /**
    * Not applicable with OAuth2. Use `userFromToken` instead.
+   *
+   * @returns This method never returns.
    */
   async userFromTokenAndSecret(): Promise<never> {
     throw new Exception(

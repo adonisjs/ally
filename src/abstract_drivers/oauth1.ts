@@ -110,6 +110,7 @@ export abstract class Oauth1Driver<Token extends Oauth1AccessToken, Scopes exten
    * authorization from the current request.
    *
    * @param callback - Optional callback to customize the API request
+   * @returns A promise resolving to the authenticated user profile.
    */
   abstract user(callback?: (request: ApiRequestContract) => void): Promise<AllyUserContract<Token>>
 
@@ -120,6 +121,7 @@ export abstract class Oauth1Driver<Token extends Oauth1AccessToken, Scopes exten
    * @param token - The access token
    * @param secret - The token secret
    * @param callback - Optional callback to customize the API request
+   * @returns A promise resolving to the authenticated user profile.
    */
   abstract userFromTokenAndSecret(
     token: string,
@@ -130,6 +132,8 @@ export abstract class Oauth1Driver<Token extends Oauth1AccessToken, Scopes exten
   /**
    * Check if the current error indicates that the user denied access.
    * Different providers use different error codes for access denial.
+   *
+   * @returns `true` when the provider reported an access-denied state.
    */
   abstract accessDenied(): boolean
 
@@ -147,12 +151,16 @@ export abstract class Oauth1Driver<Token extends Oauth1AccessToken, Scopes exten
   /**
    * The cookie name for storing the OAuth token secret.
    * Automatically derived from the token cookie name.
+   *
+   * @returns The cookie name used to persist the OAuth token secret.
    */
   protected get oauthSecretCookieName() {
     return `${this.oauthTokenCookieName}_secret`
   }
 
   /**
+   * Create a new OAuth1 driver instance.
+   *
    * @param ctx - The current HTTP context
    * @param config - OAuth1 driver configuration
    */
@@ -168,6 +176,7 @@ export abstract class Oauth1Driver<Token extends Oauth1AccessToken, Scopes exten
    * with scope support.
    *
    * @param url - The base authorization URL
+   * @returns A redirect request builder for the given URL.
    */
   protected urlBuilder(url: string) {
     return new RedirectRequest(url, this.scopeParamName, this.scopesSeparator)
@@ -202,6 +211,8 @@ export abstract class Oauth1Driver<Token extends Oauth1AccessToken, Scopes exten
 
   /**
    * Stores the OAuth token in an encrypted cookie for later use
+   *
+   * @param token - The request token to persist.
    */
   #persistToken(token: string): void {
     this.ctx.response.encryptedCookie(this.oauthTokenCookieName, token, {
@@ -212,6 +223,8 @@ export abstract class Oauth1Driver<Token extends Oauth1AccessToken, Scopes exten
 
   /**
    * Stores the OAuth token secret in an encrypted cookie for later use
+   *
+   * @param secret - The request token secret to persist.
    */
   #persistSecret(secret: string): void {
     this.ctx.response.encryptedCookie(this.oauthSecretCookieName, secret, {
@@ -223,6 +236,8 @@ export abstract class Oauth1Driver<Token extends Oauth1AccessToken, Scopes exten
   /**
    * OAuth1 does not support stateless authentication due to the
    * three-legged authentication flow requiring token persistence.
+   *
+   * @returns This method never returns.
    */
   stateless(): never {
     throw new Exception('OAuth1 does not support stateless authorization')
@@ -234,6 +249,7 @@ export abstract class Oauth1Driver<Token extends Oauth1AccessToken, Scopes exten
    * in a different context.
    *
    * @param callback - Optional callback to customize the redirect request
+   * @returns A promise resolving to the authorization URL.
    *
    * @example
    * ```ts
@@ -251,6 +267,7 @@ export abstract class Oauth1Driver<Token extends Oauth1AccessToken, Scopes exten
    * The request token is automatically obtained and stored in cookies.
    *
    * @param callback - Optional callback to customize the redirect request
+   * @returns A promise that resolves after the redirect response is prepared.
    *
    * @example
    * ```ts
@@ -281,6 +298,8 @@ export abstract class Oauth1Driver<Token extends Oauth1AccessToken, Scopes exten
   /**
    * Check if the OAuth token from the callback matches the token
    * stored in the cookie.
+   *
+   * @returns `true` when the callback token does not match the stored token.
    */
   stateMisMatch(): boolean {
     return this.oauthTokenCookieValue !== this.ctx.request.input(this.oauthTokenParamName)
@@ -288,6 +307,8 @@ export abstract class Oauth1Driver<Token extends Oauth1AccessToken, Scopes exten
 
   /**
    * Check if an error was returned by the OAuth provider.
+   *
+   * @returns `true` when an error exists on the callback request.
    */
   hasError(): boolean {
     return !!this.getError()
@@ -296,6 +317,8 @@ export abstract class Oauth1Driver<Token extends Oauth1AccessToken, Scopes exten
   /**
    * Get the error code or message returned by the OAuth provider.
    * Returns 'unknown_error' if no verifier is present and no error was specified.
+   *
+   * @returns The provider error value when present.
    */
   getError(): string | null {
     const error = this.ctx.request.input(this.errorParamName)
@@ -312,6 +335,8 @@ export abstract class Oauth1Driver<Token extends Oauth1AccessToken, Scopes exten
 
   /**
    * Get the OAuth verifier from the callback request.
+   *
+   * @returns The OAuth verifier when present.
    */
   getCode(): string | null {
     return this.ctx.request.input(this.oauthTokenVerifierName, null)
@@ -319,6 +344,8 @@ export abstract class Oauth1Driver<Token extends Oauth1AccessToken, Scopes exten
 
   /**
    * Check if the OAuth verifier is present in the callback request.
+   *
+   * @returns `true` when the callback request contains an OAuth verifier.
    */
   hasCode(): boolean {
     return !!this.getCode()
@@ -330,6 +357,7 @@ export abstract class Oauth1Driver<Token extends Oauth1AccessToken, Scopes exten
    * making the request.
    *
    * @param callback - Optional callback to customize the token request
+   * @returns A promise resolving to the access token payload.
    *
    * @example
    * ```ts
@@ -369,6 +397,8 @@ export abstract class Oauth1Driver<Token extends Oauth1AccessToken, Scopes exten
 
   /**
    * Not applicable with OAuth1. Use `userFromTokenAndSecret` instead.
+   *
+   * @returns This method never returns.
    */
   async userFromToken(): Promise<never> {
     throw new Exception(

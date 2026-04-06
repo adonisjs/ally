@@ -58,8 +58,17 @@ export class LinkedInOpenidConnectDriver extends Oauth2Driver<
   LinkedInOpenidConnectAccessToken,
   LinkedInOpenidConnectScopes
 > {
+  /**
+   * LinkedIn OpenID authorization endpoint URL.
+   */
   protected authorizeUrl = 'https://www.linkedin.com/oauth/v2/authorization'
+  /**
+   * LinkedIn OpenID token endpoint URL.
+   */
   protected accessTokenUrl = 'https://www.linkedin.com/oauth/v2/accessToken'
+  /**
+   * LinkedIn OpenID userinfo endpoint URL.
+   */
   protected userInfoUrl = 'https://api.linkedin.com/v2/userinfo'
 
   /**

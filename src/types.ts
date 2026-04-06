@@ -26,20 +26,45 @@ export type { Oauth1RequestToken }
 export type { ApiRequestContract }
 export type { Oauth2ClientConfig as Oauth2DriverConfig }
 export type { Oauth1ClientConfig as Oauth1DriverConfig }
+
+/**
+ * Allowed high-level intents when using a provider through `AllyManager`.
+ *
+ * @example
+ * ```ts
+ * ally.use('github', { intent: 'signup' })
+ * ```
+ */
 export type AllyManagerIntent = 'signup' | 'login' | 'link'
+
+/**
+ * Options accepted by `AllyManager.use`.
+ */
 export type AllyManagerUseOptions = {
+  /**
+   * The interaction intent associated with the provider usage.
+   */
   intent?: AllyManagerIntent
 }
 
 /**
  * Issue: https://github.com/Microsoft/TypeScript/issues/29729
  * Solution: https://github.com/sindresorhus/type-fest/blob/main/source/literal-union.d.ts
+ *
+ * Allows known literal values while still accepting arbitrary strings.
+ *
+ * @example
+ * ```ts
+ * const scopes: LiteralStringUnion<'email' | 'profile'>[] = ['email']
+ * ```
  */
 export type LiteralStringUnion<LiteralType> = LiteralType | (string & { _?: never })
 
 /**
  * Extension of oauth-client redirect request with support
  * for defining scopes as first class citizen
+ *
+ * @typeParam Scopes - The known set of supported scopes for the provider.
  */
 export interface RedirectRequestContract<
   Scopes extends string = string,
@@ -47,46 +72,89 @@ export interface RedirectRequestContract<
   /**
    * Define a callback to transform scopes before they are defined
    * as a param
+   *
+   * @param callback - Callback used to transform scope values before serialization.
+   * @returns The current redirect request instance.
    */
   transformScopes(callback: (scopes: LiteralStringUnion<Scopes>[]) => string[]): this
 
   /**
    * Define the scopes for authorization
+   *
+   * @param scopes - The scopes to serialize on the request.
+   * @returns The current redirect request instance.
    */
   scopes(scopes: LiteralStringUnion<Scopes>[]): this
 
   /**
    * Merge to existing pre-defined scopes
+   *
+   * @param scopes - Additional scopes to merge with the existing list.
+   * @returns The current redirect request instance.
    */
   mergeScopes(scopes: LiteralStringUnion<Scopes>[]): this
 
   /**
    * Clear existing scopes
+   *
+   * @returns The current redirect request instance.
    */
   clearScopes(): this
 }
 
 /**
  * The user fetched from the oauth provider.
+ *
+ * @typeParam Token - The access token shape returned by the provider.
  */
 export interface AllyUserContract<Token extends Oauth2AccessToken | Oauth1AccessToken> {
+  /**
+   * Unique user identifier returned by the provider.
+   */
   id: string
+  /**
+   * Provider-specific nickname or username.
+   */
   nickName: string
+  /**
+   * Display name returned by the provider.
+   */
   name: string
+  /**
+   * Primary email address returned by the provider, when available.
+   */
   email: string | null
+  /**
+   * Email verification state as inferred from the provider payload.
+   */
   emailVerificationState: 'verified' | 'unverified' | 'unsupported'
+  /**
+   * URL to the user's avatar, when available.
+   */
   avatarUrl: string | null
+  /**
+   * Access token information associated with the user payload.
+   */
   token: Token
+  /**
+   * Original provider response body.
+   */
   original: any
 }
 
 /**
  * Every driver should implement this contract
+ *
+ * @typeParam Token - The token shape returned by the driver.
+ * @typeParam Scopes - The supported authorization scopes for the driver.
  */
 export interface AllyDriverContract<
   Token extends Oauth2AccessToken | Oauth1AccessToken,
   Scopes extends string,
 > {
+  /**
+   * OAuth protocol version supported by the driver.
+   */
   version: 'oauth1' | 'oauth2'
 
   /**
@@ -97,63 +165,93 @@ export interface AllyDriverContract<
 
   /**
    * Perform stateless authentication. Only applicable for Oauth2 clients
+   *
+   * @returns The current driver instance.
    */
   stateless(): this
 
   /**
    * Redirect user for authorization
+   *
+   * @param callback - Optional callback used to customize the redirect request.
+   * @returns A promise that resolves after the redirect response is prepared.
    */
   redirect(callback?: (request: RedirectRequestContract<Scopes>) => void): Promise<void>
 
   /**
    * Get redirect url. You must manage the state yourself when redirecting
    * manually
+   *
+   * @param callback - Optional callback used to customize the redirect request.
+   * @returns A promise resolving to the computed redirect URL.
    */
   redirectUrl(callback?: (request: RedirectRequestContract<Scopes>) => void): Promise<string>
 
   /**
    * Find if the current request has authorization code or oauth token
+   *
+   * @returns `true` when the current request contains an authorization code or token.
    */
   hasCode(): boolean
 
   /**
    * Get the current request authorization code or oauth token. Returns
    * null if there no code
+   *
+   * @returns The current authorization code or token value.
    */
   getCode(): string | null
 
   /**
    * Find if the current error code is for access denied
+   *
+   * @returns `true` when the provider reported an access-denied response.
    */
   accessDenied(): boolean
 
   /**
    * Find if there is a state mismatch
+   *
+   * @returns `true` when the request state does not match the stored state.
    */
   stateMisMatch(): boolean
 
   /**
    * Find if there is an error post redirect
+   *
+   * @returns `true` when the callback request contains a provider error.
    */
   hasError(): boolean
 
   /**
    * Get the post redirect error
+   *
+   * @returns The provider error code or message, when present.
    */
   getError(): string | null
 
   /**
    * Get access token
+   *
+   * @param callback - Optional callback used to customize the token request.
+   * @returns A promise resolving to the access token payload.
    */
   accessToken(callback?: (request: ApiRequestContract) => void): Promise<Token>
 
   /**
    * Returns details for the authorized user
+   *
+   * @param callback - Optional callback used to customize downstream API requests.
+   * @returns A promise resolving to the authenticated user profile.
    */
   user(callback?: (request: ApiRequestContract) => void): Promise<AllyUserContract<Token>>
 
   /**
    * Finds the user by access token. Applicable with "Oauth2" only
+   *
+   * @param token - The access token to use.
+   * @param callback - Optional callback used to customize downstream API requests.
+   * @returns A promise resolving to the authenticated user profile.
    */
   userFromToken(
     token: string,
@@ -162,6 +260,11 @@ export interface AllyDriverContract<
 
   /**
    * Finds the user by access token. Applicable with "Oauth1" only
+   *
+   * @param token - The OAuth1 token to use.
+   * @param secret - The OAuth1 token secret to use.
+   * @param callback - Optional callback used to customize downstream API requests.
+   * @returns A promise resolving to the authenticated user profile.
    */
   userFromTokenAndSecret(
     token: string,
@@ -173,6 +276,9 @@ export interface AllyDriverContract<
 /**
  * The manager driver factory method is called by the AllyManager to create
  * an instance of a driver during an HTTP request
+ *
+ * @param ctx - The current HTTP context.
+ * @returns A social authentication driver instance.
  */
 export type AllyManagerDriverFactory = (ctx: HttpContext) => AllyDriverContract<any, any>
 
@@ -695,6 +801,12 @@ export type SpotifyDriverConfig = Oauth2ClientConfig & {
  * from the config file
  */
 export interface SocialProviders {}
+
+/**
+ * Infer the configured social providers from an Ally config provider.
+ *
+ * @typeParam T - The Ally config provider to inspect.
+ */
 export type InferSocialProviders<
   T extends ConfigProvider<Record<string, AllyManagerDriverFactory>>,
 > = Awaited<ReturnType<T['resolver']>>

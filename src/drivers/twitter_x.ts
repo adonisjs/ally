@@ -26,8 +26,17 @@ import { Oauth2Driver } from '../abstract_drivers/oauth2.ts'
  * code flow with PKCE.
  */
 export class TwitterXDriver extends Oauth2Driver<TwitterXToken, TwitterXScopes> {
+  /**
+   * X token endpoint URL.
+   */
   protected accessTokenUrl = 'https://api.x.com/2/oauth2/token'
+  /**
+   * X authorization endpoint URL.
+   */
   protected authorizeUrl = 'https://x.com/i/oauth2/authorize'
+  /**
+   * X user profile endpoint URL.
+   */
   protected userInfoUrl = 'https://api.x.com/2/users/me'
 
   /**
@@ -65,6 +74,12 @@ export class TwitterXDriver extends Oauth2Driver<TwitterXToken, TwitterXScopes> 
    */
   protected scopesSeparator = ' '
 
+  /**
+   * Create a new X driver instance.
+   *
+   * @param ctx - The current HTTP context.
+   * @param config - X driver configuration.
+   */
   constructor(
     ctx: HttpContext,
     public config: TwitterXDriverConfig
@@ -75,6 +90,8 @@ export class TwitterXDriver extends Oauth2Driver<TwitterXToken, TwitterXScopes> 
 
   /**
    * Configures the redirect request with X-specific requirements.
+   *
+   * @param request - The redirect request to configure.
    */
   protected configureRedirectRequest(request: RedirectRequestContract<TwitterXScopes>) {
     request.scopes(this.config.scopes || ['tweet.read', 'users.read', 'users.email'])
@@ -84,6 +101,8 @@ export class TwitterXDriver extends Oauth2Driver<TwitterXToken, TwitterXScopes> 
   /**
    * Configures the token request with the PKCE verifier and the Basic auth
    * header required for confidential X clients.
+   *
+   * @param request - The token request to configure.
    */
   protected configureAccessTokenRequest(request: ApiRequestContract) {
     const credentials = Buffer.from(`${this.config.clientId}:${this.config.clientSecret}`).toString(
@@ -97,6 +116,10 @@ export class TwitterXDriver extends Oauth2Driver<TwitterXToken, TwitterXScopes> 
 
   /**
    * Creates an authenticated request for X API calls.
+   *
+   * @param url - The API endpoint URL.
+   * @param token - The access token to send.
+   * @returns A configured HTTP client instance.
    */
   protected getAuthenticatedRequest(url: string, token: string): HttpClient {
     const request = this.httpClient(url)
@@ -108,6 +131,10 @@ export class TwitterXDriver extends Oauth2Driver<TwitterXToken, TwitterXScopes> 
 
   /**
    * Fetches the authenticated user's profile from /2/users/me.
+   *
+   * @param token - The access token to use.
+   * @param includeConfirmedEmail - Whether to request the confirmed email field.
+   * @param callback - Optional callback to customize the API request.
    */
   protected async getUserInfo(
     token: string,
@@ -141,6 +168,8 @@ export class TwitterXDriver extends Oauth2Driver<TwitterXToken, TwitterXScopes> 
   /**
    * Check if the error from the callback indicates that the user denied
    * authorization.
+   *
+   * @returns `true` when the provider reported an access-denied error.
    */
   accessDenied(): boolean {
     const error = this.getError()
@@ -154,6 +183,8 @@ export class TwitterXDriver extends Oauth2Driver<TwitterXToken, TwitterXScopes> 
   /**
    * Fetches the authenticated user using the authorization code from the
    * callback request.
+   *
+   * @param callback - Optional callback to customize the API request.
    */
   async user(callback?: (request: ApiRequestContract) => void) {
     const token = await this.accessToken(callback)
@@ -167,6 +198,9 @@ export class TwitterXDriver extends Oauth2Driver<TwitterXToken, TwitterXScopes> 
 
   /**
    * Fetches the user profile using an existing access token.
+   *
+   * @param token - The access token to use.
+   * @param callback - Optional callback to customize the API request.
    */
   async userFromToken(token: string, callback?: (request: ApiRequestContract) => void) {
     const user = await this.getUserInfo(token, false, callback)

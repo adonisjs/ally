@@ -53,8 +53,17 @@ import { Oauth2Driver } from '../abstract_drivers/oauth2.ts'
  * ```
  */
 export class SpotifyDriver extends Oauth2Driver<SpotifyToken, SpotifyScopes> {
+  /**
+   * Spotify token endpoint URL.
+   */
   protected accessTokenUrl = 'https://accounts.spotify.com/api/token'
+  /**
+   * Spotify authorization endpoint URL.
+   */
   protected authorizeUrl = 'https://accounts.spotify.com/authorize'
+  /**
+   * Spotify profile endpoint URL.
+   */
   protected userInfoUrl = 'https://api.spotify.com/v1/me'
 
   /**
@@ -173,6 +182,8 @@ export class SpotifyDriver extends Oauth2Driver<SpotifyToken, SpotifyScopes> {
   /**
    * Check if the error from the callback indicates that the user
    * denied authorization.
+   *
+   * @returns `true` when the provider reported an access-denied error.
    */
   accessDenied(): boolean {
     const error = this.getError()

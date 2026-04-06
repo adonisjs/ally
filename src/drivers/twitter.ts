@@ -49,9 +49,21 @@ import { Oauth1Driver } from '../abstract_drivers/oauth1.ts'
  * ```
  */
 export class TwitterDriver extends Oauth1Driver<TwitterToken, string> {
+  /**
+   * Twitter request-token endpoint URL.
+   */
   protected requestTokenUrl = 'https://api.twitter.com/oauth/request_token'
+  /**
+   * Twitter authorization endpoint URL.
+   */
   protected authorizeUrl = 'https://api.twitter.com/oauth/authenticate'
+  /**
+   * Twitter access-token endpoint URL.
+   */
   protected accessTokenUrl = 'https://api.twitter.com/oauth/access_token'
+  /**
+   * Twitter profile endpoint URL.
+   */
   protected userInfoUrl = 'https://api.twitter.com/1.1/account/verify_credentials.json'
 
   /**
@@ -84,6 +96,9 @@ export class TwitterDriver extends Oauth1Driver<TwitterToken, string> {
    * Twitter doesn't support scopes
    */
   protected scopeParamName = ''
+  /**
+   * Scope separator placeholder maintained for OAuth1 compatibility.
+   */
   protected scopesSeparator = ' '
 
   /**
@@ -201,6 +216,8 @@ export class TwitterDriver extends Oauth1Driver<TwitterToken, string> {
   /**
    * Check if the error from the callback indicates that the user
    * denied authorization.
+   *
+   * @returns `true` when the request contains the denial marker.
    */
   accessDenied(): boolean {
     return this.ctx.request.input('denied')

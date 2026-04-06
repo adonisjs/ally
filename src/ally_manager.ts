@@ -34,14 +34,26 @@ import { E_LOCAL_SIGNUP_DISALLOWED, E_UNKNOWN_ALLY_PROVIDER } from './errors.ts'
  * ```
  */
 export class AllyManager<KnownSocialProviders extends Record<string, AllyManagerDriverFactory>> {
+  /**
+   * The current HTTP context bound to this manager instance.
+   */
   #ctx: HttpContext
+
+  /**
+   * Cache of instantiated providers keyed by provider name.
+   */
   #driversCache: Map<keyof KnownSocialProviders, AllyDriverContract<any, any>> = new Map()
 
   /**
+   * Create a new Ally manager for the current request.
+   *
    * @param config - Map of provider names to driver factory functions
    * @param ctx - The current HTTP context
    */
   constructor(
+    /**
+     * The configured provider factories available for the current application.
+     */
     public config: KnownSocialProviders,
     ctx: HttpContext
   ) {
@@ -50,6 +62,16 @@ export class AllyManager<KnownSocialProviders extends Record<string, AllyManager
 
   /**
    * Find if a provider has been configured.
+   *
+   * @param provider - The provider name to check.
+   * @returns `true` when the provider exists in the manager config.
+   *
+   * @example
+   * ```ts
+   * if (ally.has(provider)) {
+   *   await ally.use(provider).redirect()
+   * }
+   * ```
    */
   has(provider: string): provider is Extract<keyof KnownSocialProviders, string> {
     return provider in this.config
@@ -57,6 +79,16 @@ export class AllyManager<KnownSocialProviders extends Record<string, AllyManager
 
   /**
    * Find if a provider allows local signup.
+   *
+   * @param provider - The configured provider name to inspect.
+   * @returns `true` when the provider does not opt out of local signup.
+   *
+   * @example
+   * ```ts
+   * if (ally.allowsLocalSignup('github')) {
+   *   return ally.use('github', { intent: 'signup' }).redirect()
+   * }
+   * ```
    */
   allowsLocalSignup(provider: keyof KnownSocialProviders & string): boolean {
     if (!this.has(provider)) {
@@ -69,6 +101,13 @@ export class AllyManager<KnownSocialProviders extends Record<string, AllyManager
 
   /**
    * Returns configured provider names.
+   *
+   * @returns An array of configured provider names.
+   *
+   * @example
+   * ```ts
+   * const providers = ally.configuredProviderNames()
+   * ```
    */
   configuredProviderNames(): Array<Extract<keyof KnownSocialProviders, string>> {
     return Object.keys(this.config) as Array<Extract<keyof KnownSocialProviders, string>>
@@ -76,6 +115,13 @@ export class AllyManager<KnownSocialProviders extends Record<string, AllyManager
 
   /**
    * Returns provider names that allow local signup.
+   *
+   * @returns An array of configured provider names that allow signup flows.
+   *
+   * @example
+   * ```ts
+   * const signupProviders = ally.signupProviderNames()
+   * ```
    */
   signupProviderNames(): Array<Extract<keyof KnownSocialProviders, string>> {
     return this.configuredProviderNames().filter((provider) => this.allowsLocalSignup(provider))
@@ -86,11 +132,16 @@ export class AllyManager<KnownSocialProviders extends Record<string, AllyManager
    * instance is cached for the duration of the HTTP request.
    *
    * @param provider - The name of the social provider (e.g., 'github', 'google')
+   * @param options - Additional options used to qualify the provider usage.
+   * @returns The instantiated social authentication driver.
    *
    * @example
    * ```ts
    * const github = ally.use('github')
    * await github.redirect()
+   *
+   * const signupDriver = ally.use('github', { intent: 'signup' })
+   * await signupDriver.redirect()
    * ```
    */
   use<SocialProvider extends keyof KnownSocialProviders>(
