@@ -28,6 +28,7 @@ async function run() {
           () => import('./discord.js'),
           () => import('./github.js'),
           () => import('./twitter.js'),
+          () => import('./twitter_x.js'),
           () => import('./google.js'),
           () => import('./linkedin.js'),
           () => import('./linkedin_openid_connect.js'),

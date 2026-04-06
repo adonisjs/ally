@@ -31,6 +31,11 @@ const allyConfig = defineConfig({
     clientSecret: process.env.TWITTER_APP_SECRET!,
     callbackUrl: `http://localhost:${process.env.PORT}/twitter/callback`,
   }),
+  twitterX: services.twitterX({
+    clientId: process.env.TWITTER_X_CLIENT_ID!,
+    clientSecret: process.env.TWITTER_X_CLIENT_SECRET!,
+    callbackUrl: `http://localhost:${process.env.PORT}/twitter-x/callback`,
+  }),
   facebook: services.facebook({
     clientId: process.env.FACEBOOK_CLIENT_ID!,
     clientSecret: process.env.FACEBOOK_CLIENT_SECRET!,

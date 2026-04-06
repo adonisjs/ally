@@ -314,6 +314,55 @@ export type TwitterDriverConfig = Oauth1ClientConfig & {
 
 /**
  * ----------------------------------------
+ * Twitter X driver
+ * ----------------------------------------
+ */
+
+/**
+ * Common X OAuth2 scopes.
+ * https://docs.x.com/fundamentals/authentication/oauth-2-0/user-access-token
+ */
+export type TwitterXScopes =
+  | 'tweet.read'
+  | 'tweet.write'
+  | 'tweet.moderate.write'
+  | 'users.email'
+  | 'users.read'
+  | 'follows.read'
+  | 'follows.write'
+  | 'offline.access'
+  | 'space.read'
+  | 'mute.read'
+  | 'mute.write'
+  | 'like.read'
+  | 'like.write'
+  | 'list.read'
+  | 'list.write'
+  | 'block.read'
+  | 'block.write'
+  | 'bookmark.read'
+  | 'bookmark.write'
+  | 'dm.read'
+  | 'dm.write'
+  | 'media.write'
+
+/**
+ * Shape of the X access token
+ */
+export type TwitterXToken = Oauth2AccessToken & {
+  scope: string
+}
+
+/**
+ * Extra options available for X
+ */
+export type TwitterXDriverConfig = Oauth2ClientConfig & {
+  userInfoUrl?: string
+  scopes?: LiteralStringUnion<TwitterXScopes>[]
+}
+
+/**
+ * ----------------------------------------
  * Google driver
  * ----------------------------------------
  */

@@ -63,6 +63,12 @@ export abstract class Oauth2Driver<Token extends Oauth2AccessToken, Scopes exten
   protected abstract stateCookieName: string
 
   /**
+   * The cookie name for storing the PKCE code verifier. Define this property
+   * in child classes that require PKCE.
+   */
+  protected codeVerifierCookieName?: string
+
+  /**
    * The query parameter name for sending the state to the OAuth provider.
    * This is typically 'state' but varies by provider. Check the provider's
    * OAuth documentation.
@@ -142,6 +148,12 @@ export abstract class Oauth2Driver<Token extends Oauth2AccessToken, Scopes exten
   protected stateCookieValue?: string
 
   /**
+   * Cached PKCE code verifier value read from the cookie via
+   * loadState
+   */
+  protected codeVerifierCookieValue?: string
+
+  /**
    * @param ctx - The current HTTP context
    * @param config - OAuth2 driver configuration
    */
@@ -163,9 +175,16 @@ export abstract class Oauth2Driver<Token extends Oauth2AccessToken, Scopes exten
   }
 
   /**
+   * Find if the driver uses PKCE for the OAuth2 authorization code flow.
+   */
+  #usesPkce(): boolean {
+    return !!this.codeVerifierCookieName
+  }
+
+  /**
    * Loads the state value from the encrypted cookie and immediately clears
-   * the cookie. This must be called by child classes in their constructor
-   * to enable CSRF protection.
+   * the cookie. When PKCE is enabled, it also loads the PKCE code verifier.
+   * This must be called by child classes in their constructor.
    *
    * @example
    * ```ts
@@ -182,23 +201,46 @@ export abstract class Oauth2Driver<Token extends Oauth2AccessToken, Scopes exten
 
     this.stateCookieValue = this.ctx.request.encryptedCookie(this.stateCookieName)
     this.ctx.response.clearCookie(this.stateCookieName)
+
+    if (this.#usesPkce()) {
+      this.codeVerifierCookieValue = this.ctx.request.encryptedCookie(this.codeVerifierCookieName!)
+      this.ctx.response.clearCookie(this.codeVerifierCookieName!)
+    }
   }
 
   /**
-   * Stores the CSRF state in an encrypted cookie for later verification
+   * Returns the PKCE code verifier for building the authorization redirect.
+   * This method is expected to create and persist the verifier for later use.
    */
-  #persistState(): string | undefined {
-    if (this.isStateless) {
-      return
+  protected getPkceCodeVerifierForRedirect(): string | null {
+    if (!this.#usesPkce()) {
+      return null
     }
 
-    const state = this.getState()
-    this.ctx.response.encryptedCookie(this.stateCookieName, state, {
+    const codeVerifier = this.makeCodeVerifier()
+    this.ctx.response.encryptedCookie(this.codeVerifierCookieName!, codeVerifier, {
       sameSite: false,
       httpOnly: true,
     })
 
-    return state
+    this.codeVerifierCookieValue = codeVerifier
+    return codeVerifier
+  }
+
+  /**
+   * Returns the PKCE code verifier for the access token exchange.
+   * This method only reads the verifier that was persisted during redirect.
+   */
+  protected getPkceCodeVerifierForAccessToken(): string | null {
+    if (!this.#usesPkce()) {
+      return null
+    }
+
+    if (!this.codeVerifierCookieValue) {
+      throw new errors.E_OAUTH_MISSING_CODE(['code_verifier'])
+    }
+
+    return this.codeVerifierCookieValue
   }
 
   /**
@@ -252,8 +294,14 @@ export abstract class Oauth2Driver<Token extends Oauth2AccessToken, Scopes exten
    */
   async redirect(callback?: (request: RedirectRequestContract<Scopes>) => void): Promise<void> {
     const url = await this.redirectUrl((request) => {
-      const state = this.#persistState()
-      state && request.param(this.stateParamName, state)
+      if (!this.isStateless) {
+        const state = this.getState()
+        this.ctx.response.encryptedCookie(this.stateCookieName, state, {
+          sameSite: false,
+          httpOnly: true,
+        })
+        request.param(this.stateParamName, state)
+      }
 
       if (typeof callback === 'function') {
         callback(request)
@@ -272,7 +320,15 @@ export abstract class Oauth2Driver<Token extends Oauth2AccessToken, Scopes exten
       return false
     }
 
-    return this.stateCookieValue !== this.ctx.request.input(this.stateParamName)
+    if (this.stateCookieValue !== this.ctx.request.input(this.stateParamName)) {
+      return true
+    }
+
+    if (this.#usesPkce() && !this.codeVerifierCookieValue) {
+      return true
+    }
+
+    return false
   }
 
   /**

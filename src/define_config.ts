@@ -15,6 +15,7 @@ import type { GoogleDriver } from './drivers/google.ts'
 import type { GithubDriver } from './drivers/github.ts'
 import type { SpotifyDriver } from './drivers/spotify.ts'
 import type { TwitterDriver } from './drivers/twitter.ts'
+import type { TwitterXDriver } from './drivers/twitter_x.ts'
 import type { DiscordDriver } from './drivers/discord.ts'
 import type { FacebookDriver } from './drivers/facebook.ts'
 import type { LinkedInDriver } from './drivers/linked_in.ts'
@@ -25,6 +26,7 @@ import type {
   SpotifyDriverConfig,
   DiscordDriverConfig,
   TwitterDriverConfig,
+  TwitterXDriverConfig,
   LinkedInDriverConfig,
   LinkedInOpenidConnectDriverConfig,
   FacebookDriverConfig,
@@ -120,6 +122,7 @@ export const services: {
   ) => ConfigProvider<(ctx: HttpContext) => LinkedInOpenidConnectDriver>
   spotify: (config: SpotifyDriverConfig) => ConfigProvider<(ctx: HttpContext) => SpotifyDriver>
   twitter: (config: TwitterDriverConfig) => ConfigProvider<(ctx: HttpContext) => TwitterDriver>
+  twitterX: (config: TwitterXDriverConfig) => ConfigProvider<(ctx: HttpContext) => TwitterXDriver>
 } = {
   discord(config) {
     return configProvider.create(async () => {
@@ -167,6 +170,12 @@ export const services: {
     return configProvider.create(async () => {
       const { TwitterDriver } = await import('./drivers/twitter.js')
       return (ctx) => new TwitterDriver(ctx, config)
+    })
+  },
+  twitterX(config) {
+    return configProvider.create(async () => {
+      const { TwitterXDriver } = await import('./drivers/twitter_x.js')
+      return (ctx) => new TwitterXDriver(ctx, config)
     })
   },
 }
