@@ -8,8 +8,12 @@
  */
 
 import type { HttpContext } from '@adonisjs/core/http'
-import { RuntimeException } from '@adonisjs/core/exceptions'
-import type { AllyDriverContract, AllyManagerDriverFactory } from './types.ts'
+import type {
+  AllyDriverContract,
+  AllyManagerDriverFactory,
+  AllyManagerUseOptions,
+} from './types.ts'
+import { E_LOCAL_SIGNUP_DISALLOWED, E_UNKNOWN_ALLY_PROVIDER } from './errors.ts'
 
 /**
  * AllyManager is used to create and manage social authentication driver
@@ -45,6 +49,39 @@ export class AllyManager<KnownSocialProviders extends Record<string, AllyManager
   }
 
   /**
+   * Find if a provider has been configured.
+   */
+  has(provider: string): provider is Extract<keyof KnownSocialProviders, string> {
+    return provider in this.config
+  }
+
+  /**
+   * Find if a provider allows local signup.
+   */
+  allowsLocalSignup(provider: keyof KnownSocialProviders & string): boolean {
+    if (!this.has(provider)) {
+      throw new E_UNKNOWN_ALLY_PROVIDER([provider])
+    }
+
+    const driver = this.use(provider)
+    return !driver.config?.disallowLocalSignup
+  }
+
+  /**
+   * Returns configured provider names.
+   */
+  configuredProviderNames(): Array<Extract<keyof KnownSocialProviders, string>> {
+    return Object.keys(this.config) as Array<Extract<keyof KnownSocialProviders, string>>
+  }
+
+  /**
+   * Returns provider names that allow local signup.
+   */
+  signupProviderNames(): Array<Extract<keyof KnownSocialProviders, string>> {
+    return this.configuredProviderNames().filter((provider) => this.allowsLocalSignup(provider))
+  }
+
+  /**
    * Get a driver instance for the specified social provider. The driver
    * instance is cached for the duration of the HTTP request.
    *
@@ -57,19 +94,20 @@ export class AllyManager<KnownSocialProviders extends Record<string, AllyManager
    * ```
    */
   use<SocialProvider extends keyof KnownSocialProviders>(
-    provider: SocialProvider
+    provider: SocialProvider,
+    options?: AllyManagerUseOptions
   ): ReturnType<KnownSocialProviders[SocialProvider]> {
     if (this.#driversCache.has(provider)) {
       return this.#driversCache.get(provider) as ReturnType<KnownSocialProviders[SocialProvider]>
     }
 
+    if (!this.has(String(provider))) {
+      throw new E_UNKNOWN_ALLY_PROVIDER([provider as string])
+    }
+
     const driver = this.config[provider]
-    if (!driver) {
-      throw new RuntimeException(
-        `Unknown ally provider "${String(
-          provider
-        )}". Make sure it is registered inside the config/ally.ts file`
-      )
+    if (options?.intent === 'signup' && !this.allowsLocalSignup(provider as string)) {
+      throw new E_LOCAL_SIGNUP_DISALLOWED([provider as string])
     }
 
     const driverInstance = driver(this.#ctx) as ReturnType<KnownSocialProviders[SocialProvider]>

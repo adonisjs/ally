@@ -28,3 +28,22 @@ export const E_OAUTH_STATE_MISMATCH = createError(
   'E_OAUTH_STATE_MISMATCH',
   400
 )
+
+/**
+ * Error thrown when attempting to use an unknown Ally provider.
+ */
+export const E_UNKNOWN_ALLY_PROVIDER = createError<[string]>(
+  'Unknown ally provider "%s". Make sure it is registered inside the config/ally.ts file',
+  'E_UNKNOWN_ALLY_PROVIDER',
+  404
+)
+
+/**
+ * Error thrown when a provider is used for signup but local signup
+ * is disabled for it.
+ */
+export const E_LOCAL_SIGNUP_DISALLOWED = createError<[string]>(
+  'Cannot use ally provider "%s" for signup. Local signup is disabled for this provider',
+  'E_LOCAL_SIGNUP_DISALLOWED',
+  403
+)

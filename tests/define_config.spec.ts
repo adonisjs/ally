@@ -43,7 +43,9 @@ test.group('Define config', () => {
 
     assert.instanceOf(ally.use('github'), GithubDriver)
     assert.strictEqual(ally.use('github'), ally.use('github'))
-    expectTypeOf(ally.use).parameters.toEqualTypeOf<['github']>()
+    expectTypeOf(ally.use).parameters.toEqualTypeOf<
+      [provider: 'github', options?: { intent?: 'signup' | 'login' | 'link' }]
+    >()
     expectTypeOf(ally.use('github')).toMatchTypeOf<GithubDriver>()
   })
 })
@@ -64,7 +66,9 @@ test.group('Config services', () => {
 
     assert.instanceOf(ally.use('github'), GithubDriver)
     assert.strictEqual(ally.use('github'), ally.use('github'))
-    expectTypeOf(ally.use).parameters.toEqualTypeOf<['github']>()
+    expectTypeOf(ally.use).parameters.toEqualTypeOf<
+      [provider: 'github', options?: { intent?: 'signup' | 'login' | 'link' }]
+    >()
     expectTypeOf(ally.use('github')).toMatchTypeOf<GithubDriver>()
   })
 
@@ -83,7 +87,9 @@ test.group('Config services', () => {
 
     assert.instanceOf(ally.use('google'), GoogleDriver)
     assert.strictEqual(ally.use('google'), ally.use('google'))
-    expectTypeOf(ally.use).parameters.toEqualTypeOf<['google']>()
+    expectTypeOf(ally.use).parameters.toEqualTypeOf<
+      [provider: 'google', options?: { intent?: 'signup' | 'login' | 'link' }]
+    >()
     expectTypeOf(ally.use('google')).toMatchTypeOf<GoogleDriver>()
   })
 
@@ -102,7 +108,9 @@ test.group('Config services', () => {
 
     assert.instanceOf(ally.use('discord'), DiscordDriver)
     assert.strictEqual(ally.use('discord'), ally.use('discord'))
-    expectTypeOf(ally.use).parameters.toEqualTypeOf<['discord']>()
+    expectTypeOf(ally.use).parameters.toEqualTypeOf<
+      [provider: 'discord', options?: { intent?: 'signup' | 'login' | 'link' }]
+    >()
     expectTypeOf(ally.use('discord')).toMatchTypeOf<DiscordDriver>()
   })
 
@@ -121,7 +129,9 @@ test.group('Config services', () => {
 
     assert.instanceOf(ally.use('facebook'), FacebookDriver)
     assert.strictEqual(ally.use('facebook'), ally.use('facebook'))
-    expectTypeOf(ally.use).parameters.toEqualTypeOf<['facebook']>()
+    expectTypeOf(ally.use).parameters.toEqualTypeOf<
+      [provider: 'facebook', options?: { intent?: 'signup' | 'login' | 'link' }]
+    >()
     expectTypeOf(ally.use('facebook')).toMatchTypeOf<FacebookDriver>()
   })
 
@@ -140,7 +150,9 @@ test.group('Config services', () => {
 
     assert.instanceOf(ally.use('linkedin'), LinkedInDriver)
     assert.strictEqual(ally.use('linkedin'), ally.use('linkedin'))
-    expectTypeOf(ally.use).parameters.toEqualTypeOf<['linkedin']>()
+    expectTypeOf(ally.use).parameters.toEqualTypeOf<
+      [provider: 'linkedin', options?: { intent?: 'signup' | 'login' | 'link' }]
+    >()
     expectTypeOf(ally.use('linkedin')).toMatchTypeOf<LinkedInDriver>()
   })
 
@@ -159,7 +171,9 @@ test.group('Config services', () => {
 
     assert.instanceOf(ally.use('linkedinOpenidConnect'), LinkedInOpenidConnectDriver)
     assert.strictEqual(ally.use('linkedinOpenidConnect'), ally.use('linkedinOpenidConnect'))
-    expectTypeOf(ally.use).parameters.toEqualTypeOf<['linkedinOpenidConnect']>()
+    expectTypeOf(ally.use).parameters.toEqualTypeOf<
+      [provider: 'linkedinOpenidConnect', options?: { intent?: 'signup' | 'login' | 'link' }]
+    >()
     expectTypeOf(ally.use('linkedinOpenidConnect')).toMatchTypeOf<LinkedInOpenidConnectDriver>()
   })
 
@@ -178,7 +192,9 @@ test.group('Config services', () => {
 
     assert.instanceOf(ally.use('spotify'), SpotifyDriver)
     assert.strictEqual(ally.use('spotify'), ally.use('spotify'))
-    expectTypeOf(ally.use).parameters.toEqualTypeOf<['spotify']>()
+    expectTypeOf(ally.use).parameters.toEqualTypeOf<
+      [provider: 'spotify', options?: { intent?: 'signup' | 'login' | 'link' }]
+    >()
     expectTypeOf(ally.use('spotify')).toMatchTypeOf<SpotifyDriver>()
   })
 
@@ -196,7 +212,9 @@ test.group('Config services', () => {
 
     assert.instanceOf(ally.use('twitter'), TwitterDriver)
     assert.strictEqual(ally.use('twitter'), ally.use('twitter'))
-    expectTypeOf(ally.use).parameters.toEqualTypeOf<['twitter']>()
+    expectTypeOf(ally.use).parameters.toEqualTypeOf<
+      [provider: 'twitter', options?: { intent?: 'signup' | 'login' | 'link' }]
+    >()
     expectTypeOf(ally.use('twitter')).toMatchTypeOf<TwitterDriver>()
   })
 
@@ -214,7 +232,9 @@ test.group('Config services', () => {
 
     assert.instanceOf(ally.use('twitterX'), TwitterXDriver)
     assert.strictEqual(ally.use('twitterX'), ally.use('twitterX'))
-    expectTypeOf(ally.use).parameters.toEqualTypeOf<['twitterX']>()
+    expectTypeOf(ally.use).parameters.toEqualTypeOf<
+      [provider: 'twitterX', options?: { intent?: 'signup' | 'login' | 'link' }]
+    >()
     expectTypeOf(ally.use('twitterX')).toMatchTypeOf<TwitterXDriver>()
   })
 })

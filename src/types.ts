@@ -26,6 +26,10 @@ export type { Oauth1RequestToken }
 export type { ApiRequestContract }
 export type { Oauth2ClientConfig as Oauth2DriverConfig }
 export type { Oauth1ClientConfig as Oauth1DriverConfig }
+export type AllyManagerIntent = 'signup' | 'login' | 'link'
+export type AllyManagerUseOptions = {
+  intent?: AllyManagerIntent
+}
 
 /**
  * Issue: https://github.com/Microsoft/TypeScript/issues/29729
@@ -84,6 +88,12 @@ export interface AllyDriverContract<
   Scopes extends string,
 > {
   version: 'oauth1' | 'oauth2'
+
+  /**
+   * Driver configuration. Drivers may expose their config publicly so
+   * the manager can inspect runtime capabilities.
+   */
+  config?: any
 
   /**
    * Perform stateless authentication. Only applicable for Oauth2 clients
@@ -217,6 +227,7 @@ export type DiscordToken = {
  * Extra options available for Discord
  */
 export type DiscordDriverConfig = Oauth2ClientConfig & {
+  disallowLocalSignup?: boolean
   userInfoUrl?: string
   scopes?: LiteralStringUnion<DiscordScopes>[]
   prompt?: 'consent' | 'none'
@@ -282,6 +293,7 @@ export type GithubToken = {
  * Extra options available for Github
  */
 export type GithubDriverConfig = Oauth2ClientConfig & {
+  disallowLocalSignup?: boolean
   login?: string
   scopes?: LiteralStringUnion<GithubScopes>[]
   allowSignup?: boolean
@@ -309,6 +321,7 @@ export type TwitterToken = {
  * Extra options available for twitter
  */
 export type TwitterDriverConfig = Oauth1ClientConfig & {
+  disallowLocalSignup?: boolean
   userInfoUrl?: string
 }
 
@@ -320,7 +333,7 @@ export type TwitterDriverConfig = Oauth1ClientConfig & {
 
 /**
  * Common X OAuth2 scopes.
- * https://docs.x.com/fundamentals/authentication/oauth-2-0/user-access-token
+ * https://docs.x.com/fundamentals/authentication/oauth-2.0/user-access-token
  */
 export type TwitterXScopes =
   | 'tweet.read'
@@ -357,6 +370,7 @@ export type TwitterXToken = Oauth2AccessToken & {
  * Extra options available for X
  */
 export type TwitterXDriverConfig = Oauth2ClientConfig & {
+  disallowLocalSignup?: boolean
   userInfoUrl?: string
   scopes?: LiteralStringUnion<TwitterXScopes>[]
 }
@@ -426,6 +440,7 @@ export type GoogleToken = Oauth2AccessToken & {
  * https://developers.google.com/identity/protocols/oauth2/openid-connect#re-consent
  */
 export type GoogleDriverConfig = Oauth2ClientConfig & {
+  disallowLocalSignup?: boolean
   userInfoUrl?: string
 
   /**
@@ -474,6 +489,7 @@ export type LinkedInToken = {
  * https://docs.microsoft.com/en-us/linkedin/shared/authentication/authorization-code-flow?context=linkedin%2Fcontext&tabs=HTTPS#step-2-request-an-authorization-code
  */
 export type LinkedInDriverConfig = Oauth2ClientConfig & {
+  disallowLocalSignup?: boolean
   userInfoUrl?: string
   userEmailUrl?: string
 
@@ -510,6 +526,7 @@ export type LinkedInOpenidConnectScopes = 'openid' | 'profile' | 'email'
  * The configuration accepted by the driver implementation.
  */
 export type LinkedInOpenidConnectDriverConfig = {
+  disallowLocalSignup?: boolean
   clientId: string
   clientSecret: string
   callbackUrl: string
@@ -607,6 +624,7 @@ export type FacebookToken = {
  * https://developers.facebook.com/docs/facebook-login/manually-build-a-login-flow
  */
 export type FacebookDriverConfig = Oauth2ClientConfig & {
+  disallowLocalSignup?: boolean
   userInfoUrl?: string
 
   /**
@@ -664,6 +682,7 @@ export type SpotifyToken = {
  * Extra options available for Spotify
  */
 export type SpotifyDriverConfig = Oauth2ClientConfig & {
+  disallowLocalSignup?: boolean
   scopes?: LiteralStringUnion<SpotifyScopes>[]
   showDialog?: boolean
 }
