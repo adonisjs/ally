@@ -53,10 +53,7 @@ test.group('Ally manager', () => {
 
       if (error instanceof E_UNKNOWN_ALLY_PROVIDER) {
         assert.equal(error.status, 404)
-        assert.equal(
-          error.message,
-          'Unknown ally provider "github". Make sure it is registered inside the config/ally.ts file'
-        )
+        assert.equal(error.message, 'Unknown authentication provider "github"')
       }
     }
   })
@@ -189,10 +186,7 @@ test.group('Ally manager', () => {
 
       if (error instanceof E_UNKNOWN_ALLY_PROVIDER) {
         assert.equal(error.status, 404)
-        assert.equal(
-          error.message,
-          'Unknown ally provider "github". Make sure it is registered inside the config/ally.ts file'
-        )
+        assert.equal(error.message, 'Unknown authentication provider "github"')
       }
     }
   })
@@ -225,7 +219,7 @@ test.group('Ally manager', () => {
         assert.equal(error.status, 403)
         assert.equal(
           error.message,
-          'Cannot use ally provider "github" for signup. Local signup is disabled for this provider'
+          'Cannot signup using "github". Local signup is disabled for this provider'
         )
       }
     }

@@ -143,6 +143,16 @@ export abstract class Oauth1Driver<Token extends Oauth1AccessToken, Scopes exten
   version = 'oauth1' as const
 
   /**
+   * The origin URL set via `setOriginUrl` before redirect
+   */
+  protected originUrl?: string
+
+  /**
+   * Cached origin URL value read from the cookie via loadState
+   */
+  protected originUrlCookieValue?: string
+
+  /**
    * Cached OAuth token and secret values read from cookies
    */
   protected oauthTokenCookieValue?: string
@@ -156,6 +166,16 @@ export abstract class Oauth1Driver<Token extends Oauth1AccessToken, Scopes exten
    */
   protected get oauthSecretCookieName() {
     return `${this.oauthTokenCookieName}_secret`
+  }
+
+  /**
+   * The cookie name for storing the origin URL. The origin URL is
+   * the page the user was on before being redirected to the OAuth
+   * provider. It is used to redirect the user back when an error
+   * occurs during the callback.
+   */
+  protected get originUrlCookieName() {
+    return `${this.oauthTokenCookieName}_origin_url`
   }
 
   /**
@@ -201,12 +221,14 @@ export abstract class Oauth1Driver<Token extends Oauth1AccessToken, Scopes exten
      */
     this.oauthTokenCookieValue = this.ctx.request.encryptedCookie(this.oauthTokenCookieName)
     this.oauthSecretCookieValue = this.ctx.request.encryptedCookie(this.oauthSecretCookieName)
+    this.originUrlCookieValue = this.ctx.request.cookie(this.originUrlCookieName)
 
     /**
      * Clear cookies
      */
     this.ctx.response.clearCookie(this.oauthTokenCookieName)
     this.ctx.response.clearCookie(this.oauthSecretCookieName)
+    this.ctx.response.clearCookie(this.originUrlCookieName)
   }
 
   /**
@@ -231,6 +253,25 @@ export abstract class Oauth1Driver<Token extends Oauth1AccessToken, Scopes exten
       sameSite: false,
       httpOnly: true,
     })
+  }
+
+  /**
+   * Set the origin URL to redirect the user back to when an error
+   * occurs during the OAuth callback. Without this, the error
+   * handler redirects "back" which would be the OAuth provider's
+   * page instead of your application.
+   *
+   * @param url - The URL to redirect to on error
+   * @returns The current driver instance.
+   *
+   * @example
+   * ```ts
+   * await ally.use('twitter').setOriginUrl('/login').redirect()
+   * ```
+   */
+  setOriginUrl(url: string): this {
+    this.originUrl = url
+    return this
   }
 
   /**
@@ -283,6 +324,13 @@ export abstract class Oauth1Driver<Token extends Oauth1AccessToken, Scopes exten
      */
     this.#persistToken(token)
     this.#persistSecret(secret)
+
+    if (this.originUrl) {
+      this.ctx.response.cookie(this.originUrlCookieName, this.originUrl, {
+        sameSite: false,
+        httpOnly: true,
+      })
+    }
 
     const url = await this.redirectUrl((request) => {
       request.param(this.oauthTokenParamName, token)
@@ -369,7 +417,11 @@ export abstract class Oauth1Driver<Token extends Oauth1AccessToken, Scopes exten
      * We expect the user to handle errors before calling this method
      */
     if (this.hasError()) {
-      throw new errors.E_OAUTH_MISSING_CODE([this.oauthTokenVerifierName])
+      const error = new errors.E_OAUTH_MISSING_CODE([this.oauthTokenVerifierName])
+      if (this.originUrlCookieValue) {
+        error.setRedirectUrl(this.originUrlCookieValue)
+      }
+      throw error
     }
 
     /**
@@ -377,7 +429,11 @@ export abstract class Oauth1Driver<Token extends Oauth1AccessToken, Scopes exten
      * calling this method
      */
     if (this.stateMisMatch()) {
-      throw new errors.E_OAUTH_STATE_MISMATCH()
+      const error = new errors.E_OAUTH_STATE_MISMATCH()
+      if (this.originUrlCookieValue) {
+        error.setRedirectUrl(this.originUrlCookieValue)
+      }
+      throw error
     }
 
     /**
