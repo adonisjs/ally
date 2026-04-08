@@ -166,6 +166,98 @@ test.group('Configure', (group) => {
     await assert.fileEquals('start/env.ts', `export default Env.create(new URL('./'), {})`)
   })
 
+  test('configure twitterX provider with custom env prefix', async ({ fs, assert }) => {
+    const ignitor = new IgnitorFactory()
+      .withCoreProviders()
+      .withCoreConfig()
+      .create(BASE_URL, {
+        importer: (filePath) => {
+          if (filePath.startsWith('./') || filePath.startsWith('../')) {
+            return import(new URL(filePath, BASE_URL).href)
+          }
+
+          return import(filePath)
+        },
+      })
+
+    const app = ignitor.createApp('web')
+    await app.init()
+    await app.boot()
+
+    await fs.create('.env', '')
+    await fs.createJson('tsconfig.json', {})
+    await fs.create('start/env.ts', `export default Env.create(new URL('./'), {})`)
+    await fs.create('adonisrc.ts', `export default defineConfig({})`)
+
+    const ace = await app.container.make('ace')
+    const command = await ace.create(Configure, ['../../index.js', '--providers=twitterX'])
+    await command.exec()
+
+    await assert.fileExists('config/ally.ts')
+    await assert.fileContains(
+      'config/ally.ts',
+      `twitterX: services.twitterX({
+    clientId: env.get('TWITTER_X_CLIENT_ID'),
+    clientSecret: env.get('TWITTER_X_CLIENT_SECRET'),
+    callbackUrl: '',
+  }),`
+    )
+    await assert.fileContains('.env', 'TWITTER_X_CLIENT_ID')
+    await assert.fileContains('.env', 'TWITTER_X_CLIENT_SECRET')
+
+    await assert.fileContains('start/env.ts', 'TWITTER_X_CLIENT_ID: Env.schema.string()')
+    await assert.fileContains('start/env.ts', 'TWITTER_X_CLIENT_SECRET: Env.schema.string()')
+  })
+
+  test('configure linkedinOpenidConnect provider with custom env prefix', async ({
+    fs,
+    assert,
+  }) => {
+    const ignitor = new IgnitorFactory()
+      .withCoreProviders()
+      .withCoreConfig()
+      .create(BASE_URL, {
+        importer: (filePath) => {
+          if (filePath.startsWith('./') || filePath.startsWith('../')) {
+            return import(new URL(filePath, BASE_URL).href)
+          }
+
+          return import(filePath)
+        },
+      })
+
+    const app = ignitor.createApp('web')
+    await app.init()
+    await app.boot()
+
+    await fs.create('.env', '')
+    await fs.createJson('tsconfig.json', {})
+    await fs.create('start/env.ts', `export default Env.create(new URL('./'), {})`)
+    await fs.create('adonisrc.ts', `export default defineConfig({})`)
+
+    const ace = await app.container.make('ace')
+    const command = await ace.create(Configure, [
+      '../../index.js',
+      '--providers=linkedinOpenidConnect',
+    ])
+    await command.exec()
+
+    await assert.fileExists('config/ally.ts')
+    await assert.fileContains(
+      'config/ally.ts',
+      `linkedinOpenidConnect: services.linkedinOpenidConnect({
+    clientId: env.get('LINKEDIN_OC_CLIENT_ID'),
+    clientSecret: env.get('LINKEDIN_OC_CLIENT_SECRET'),
+    callbackUrl: '',
+  }),`
+    )
+    await assert.fileContains('.env', 'LINKEDIN_OC_CLIENT_ID')
+    await assert.fileContains('.env', 'LINKEDIN_OC_CLIENT_SECRET')
+
+    await assert.fileContains('start/env.ts', 'LINKEDIN_OC_CLIENT_ID: Env.schema.string()')
+    await assert.fileContains('start/env.ts', 'LINKEDIN_OC_CLIENT_SECRET: Env.schema.string()')
+  })
+
   test('prompt when provider is pre-defined', async ({ fs, assert }) => {
     const ignitor = new IgnitorFactory()
       .withCoreProviders()
