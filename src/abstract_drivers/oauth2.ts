@@ -303,6 +303,22 @@ export abstract class Oauth2Driver<Token extends Oauth2AccessToken, Scopes exten
   }
 
   /**
+   * Get the origin URL that was set before the redirect and persisted
+   * via a cookie. Available during the callback phase after `loadState`
+   * has been called.
+   *
+   * @returns The origin URL, or `undefined` when none was set.
+   *
+   * @example
+   * ```ts
+   * const originUrl = ally.use('github').getOriginUrl()
+   * ```
+   */
+  getOriginUrl(): string | undefined {
+    return this.originUrlCookieValue
+  }
+
+  /**
    * Enable stateless authentication by disabling CSRF state verification.
    * Only use this in scenarios where state verification is not required.
    *

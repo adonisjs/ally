@@ -180,6 +180,15 @@ export interface AllyDriverContract<
   setOriginUrl(url: string): this
 
   /**
+   * Get the origin URL that was set before the redirect and persisted
+   * via a cookie. Available during the callback phase after `loadState`
+   * has been called.
+   *
+   * @returns The origin URL, or `undefined` when none was set.
+   */
+  getOriginUrl(): string | undefined
+
+  /**
    * Redirect user for authorization
    *
    * @param callback - Optional callback used to customize the redirect request.

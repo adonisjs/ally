@@ -275,6 +275,22 @@ export abstract class Oauth1Driver<Token extends Oauth1AccessToken, Scopes exten
   }
 
   /**
+   * Get the origin URL that was set before the redirect and persisted
+   * via a cookie. Available during the callback phase after `loadState`
+   * has been called.
+   *
+   * @returns The origin URL, or `undefined` when none was set.
+   *
+   * @example
+   * ```ts
+   * const originUrl = ally.use('twitter').getOriginUrl()
+   * ```
+   */
+  getOriginUrl(): string | undefined {
+    return this.originUrlCookieValue
+  }
+
+  /**
    * OAuth1 does not support stateless authentication due to the
    * three-legged authentication flow requiring token persistence.
    *
