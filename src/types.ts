@@ -171,24 +171,6 @@ export interface AllyDriverContract<
   stateless(): this
 
   /**
-   * Set the origin URL to redirect the user back to when an error
-   * occurs during the OAuth callback.
-   *
-   * @param url - The URL to redirect to on error
-   * @returns The current driver instance.
-   */
-  setOriginUrl(url: string): this
-
-  /**
-   * Get the origin URL that was set before the redirect and persisted
-   * via a cookie. Available during the callback phase after `loadState`
-   * has been called.
-   *
-   * @returns The origin URL, or `undefined` when none was set.
-   */
-  getOriginUrl(): string | undefined
-
-  /**
    * Redirect user for authorization
    *
    * @param callback - Optional callback used to customize the redirect request.

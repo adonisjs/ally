@@ -19,17 +19,7 @@ import { type HttpContext } from '@adonisjs/core/http'
  * and supporting i18n translation.
  */
 export abstract class HttpResponseException extends Exception {
-  public redirectUri?: string
   abstract identifier: string
-
-  /**
-   * Set the redirect URL for the exception. In case of an error, the
-   * users will be redirected to this page.
-   */
-  setRedirectUrl(uri: string) {
-    this.redirectUri = uri
-    return this
-  }
 
   /**
    * Returns the message to be sent in the HTTP response.
@@ -55,7 +45,7 @@ export abstract class HttpResponseException extends Exception {
         if (ctx.session) {
           ctx.session.flash('error', message)
           ctx.session.flashErrors({ [error.code!]: message })
-          ctx.response.redirect(this.redirectUri ?? 'back', true)
+          ctx.response.redirect().back()
         } else {
           ctx.response.status(error.status).send(message)
         }

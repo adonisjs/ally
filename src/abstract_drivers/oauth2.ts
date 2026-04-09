@@ -69,16 +69,6 @@ export abstract class Oauth2Driver<Token extends Oauth2AccessToken, Scopes exten
   protected codeVerifierCookieName?: string
 
   /**
-   * The cookie name for storing the origin URL. The origin URL is
-   * the page the user was on before being redirected to the OAuth
-   * provider. It is used to redirect the user back when an error
-   * occurs during the callback.
-   */
-  protected get originUrlCookieName() {
-    return `${this.stateCookieName}_origin_url`
-  }
-
-  /**
    * The query parameter name for sending the state to the OAuth provider.
    * This is typically 'state' but varies by provider. Check the provider's
    * OAuth documentation.
@@ -162,16 +152,6 @@ export abstract class Oauth2Driver<Token extends Oauth2AccessToken, Scopes exten
   protected stateCookieValue?: string
 
   /**
-   * The origin URL set via `setOriginUrl` before redirect
-   */
-  protected originUrl?: string
-
-  /**
-   * Cached origin URL value read from the cookie via loadState
-   */
-  protected originUrlCookieValue?: string
-
-  /**
    * Cached PKCE code verifier value read from the cookie via
    * loadState
    */
@@ -231,9 +211,6 @@ export abstract class Oauth2Driver<Token extends Oauth2AccessToken, Scopes exten
     this.stateCookieValue = this.ctx.request.encryptedCookie(this.stateCookieName)
     this.ctx.response.clearCookie(this.stateCookieName)
 
-    this.originUrlCookieValue = this.ctx.request.cookie(this.originUrlCookieName)
-    this.ctx.response.clearCookie(this.originUrlCookieName)
-
     if (this.#usesPkce()) {
       this.codeVerifierCookieValue = this.ctx.request.encryptedCookie(this.codeVerifierCookieName!)
       this.ctx.response.clearCookie(this.codeVerifierCookieName!)
@@ -273,49 +250,10 @@ export abstract class Oauth2Driver<Token extends Oauth2AccessToken, Scopes exten
     }
 
     if (!this.codeVerifierCookieValue) {
-      const error = new errors.E_OAUTH_MISSING_CODE(['code_verifier'])
-      if (this.originUrlCookieValue) {
-        error.setRedirectUrl(this.originUrlCookieValue)
-      }
-      throw error
+      throw new errors.E_OAUTH_MISSING_CODE(['code_verifier'])
     }
 
     return this.codeVerifierCookieValue
-  }
-
-  /**
-   * Set the origin URL to redirect the user back to when an error
-   * occurs during the OAuth callback. Without this, the error
-   * handler redirects "back" which would be the OAuth provider's
-   * page instead of your application.
-   *
-   * @param url - The URL to redirect to on error
-   * @returns The current driver instance.
-   *
-   * @example
-   * ```ts
-   * await ally.use('github').setOriginUrl('/login').redirect()
-   * ```
-   */
-  setOriginUrl(url: string): this {
-    this.originUrl = url
-    return this
-  }
-
-  /**
-   * Get the origin URL that was set before the redirect and persisted
-   * via a cookie. Available during the callback phase after `loadState`
-   * has been called.
-   *
-   * @returns The origin URL, or `undefined` when none was set.
-   *
-   * @example
-   * ```ts
-   * const originUrl = ally.use('github').getOriginUrl()
-   * ```
-   */
-  getOriginUrl(): string | undefined {
-    return this.originUrlCookieValue
   }
 
   /**
@@ -380,13 +318,6 @@ export abstract class Oauth2Driver<Token extends Oauth2AccessToken, Scopes exten
           httpOnly: true,
         })
         request.param(this.stateParamName, state)
-
-        if (this.originUrl) {
-          this.ctx.response.cookie(this.originUrlCookieName, this.originUrl, {
-            sameSite: false,
-            httpOnly: true,
-          })
-        }
       }
 
       if (typeof callback === 'function') {
@@ -482,11 +413,7 @@ export abstract class Oauth2Driver<Token extends Oauth2AccessToken, Scopes exten
      * We expect the user to handle errors before calling this method
      */
     if (this.hasError()) {
-      const error = new errors.E_OAUTH_MISSING_CODE([this.codeParamName])
-      if (this.originUrlCookieValue) {
-        error.setRedirectUrl(this.originUrlCookieValue)
-      }
-      throw error
+      throw new errors.E_OAUTH_MISSING_CODE([this.codeParamName])
     }
 
     /**
@@ -494,11 +421,7 @@ export abstract class Oauth2Driver<Token extends Oauth2AccessToken, Scopes exten
      * calling this method
      */
     if (this.stateMisMatch()) {
-      const error = new errors.E_OAUTH_STATE_MISMATCH()
-      if (this.originUrlCookieValue) {
-        error.setRedirectUrl(this.originUrlCookieValue)
-      }
-      throw error
+      throw new errors.E_OAUTH_STATE_MISMATCH()
     }
 
     /**
