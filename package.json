@@ -43,6 +43,7 @@
     "@adonisjs/core": "^7.3.1",
     "@adonisjs/eslint-config": "^3.0.0",
     "@adonisjs/i18n": "^3.0.0",
+    "@adonisjs/inertia": "^4.2.0",
     "@adonisjs/prettier-config": "^1.4.5",
     "@adonisjs/session": "^8.1.0",
     "@adonisjs/tsconfig": "^2.0.0",
@@ -70,7 +71,8 @@
     "@adonisjs/assembler": "^8.0.0",
     "@adonisjs/core": "^7.0.0-next.8 || ^7.0.0",
     "@adonisjs/i18n": "^3.0.0",
-    "@adonisjs/session": "^8.0.0"
+    "@adonisjs/session": "^8.0.0",
+    "@adonisjs/inertia": "^4.2.0"
   },
   "peerDependenciesMeta": {
     "@adonisjs/assembler": {
@@ -80,6 +82,9 @@
       "optional": true
     },
     "@adonisjs/session": {
+      "optional": true
+    },
+    "@adonisjs/inertia": {
       "optional": true
     }
   },

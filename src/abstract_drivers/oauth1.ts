@@ -7,6 +7,8 @@
  * file that was distributed with this source code.
  */
 
+/// <reference types="@adonisjs/inertia/inertia_middleware" />
+
 import { Exception } from '@adonisjs/core/exceptions'
 import type { HttpContext } from '@adonisjs/core/http'
 import { Oauth1Client } from '@poppinss/oauth-client/oauth1'
@@ -292,7 +294,11 @@ export abstract class Oauth1Driver<Token extends Oauth1AccessToken, Scopes exten
       }
     })
 
-    this.ctx.response.redirect(url)
+    if ('inertia' in this.ctx && this.ctx.inertia.requestInfo().isInertiaRequest) {
+      this.ctx.inertia.location(url)
+    } else {
+      this.ctx.response.redirect(url)
+    }
   }
 
   /**
