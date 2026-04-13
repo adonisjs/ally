@@ -196,7 +196,7 @@ test.group('Configure', (group) => {
     await assert.fileExists('config/ally.ts')
     await assert.fileContains(
       'config/ally.ts',
-      `twitterX: services.twitterX({
+      `x: services.twitterX({
     clientId: env.get('TWITTER_X_CLIENT_ID'),
     clientSecret: env.get('TWITTER_X_CLIENT_SECRET'),
     callbackUrl: '',
@@ -245,7 +245,7 @@ test.group('Configure', (group) => {
     await assert.fileExists('config/ally.ts')
     await assert.fileContains(
       'config/ally.ts',
-      `linkedinOpenidConnect: services.linkedinOpenidConnect({
+      `linkedin: services.linkedinOpenidConnect({
     clientId: env.get('LINKEDIN_OC_CLIENT_ID'),
     clientSecret: env.get('LINKEDIN_OC_CLIENT_SECRET'),
     callbackUrl: '',

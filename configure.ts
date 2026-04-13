@@ -14,20 +14,26 @@ import { stubsRoot } from './stubs/main.ts'
  * List of available providers with their prompt labels
  * and env variable prefixes.
  */
-const AVAILABLE_PROVIDERS: { name: string; message: string; envPrefix: string }[] = [
-  { name: 'discord', message: 'Discord', envPrefix: 'DISCORD' },
-  { name: 'facebook', message: 'Facebook', envPrefix: 'FACEBOOK' },
-  { name: 'github', message: 'GitHub', envPrefix: 'GITHUB' },
-  { name: 'google', message: 'Google', envPrefix: 'GOOGLE' },
-  { name: 'linkedin', message: 'LinkedIn', envPrefix: 'LINKEDIN' },
+const AVAILABLE_PROVIDERS: {
+  name: string
+  configKey: string
+  message: string
+  envPrefix: string
+}[] = [
+  { name: 'discord', configKey: 'discord', message: 'Discord', envPrefix: 'DISCORD' },
+  { name: 'facebook', configKey: 'facebook', message: 'Facebook', envPrefix: 'FACEBOOK' },
+  { name: 'github', configKey: 'github', message: 'GitHub', envPrefix: 'GITHUB' },
+  { name: 'google', configKey: 'google', message: 'Google', envPrefix: 'GOOGLE' },
+  { name: 'linkedin', configKey: 'linkedin', message: 'LinkedIn', envPrefix: 'LINKEDIN' },
   {
     name: 'linkedinOpenidConnect',
+    configKey: 'linkedin',
     message: 'LinkedIn (OpenID Connect)',
     envPrefix: 'LINKEDIN_OC',
   },
-  { name: 'spotify', message: 'Spotify', envPrefix: 'SPOTIFY' },
-  { name: 'twitter', message: 'Twitter', envPrefix: 'TWITTER' },
-  { name: 'twitterX', message: 'Twitter X (OAuth2)', envPrefix: 'TWITTER_X' },
+  { name: 'spotify', configKey: 'spotify', message: 'Spotify', envPrefix: 'SPOTIFY' },
+  { name: 'twitter', configKey: 'twitter', message: 'Twitter', envPrefix: 'TWITTER' },
+  { name: 'twitterX', configKey: 'x', message: 'Twitter X (OAuth2)', envPrefix: 'TWITTER_X' },
 ]
 
 /**
@@ -86,7 +92,7 @@ export async function configure(command: Configure) {
    */
   await codemods.makeUsingStub(stubsRoot, 'config/ally.stub', {
     providers: providers.map((provider) => {
-      return { provider: provider.name, envPrefix: provider.envPrefix }
+      return { name: provider.configKey, provider: provider.name, envPrefix: provider.envPrefix }
     }),
   })
 
