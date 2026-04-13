@@ -177,7 +177,7 @@ export class LinkedInOpenidConnectDriver extends Oauth2Driver<
       name: body.family_name,
       avatarUrl: body.picture,
       email: body.email,
-      emailVerificationState: 'unsupported' as const,
+      emailVerificationState: body.email_verified === true ? 'verified' : 'unverified',
       original: body,
     } satisfies Omit<AllyUserContract<Oauth2AccessToken>, 'token'>
   }
