@@ -102,8 +102,8 @@ export async function configure(command: Configure) {
    */
   await codemods.defineEnvVariables(
     providers.reduce<Record<string, string>>((result, provider) => {
-      result[`${provider.envPrefix}_CLIENT_ID`] = ''
-      result[`${provider.envPrefix}_CLIENT_SECRET`] = ''
+      result[`${provider.envPrefix}_CLIENT_ID`] = 'placeholder'
+      result[`${provider.envPrefix}_CLIENT_SECRET`] = 'placeholder'
       return result
     }, {})
   )
