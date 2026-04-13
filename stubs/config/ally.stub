@@ -9,7 +9,7 @@ const allyConfig = defineConfig({
   {{provider.name}}: services.{{provider.provider}}({
     clientId: env.get('{{provider.envPrefix}}_CLIENT_ID'),
     clientSecret: env.get('{{provider.envPrefix}}_CLIENT_SECRET'),
-    callbackUrl: '',
+    callbackUrl: \`\${env.get('APP_URL')}/oauth/{{provider.name}}/callback\`,
   }),
 {{/each}}
 })

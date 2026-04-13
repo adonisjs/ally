@@ -59,7 +59,7 @@ test.group('Configure', (group) => {
       `facebook: services.facebook({
     clientId: env.get('FACEBOOK_CLIENT_ID'),
     clientSecret: env.get('FACEBOOK_CLIENT_SECRET'),
-    callbackUrl: '',
+    callbackUrl: \`\${env.get('APP_URL')}/oauth/facebook/callback\`,
   }),`
     )
     await assert.fileContains('.env', 'FACEBOOK_CLIENT_ID')
@@ -110,7 +110,7 @@ test.group('Configure', (group) => {
       `github: services.github({
     clientId: env.get('GITHUB_CLIENT_ID'),
     clientSecret: env.get('GITHUB_CLIENT_SECRET'),
-    callbackUrl: '',
+    callbackUrl: \`\${env.get('APP_URL')}/oauth/github/callback\`,
   }),`
     )
     await assert.fileContains(
@@ -118,7 +118,7 @@ test.group('Configure', (group) => {
       `linkedin: services.linkedin({
     clientId: env.get('LINKEDIN_CLIENT_ID'),
     clientSecret: env.get('LINKEDIN_CLIENT_SECRET'),
-    callbackUrl: '',
+    callbackUrl: \`\${env.get('APP_URL')}/oauth/linkedin/callback\`,
   }),`
     )
     await assert.fileContains('.env', 'GITHUB_CLIENT_ID')
@@ -199,7 +199,7 @@ test.group('Configure', (group) => {
       `x: services.twitterX({
     clientId: env.get('TWITTER_X_CLIENT_ID'),
     clientSecret: env.get('TWITTER_X_CLIENT_SECRET'),
-    callbackUrl: '',
+    callbackUrl: \`\${env.get('APP_URL')}/oauth/x/callback\`,
   }),`
     )
     await assert.fileContains('.env', 'TWITTER_X_CLIENT_ID')
@@ -248,7 +248,7 @@ test.group('Configure', (group) => {
       `linkedin: services.linkedinOpenidConnect({
     clientId: env.get('LINKEDIN_OC_CLIENT_ID'),
     clientSecret: env.get('LINKEDIN_OC_CLIENT_SECRET'),
-    callbackUrl: '',
+    callbackUrl: \`\${env.get('APP_URL')}/oauth/linkedin/callback\`,
   }),`
     )
     await assert.fileContains('.env', 'LINKEDIN_OC_CLIENT_ID')
@@ -297,7 +297,7 @@ test.group('Configure', (group) => {
       `github: services.github({
     clientId: env.get('GITHUB_CLIENT_ID'),
     clientSecret: env.get('GITHUB_CLIENT_SECRET'),
-    callbackUrl: '',
+    callbackUrl: \`\${env.get('APP_URL')}/oauth/github/callback\`,
   }),`
     )
     await assert.fileContains(
@@ -305,7 +305,7 @@ test.group('Configure', (group) => {
       `linkedin: services.linkedin({
     clientId: env.get('LINKEDIN_CLIENT_ID'),
     clientSecret: env.get('LINKEDIN_CLIENT_SECRET'),
-    callbackUrl: '',
+    callbackUrl: \`\${env.get('APP_URL')}/oauth/linkedin/callback\`,
   }),`
     )
     await assert.fileContains('.env', 'GITHUB_CLIENT_ID')
