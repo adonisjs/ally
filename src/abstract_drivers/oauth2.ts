@@ -345,7 +345,14 @@ export abstract class Oauth2Driver<Token extends Oauth2AccessToken, Scopes exten
       return false
     }
 
-    if (this.stateCookieValue !== this.ctx.request.input(this.stateParamName)) {
+    /**
+     * A missing state cookie is a mismatch. Otherwise, a callback without
+     * the state param would pass when the cookie is missing too.
+     */
+    if (
+      !this.stateCookieValue ||
+      this.stateCookieValue !== this.ctx.request.input(this.stateParamName)
+    ) {
       return true
     }
 

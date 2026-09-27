@@ -308,7 +308,14 @@ export abstract class Oauth1Driver<Token extends Oauth1AccessToken, Scopes exten
    * @returns `true` when the callback token does not match the stored token.
    */
   stateMisMatch(): boolean {
-    return this.oauthTokenCookieValue !== this.ctx.request.input(this.oauthTokenParamName)
+    /**
+     * A missing oauth token cookie is a mismatch. Otherwise, a callback
+     * without the oauth token param would pass when the cookie is missing too.
+     */
+    return (
+      !this.oauthTokenCookieValue ||
+      this.oauthTokenCookieValue !== this.ctx.request.input(this.oauthTokenParamName)
+    )
   }
 
   /**
