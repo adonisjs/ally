@@ -4,12 +4,15 @@ on:
   - pull_request
   - workflow_call
 
+permissions:
+  contents: read
+
 jobs:
   test:
-    uses: adonisjs/.github/.github/workflows/test.yml@main
+    uses: adonisjs/.github/.github/workflows/test.yml@301b4db7ba7b315fb7551cb6cbe260528a15f5e9 # main
 
   lint:
-    uses: adonisjs/.github/.github/workflows/lint.yml@main
+    uses: adonisjs/.github/.github/workflows/lint.yml@301b4db7ba7b315fb7551cb6cbe260528a15f5e9 # main
 
   typecheck:
-    uses: adonisjs/.github/.github/workflows/typecheck.yml@main
+    uses: adonisjs/.github/.github/workflows/typecheck.yml@301b4db7ba7b315fb7551cb6cbe260528a15f5e9 # main
