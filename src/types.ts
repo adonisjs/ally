@@ -37,8 +37,9 @@ export type LiteralStringUnion<LiteralType> = LiteralType | (string & { _?: neve
  * Extension of oauth-client redirect request with support
  * for defining scopes as first class citizen
  */
-export interface RedirectRequestContract<Scopes extends string = string>
-  extends ClientRequestContract {
+export interface RedirectRequestContract<
+  Scopes extends string = string,
+> extends ClientRequestContract {
   /**
    * Define a callback to transform scopes before they are defined
    * as a param
@@ -633,7 +634,6 @@ export type InferSocialProviders<
 /**
  * Ally service is shared with the HTTP context
  */
-export interface AllyService
-  extends AllyManager<
-    SocialProviders extends Record<string, AllyManagerDriverFactory> ? SocialProviders : never
-  > {}
+export interface AllyService extends AllyManager<
+  SocialProviders extends Record<string, AllyManagerDriverFactory> ? SocialProviders : never
+> {}
